@@ -18,7 +18,7 @@ def worker(arg, arg2):
 def lister(arg):
     return glob(arg+"**"+chr(92), recursive=False)
 
-def main(arg1,directory):
+def main(arg,arg1,directory):
     try:
         if arg=="locatenr": recurse=False
         else: recurse=True
