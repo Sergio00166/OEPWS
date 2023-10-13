@@ -40,9 +40,10 @@ def database(arg,arg1,directory,oldir):
         out=Queue()
         proc=Process(target=cmd, args=(arg,arg1,directory,oldir,out,))
         proc.start(); ext=out.get(); proc.join()
+        directory=ext[0]
         if not ext[1]:
             from startcmd import main as runcmd
             if runcmd(arg, arg1, directory):
                 print(color("\n  Command not found","R"))
             print("")    
-    return ext[0]
+    return directory
