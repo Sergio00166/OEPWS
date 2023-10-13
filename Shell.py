@@ -46,9 +46,8 @@ def cli(args):
         else:
             if not arg=="":
                 if arg=="sudo": arg1=arg1.replace(";","';'")
-                #try:
-                directory=database(arg,arg1,directory,str(oldir[0]))
-                #except: print(ferror)
+                try: directory=database(arg,arg1,directory,str(oldir[0]))
+                except: print(ferror)
                 if arg=="flmgr": clsmenu()
                 if not len(inp)==1 and not cont==len(inp)-1:
                     if not args==False and cont==0: cont+=1
