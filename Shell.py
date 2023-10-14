@@ -67,7 +67,6 @@ def main(args):
             while True: cli(False)
         else: cli(args)
     else:
-        clsmenu()
         while True: cli(False)
         
 if __name__ == "__main__":
@@ -78,11 +77,12 @@ if __name__ == "__main__":
         if "site-packages" in x: path.remove(x)
     path.append(path[0]+chr(92)+"import")
     from colors import color
-    flechas=str(color(" >> ","G-"))
-    ferror=color("\n  FATAL ERROR\n","R")
     menu=str(color(" OEPWS by Sergio1260 ","G")+"\n "+
              color(version,"R")+color(" on ","G")+
              color("Windows OS","B"))
+    clsmenu()
+    flechas=str(color(" >> ","G-"))
+    ferror=color("\n  FATAL ERROR\n","R")
     raw=str(check_output("echo %userprofile%",shell=True))
     userdir=raw[2:len(raw)-4].replace(chr(92)+chr(92),chr(92))
     userdir=userdir.replace(chr(92),chr(92)+chr(92))
