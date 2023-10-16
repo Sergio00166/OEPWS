@@ -39,8 +39,7 @@ def sysinfo():
     global line
     thr=Thread(target=async_worker); thr.start()
     file=path[0]+"\\import\\powershell\\sysinfo.ps1"
-    raw=str(check_output("powershell Set-ExecutionPolicy -Scope CurrentUser "+
-                         "-ExecutionPolicy Bypass -Force; "+file), encoding="cp857")
+    raw=str(check_output("powershell -noprofile -executionpolicy bypass -file "+file), encoding="cp857")
     raw=raw[:len(raw)-1]
     raw=raw.split("\r\n")
     raw.pop(8); raw.pop(9)
