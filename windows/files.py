@@ -19,6 +19,7 @@ def lsacl(arg1, directory):
             if isdir(file):
                 if file+chr(92)==directory: file=fixcrdir(directory)+chr(92)
                 else: file=file.replace(directory,"")+chr(92)
+            file=file[:len(file)].replace(directory,"")
             buff+=("┌─ "+green+"Object: "+reset+blue+file+reset+"\n│\n")
             ext=ext[ext.find(" "):]; fix=[]; ext=ext.split("\\n")
             for x in ext: fix.append(x.lstrip().rstrip())
@@ -33,7 +34,6 @@ def lsacl(arg1, directory):
             buff+=reset+"└─\n\n"
             print(buff, end="")
     else: print(color("   Error\n","R"))
-
 
 def delete(arg1, directory):
     if not arg1=="": extra(2,arg1,directory)
