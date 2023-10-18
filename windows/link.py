@@ -3,6 +3,7 @@
 from subprocess import check_output
 from colors import color
 from os import system as cmd
+from other import fixfiles, fixaddr
 
 def mklnk(dirname,name,refer,rpth):
     cmd("powershell $WshShell=New-Object -comObject WScript.Shell;"+
@@ -12,7 +13,7 @@ def mklnk(dirname,name,refer,rpth):
 
 def create_link(arg, arg1, directory):
     try:
-        if arg1=="links":symb = True
+        if arg=="links": symb = True
         else: symb = False
         if " to " in arg1:
             refer = arg1[arg1.find(" to ") + 4:]
@@ -42,14 +43,15 @@ def create_link(arg, arg1, directory):
                     else: dirname = directory + direct
                 else: dirname = directory; name = drt
             if not ":" + chr(92): refer = directory + refer
-            refer = str(refer).replace(chr(92) + chr(92), chr(92))
-            fix = refer.split(chr(92))
-            fix.pop()
-            rpth = ""
+            refer = str(refer).replace(chr(92)+chr(92), chr(92))
+            fix = refer.split(chr(92)); fix.pop(); rpth = ""
             for x in fix: rpth += x + chr(92)
-            if symb:
-                check_output("powershell New-Item -ItemType SymbolicLink -Path '" +
-                             dirname + "' -Name '" + name + "' -Value '" + refer + "'", shell=False)
-            else: mklnk(dirname, name, refer, rpth)
+            refer=fixfiles(refer); dirname=fixaddr(dirname, True)
+            if not (len(refer)==0 or dirname==None):
+                if symb:
+                    check_output("powershell New-Item -ItemType SymbolicLink -Path '" +
+                                 dirname+"' -Name '"+name+"' -Value '"+refer+"'", shell=False)
+                else: mklnk(dirname, name, refer, rpth)
+            else: print(color("\n   The file/dir doesn't exist\n", "R"))
         else: print(color("\n   Bad syntax\n", "R"))
     except: print(color("\n   Error\n", "R"))
