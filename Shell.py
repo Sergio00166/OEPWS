@@ -5,12 +5,12 @@ from os import environ, getcwd
 from sys import setrecursionlimit, path, argv
 from subprocess import check_output
 
-version="alfa v0.1.60.1"; line=" -"
+version="alfa v0.1.60.2"; line=" -"
 
 def clsmenu(): cmd("CLS"); print(menu,end="\n\n")
 
 def var(arg1):
-    direct='"'+directory[:len(directory)-1]+'"'
+    direct=directory[:len(directory)-1]
     arg1=arg1.replace("'$dir'","\f").replace("$dir",direct)
     arg1=arg1.replace("\f","$dir").replace("'$ver'","\f")
     arg1=arg1.replace("$ver",version).replace("\f","$ver")
