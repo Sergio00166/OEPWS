@@ -5,7 +5,7 @@ from os import environ, getcwd
 from sys import setrecursionlimit, path, argv
 from subprocess import check_output
 
-version="alfa v0.1.60.0"; line=" -"
+version="alfa v0.1.60.1"; line=" -"
 
 def clsmenu(): cmd("CLS"); print(menu,end="\n\n")
 
