@@ -50,12 +50,12 @@ def main():
     delay(0.5); print(""); prog=""; percent=0
     print("     "+color("  Python SysBench v3.0 ","bW"),end="\n\n")
     print("\r  Running Single-Core benchmark... ",end="")
-    onec=onec=str(fractal.one_core())
+    onec=str(one_core())
     print(color("DONE","B"),end="")
     delay(1)
     print("\r"+" "*64,end="")
     print("\r  Running Multi-Core benchmark... ",end="")
-    allc=allc=str(fractal.all_cores())
+    allc=str(all_cores())
     print(color("DONE","B"),end="")
     delay(1)
     print("\r"+" "*64,end="")
@@ -65,3 +65,4 @@ def main():
           +"                                          ")
     print(color("   Multi-Core  performance: ","B")+color(allc,"G"))
     print("")
+
