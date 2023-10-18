@@ -43,7 +43,7 @@ class Tree:
 
 
 def ls(arg1, directory):
-    from os.path import isfile, isdir, getmtime
+    from os.path import islink, isdir, getmtime
     from datetime import datetime as dt
     green=color("","Gnr"); blue=color("","Bnr")
     magenta=color("","Mnr"); red=color("","Rnr")
@@ -70,11 +70,10 @@ def ls(arg1, directory):
                     for z in ext:
                         try: hour = dt.fromtimestamp(getmtime(z)).strftime("%d-%m-%Y %H:%M:%S")
                         except: hour="##-##-#### ##:##:##"
-                        if isdir(z): content=blue+z.replace(x,"")+reset
-                        elif isfile(z):
-                            if z.endswith((".lnk",".url")):  
-                                content=magenta+z.replace(x,"")+reset
-                            else: content=green+z.replace(x,"")+reset
+                        if islink(z) or z.endswith((".lnk",".url")):
+                            content=magenta+z.replace(x,"")+reset
+                        elif isdir(z): content=blue+z.replace(x,"")+reset
+                        else: content=green+z.replace(x,"")+reset
                         print("├"+" "+hour+"  "+content)
                 else:  print("├   "+red+"EMPTY DIRECTORY"+reset)
                 print("└─")
