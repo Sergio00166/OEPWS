@@ -54,9 +54,6 @@ def things(arg, arg1, directory):
     elif arg=="dskperf":
         from dskperf import main
         main(arg1,directory)
-    elif arg=="link":
-        from link import create_link
-        create_link(arg1, directory)
     elif arg=="ip":
         from ip_info import main as ipinfo
         ipinfo()

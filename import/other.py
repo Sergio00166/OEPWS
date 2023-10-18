@@ -22,7 +22,7 @@ def mkadlnk(arg):
     with open(arg, 'wb') as file:
         file.write(bytes_data)
 
-def fixaddr(arg):
+def fixaddr(arg, silent=False):
     from glob import glob
     from os.path import isfile
     fix=glob(arg, recursive=False)
@@ -34,11 +34,13 @@ def fixaddr(arg):
                 ext=ext[:len(ext)-2]
                 if not ext[len(ext)-1]==chr(92): ext+=chr(92)
                 return ext
-            except: print(color("\n   Permision Denied\n","R")); return None
-        else: print(color("\n   It isn't a valid directory\n","R")); return None
+            except:
+                if not silent: print(color("\n   Permision Denied\n","R")); return None
+        else:
+            if not silent: print(color("\n   It isn't a valid directory\n","R")); return None
     else:
-        if len(fix)>1: print(color("\n   Too many arguments\n","R")); return None
-        else: print(color("\n   The dir doesn't exist\n","R")); return None
+        if len(fix)>1 and not silent: print(color("\n   Too many arguments\n","R")); return None
+        elif not silent: print(color("\n   The dir doesn't exist\n","R")); return None
 
 def fixfiles(arg):
     arg=arg.split(chr(92))
