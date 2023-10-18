@@ -14,9 +14,9 @@ Extra: if you type the name of an executable without the .exe, this shell will l
 
 ----------------------------------
 
-      alpha v0.1.60.1
+      alpha v0.1.60.2
 
-      Some improvements and fixes for the link/links command
+      Minor changes
       
 ---------------------------------------------------------------------------
 
