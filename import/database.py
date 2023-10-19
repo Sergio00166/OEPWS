@@ -4,7 +4,7 @@ from colors import color
 from mp3 import mp3
 from multiprocessing import Process, Queue
     
-dic={"directory":["go","flmgr","cd","eject"],"files":["new","no","edit","write","flush","chmod","chown","lsacl"],
+dic={"directory":["go","flmgr","cd","eject"],"files":["when","new","no","edit","write","flush","chmod","chown","lsacl"],
      "users":["su","sudo","deluser","crex","lsusr","addgroup","delgroup","lsgrp"],
      "extras":["speedtest","pwdgen","weather","volumes","restart","shutdown","repair","time","flushdns","kill","print","mem"]}
 

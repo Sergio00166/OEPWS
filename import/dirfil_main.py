@@ -6,6 +6,7 @@ from colors import color
 from glob import glob
 
 lstext = []
+mctime = {}
 
 def create_file(file):
     from os.path import exists
@@ -55,8 +56,18 @@ def change_permissions_alt(exp, extra):
     try: check_output('CACLS ' + exp + ' ' + extra + ' 2>nul', shell=True)
     except: pass
 
+def modcrtime(arg,directory):
+    global mctime
+    from os.path import getmtime, getctime
+    from datetime import datetime as dt
+    arg=arg[1:len(arg)-1]
+    files=glob(arg, recursive=False)
+    for x in files:
+        mod=dt.fromtimestamp(getmtime(x)).strftime("%d-%m-%Y %H:%M:%S")
+        crea=dt.fromtimestamp(getctime(x)).strftime("%d-%m-%Y %H:%M:%S")
+        mctime[x]=[mod,crea]
+    
 def work(exp, mode, extra="", extra2=""):
-    global lstext
     if mode == 1:
         file = exp[1:len(exp)-1]
         if "*" in file or "?" in file:
@@ -68,29 +79,29 @@ def work(exp, mode, extra="", extra2=""):
     elif mode == 5: change_permissions(exp, extra)
     elif mode == 6: list_permissions(exp)
     elif mode == 7: change_permissions_alt(exp, extra)
+    elif mode == 8: modcrtime(exp, extra)
 
 def extra(mode, arg1, directory, extra="", extra2=""):
-    global lstext
+    global lstext, mctime
     from sys import path
     extpth = path[0] + "\\import\\extras" + chr(92)
     arg1=arg1.replace("'in'","\n")
-    if "in " in arg1:
-        fro = arg1.find("in ")
+    if " in " in arg1:
+        fro = arg1.find(" in ")
         dire = arg1[:fro].replace("\n","in")
         dire=dire.split("::")
         lstext = []
         if not chr(92) in arg1[fro+3:] and len(arg1[fro+3:]) == 2 or not arg1[:-1] == chr(92):
             direct = arg1[fro+4:] + chr(92)
         else: direct = arg1[fro+4:]
-        if not ":" in direct:
-            direct = directory + direct
+        if not ":" in direct: direct = '"'+directory+direct+'"'
         try:
             for x in dire:
-                exp = '"' + direct + x + '"'
+                exp = '"'+direct+x+'"'
                 exp = str(exp).replace(chr(92)+chr(92), chr(92))
                 work(exp, mode)
-            if mode == 6:
-                return lstext
+            if mode == 6: return lstext
+            elif mode == 8: return mctime
         except PermissionError: print(color("\n   Permission denied\n", "R"))
         except: print(color("\n   Error\n", "R"))
     else:
@@ -99,12 +110,11 @@ def extra(mode, arg1, directory, extra="", extra2=""):
         lstext = []
         try:
             for x in dires:
-                if ":" + chr(92) in x:
-                    exp = '"' + x + '"'
-                else:
-                    exp = '"' + directory + x + '"'
+                if ":" + chr(92) in x: exp = '"'+x+'"'
+                else: exp = '"'+directory+x+'"'
                 exp = str(exp).replace(chr(92)+chr(92), chr(92))
                 work(exp, mode, extra, extra2)
             if mode == 6: return lstext
+            elif mode == 8: return mctime
         except PermissionError: print(color("\n   Permission denied\n", "R"))
         except: print(color("\n   Error\n", "R"))
