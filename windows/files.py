@@ -102,11 +102,26 @@ def chown(arg1, directory):
         extra(5,file,directory,"/setowner "+user)
     else: print(color("\n   You must be admin to do that\n","R"))
 
+def when(arg1, directory):
+    green=color("","Gnr"); blue=color("","Bnr")
+    yellow=color("","Ynr"); reset=color()
+    ext=extra(8,arg1,directory); print("")
+    for x in ext:
+        file=x.replace(directory,"")
+        if len(file)==0: file=fixcrdir(x)
+        if isdir(x): fltp=" Directory "
+        else: fltp=" File "
+        out= ("┌─"+green+fltp+reset+blue+file+reset+"\n│")
+        out+=("\n├"+yellow+" Modificated: "+reset+ext[x][0]+reset)
+        out+=("\n├"+yellow+" Created:     "+reset+ext[x][1]+reset+"\n└─\n")
+        print(out)
+    
 def files(arg,arg1,directory):
     if arg=="new":
         if not arg1=="": extra(1,arg1,directory)
         else: print(color("\n   Error\n","R"))
-    elif arg=="no": delete(arg1, directory) 
+    elif arg=="no": delete(arg1, directory)
+    elif arg=="when": when(arg1, directory)
     elif arg=="edit": edit_file(arg1, directory)
     elif arg=="write": write_to_file(arg1, directory)
     elif arg=="flush": extra(3,arg1,directory)
