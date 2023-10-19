@@ -63,8 +63,10 @@ def modcrtime(arg,directory):
     arg=arg[1:len(arg)-1]
     files=glob(arg, recursive=False)
     for x in files:
-        mod=dt.fromtimestamp(getmtime(x)).strftime("%d-%m-%Y %H:%M:%S")
-        crea=dt.fromtimestamp(getctime(x)).strftime("%d-%m-%Y %H:%M:%S")
+        try: mod=dt.fromtimestamp(getmtime(x)).strftime("%d-%m-%Y %H:%M:%S")
+        except: mod="##-##-#### ##:##:##"
+        try: crea=dt.fromtimestamp(getctime(x)).strftime("%d-%m-%Y %H:%M:%S")
+        except: crea="##-##-#### ##:##:##"
         mctime[x]=[mod,crea]
     
 def work(exp, mode, extra="", extra2=""):
