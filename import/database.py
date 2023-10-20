@@ -1,8 +1,11 @@
-#Code by Sergio126
+#Code by Sergio1260
 
 from colors import color
-from mp3 import mp3
 from multiprocessing import Process, Queue
+try:
+    from mp3 import mp3
+    mp3loaded=True
+except: mp3loaded=False
     
 dic={"directory":["go","flmgr","cd","eject"],"files":["when","new","no","edit","write","flush","chmod","chown","lsacl"],
      "users":["su","sudo","deluser","crex","lsusr","addgroup","delgroup","lsgrp"],
@@ -32,10 +35,20 @@ def cmd(arg,arg1,directory,oldir, out):
     out.put([directory,status])
       
 def database(arg,arg1,directory,oldir):
+    global mp3loaded, mp3
     if arg=="adduser":
         from users import add_user
         add_user(arg1)
-    elif arg=="mp3": mp3(arg,arg1,directory)
+    elif arg=="mp3":
+        if mp3loaded: mp3(arg,arg1,directory)
+        else:
+            try:
+                from mp3 import mp3
+                mp3loaded=True
+                mp3(arg,arg1,directory)
+            except:
+                print(color("\n    Cannot load mp3\n","R"))
+                mp3loaded=False
     else:
         out=Queue()
         proc=Process(target=cmd, args=(arg,arg1,directory,oldir,out,))
