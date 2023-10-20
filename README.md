@@ -14,9 +14,9 @@ Extra: if you type the name of an executable without the .exe, this shell will l
 
 ----------------------------------
 
-      alpha v0.1.61.0
+      alpha v0.1.63.0
 
-      Some changes and fixes. Added "where" command
+      Added sort command
       
 ---------------------------------------------------------------------------
 
@@ -54,6 +54,9 @@ $ + name > refers to the native enviorment variable from windows cmd
 
 To run an file on the current dir you need to put .\ before the file name (you can use * and ? in the filename)<br><br>
 
+*sort(mode)* file (in path)<br>
+Sorts by the mode the contents of the dir <br>
+Modes: mtime, ctime, size, alpha (alphabetical)<br><br>
 *where* file (in path)<br>
 prints when the file/dir was modified and created <br><br>
 *flmgr*<br>
