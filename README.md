@@ -98,9 +98,8 @@ to delete a dir: no dirname\\ <br>
 *read* file <br>
 prints the content of the especified file<br>
 Options:<br>
--f (Full) reads above 999 default line limit (also disables line counter)<br>
--n (No counter) disables the line counter<br>
--c (Concatenate) like linux cat command<br>
+readn (No counter) disables the line counter<br>
+readc (Concatenate) like linux cat command<br>
 Important: -f can be used with -n or -c no -n -c at the same time<br> 
 <br><br>
 *ls* dir
@@ -128,6 +127,7 @@ edits the specified file with the nano editor
 <br><br>
 *locate* file/dir in path from  <br>
 finds the specified file/dir in the path
+locatenr (not recursive version)
 <br><br>
 *from* file in path find hello <br>
 finds the word hello in the specified file
