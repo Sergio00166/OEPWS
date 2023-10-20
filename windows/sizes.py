@@ -48,19 +48,22 @@ class sizes:
         from other import fixfiles
         try:
             print("")
-            if "in " in arg1:
-                dirt=arg1[arg1.find("in ")+3:]; dirt=dirt[:dirt.find(" ")]
-                file=arg1[arg1.find(dirt)+len(dirt)+1:]
+            arg1=arg1.replace("'in'","\f")
+            if " in " in arg1:
+                z=arg1.find(" in ")
+                dirt=arg1[z+4:]
+                file=arg1[:z]
                 if not dirt[len(dirt)-1:]==chr(92): dirt+=chr(92)
             else: file=arg1
+            file=file.replace("\f","in")
             files=file.split("::"); fix=False
             pool=Pool(processes=cpu_count())
             for x in files:
-                if "in " in arg1: file=dirt+x
+                if " in " in arg1: file=dirt+x
                 elif ":\\" in x: file=x
-                else: file=directory+x; fix=True
+                else: file=directory+x
                 worker=partial(sizes.sizwk, directory=directory, rd=fix)
-                exp=pool.map_async(worker,glob(fixfiles(file), recursive=False))
+                exp=pool.map_async(worker,glob(file, recursive=False))
                 out=exp.get()
                 if not len(out)==0:
                     for i in out: print(i)
