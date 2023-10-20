@@ -8,6 +8,9 @@ def things(arg, arg1, directory):
     elif arg=="sys":
         from sysinfo import sysinfo
         sysinfo()
+    elif "sort(" in arg:
+        from sort import sort
+        sort(arg,arg1,directory)
     elif arg=="sl":
         from colors import color
         print("\n"+color("   You write it wrong","R")+"\n")
