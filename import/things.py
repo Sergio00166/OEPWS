@@ -64,9 +64,8 @@ def things(arg, arg1, directory):
         from link import create_link
         create_link(arg, arg1, directory)
     elif arg=="size":
-        from sizes import sizes
-        if arg1=="": sizes.size("",directory)
-        else: sizes.size(arg1,directory) 
+        from sizes import size
+        size(arg1,directory) 
     elif arg=="dskinfo":
         from sizes import dskinfo
         dskinfo(arg1, directory)
