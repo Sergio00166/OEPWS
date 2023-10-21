@@ -40,7 +40,6 @@ def main(arg1, directory):
         print("\n   "+blue+dirt+reset)
         Tree.worker(path); print("")
 
-
 def print_files(files, max_width):
     current_width = 0
     for file in files:
@@ -49,7 +48,8 @@ def print_files(files, max_width):
         if current_width+len(file)>=max_width:
             print("\n├   ",end="")
             current_width = 0
-        print(file, end=" "*4)
+        else: print(" · ", end="")
+        print(file, end="")
         current_width += len(file)
     print("")
 
