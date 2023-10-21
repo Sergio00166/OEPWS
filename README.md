@@ -14,9 +14,9 @@ Extra: if you type the name of an executable without the .exe, this shell will l
 
 ----------------------------------
 
-      alpha v0.1.63.0
+      alpha v0.1.64.0
 
-      Added sort command
+      Some improvements
       
 ---------------------------------------------------------------------------
 
