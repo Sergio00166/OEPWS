@@ -5,70 +5,68 @@ from colors import color
 from glob import glob
 from other import readable, fixcrdir
 
-class sizes:
-    
-    def get_directory_size(directory):
-        total = 0
-        try:
-            for entry in scandir(directory):
-                if entry.is_file():
-                    total += entry.stat().st_size
-                elif entry.is_dir():
-                    total += sizes.get_directory_size(entry.path)
-        except NotADirectoryError: return path.getsize(directory)
-        except PermissionError: return 0
-        return total
+def get_directory_size(directory):
+    total = 0
+    try:
+        for entry in scandir(directory):
+            if entry.is_file():
+                total += entry.stat().st_size
+            elif entry.is_dir():
+                total += get_directory_size(entry.path)
+    except NotADirectoryError: return path.getsize(directory)
+    except PermissionError: return 0
+    return total
 
-    def sizwk(i,directory, rd):
-        if path.isdir(i): return sizes.dirsize(i,directory, rd)
-        else:
-            file_size = path.getsize(i)
-            if rd: i=i.replace(directory,"")
-            ext=(color('   File ',"G")+color(i,"B")+"\n")
-            ext+=(color('   Size: ',"Y-")+color(readable(file_size),"B")+"\n")
-            return ext
-
-    def dirsize(arg1,directory, rd):
-        if arg1=="": direct=directory
-        else:
-            if ":\\" in arg1: direct=arg1
-            else: direct=directory + arg1
-        for x in glob(direct, recursive=False):
-            size=sizes.get_directory_size(x)
-            size=readable(size)
-            if rd: x=x.replace(directory,"")
-            if x=="": x=fixcrdir(directory)
-            ext=(color("   Directory: ","G")+color(x,"B")+"\n")
-            ext+=(color("   Dir size: ","Y-")+color(size,"B")+"\n")
+def sizwk(i,directory, rd):
+    if path.isdir(i): return dirsize(i,directory, rd)
+    else:
+        file_size = path.getsize(i)
+        if rd: i=i.replace(directory,"")
+        ext=(color('   File ',"G")+color(i,"B")+"\n")
+        ext+=(color('   Size: ',"Y-")+color(readable(file_size),"B")+"\n")
         return ext
 
-    def size(arg1,directory):
-        from multiprocessing import Pool, cpu_count
-        from functools import partial
-        from other import fixfiles
-        try:
-            print("")
-            arg1=arg1.replace("'in'","\f")
-            if " in " in arg1:
-                z=arg1.find(" in ")
-                dirt=arg1[z+4:]
-                file=arg1[:z]
-                if not dirt[len(dirt)-1:]==chr(92): dirt+=chr(92)
-            else: file=arg1
-            file=file.replace("\f","in")
-            files=file.split("::"); fix=False
-            pool=Pool(processes=cpu_count())
-            for x in files:
-                if " in " in arg1: file=dirt+x
-                elif ":\\" in x: file=x
-                else: file=directory+x
-                worker=partial(sizes.sizwk, directory=directory, rd=fix)
-                exp=pool.map_async(worker,glob(file, recursive=False))
-                out=exp.get()
-                if not len(out)==0:
-                    for i in out: print(i)
-                else: print(color("   It doesn't exist","R")+"\n")
-        except: print(color("   Error\n","R"))
+def dirsize(arg1,directory, rd):
+    if arg1=="": direct=directory
+    else:
+        if ":\\" in arg1: direct=arg1
+        else: direct=directory + arg1
+    for x in glob(direct, recursive=False):
+        size=get_directory_size(x)
+        size=readable(size)
+        if rd: x=x.replace(directory,"")
+        if x=="": x=fixcrdir(directory)
+        ext=(color("   Directory: ","G")+color(x,"B")+"\n")
+        ext+=(color("   Dir size: ","Y-")+color(size,"B")+"\n")
+    return ext
+
+def size(arg1,directory):
+    from multiprocessing import Pool, cpu_count
+    from functools import partial
+    from other import fixfiles
+    try:
+        print("")
+        arg1=arg1.replace("'in'","\f")
+        if " in " in arg1:
+            z=arg1.find(" in ")
+            dirt=arg1[z+4:]
+            file=arg1[:z]
+            if not dirt[len(dirt)-1:]==chr(92): dirt+=chr(92)
+        else: file=arg1
+        file=file.replace("\f","in")
+        files=file.split("::"); fix=False
+        pool=Pool(processes=cpu_count())
+        for x in files:
+            if " in " in arg1: file=dirt+x
+            elif ":\\" in x: file=x
+            else: file=directory+x
+            worker=partial(sizwk, directory=directory, rd=fix)
+            exp=pool.map_async(worker,glob(file, recursive=False))
+            out=exp.get()
+            if not len(out)==0:
+                for i in out: print(i)
+            else: print(color("   It doesn't exist","R")+"\n")
+    except: print(color("   Error\n","R"))
 
 def dskinfo(arg1, directory):
     from psutil import disk_usage
