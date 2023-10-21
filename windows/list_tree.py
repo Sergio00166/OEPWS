@@ -45,7 +45,7 @@ def print_files(files, max_width):
     for file in files:
         if files.index(file)==0:
             print("├   ",end="")
-        if current_width+len(file)>=max_width:
+        elif current_width+len(file)>=max_width:
             print("\n├   ",end="")
             current_width = 0
         else: print(" · ", end="")
