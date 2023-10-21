@@ -18,6 +18,7 @@ def sort(arg,arg1,directory):
         if not ":\\" in dirt:
             dirt=directory+dirt
     else: dirt=directory
+    if arg1=="": arg1="*"
     arg1=arg1.split("::")
     for i in arg1:
         
