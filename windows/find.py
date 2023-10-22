@@ -20,8 +20,8 @@ def finwk(x, filedir, lines):
             found+=color(",","G")
         text=text.replace(i,color(i,"bW"))
         filedir=filedir.split("\\"); filedir=filedir[len(filedir)-1]
-    ext+=("  "+found+color(" found in file:","G-")+" "+color(filedir,"B-")
-          +" "+color("in line:","G-")+" "+color(str(x[0]+1),"R")+"\n")
+    ext+=("  "+found+color(" found in file:","G")+" "+color(filedir,"B-")
+          +" "+color("in line:","G")+" "+color(str(x[0]+1),"R")+"\n")
     ext+=(color("  > ","R")+text.lstrip())
     return ext
 

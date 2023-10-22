@@ -23,7 +23,7 @@ def sizwk(i,directory, rd):
         file_size = path.getsize(i)
         if rd: i=i.replace(directory,"")
         ext=(color('   File ',"G")+color(i,"B")+"\n")
-        ext+=(color('   Size: ',"Y-")+color(readable(file_size),"B")+"\n")
+        ext+=(color('   Size: ',"Y")+color(readable(file_size),"B")+"\n")
         return ext
 
 def dirsize(arg1,directory, rd):
@@ -37,7 +37,7 @@ def dirsize(arg1,directory, rd):
         if rd: x=x.replace(directory,"")
         if x=="": x=fixcrdir(directory)
         ext=(color("   Directory: ","G")+color(x,"B")+"\n")
-        ext+=(color("   Dir size: ","Y-")+color(size,"B")+"\n")
+        ext+=(color("   Dir size: ","Y")+color(size,"B")+"\n")
     return ext
 
 def size(arg1,directory):
@@ -64,7 +64,8 @@ def size(arg1,directory):
             exp=pool.map_async(worker,glob(file, recursive=False))
             out=exp.get()
             if not len(out)==0:
-                for i in out: print(i)
+                for i in out:
+                    print(i.replace(directory,""))
             else: print(color("   It doesn't exist","R")+"\n")
     except: print(color("   Error\n","R"))
 
@@ -74,16 +75,15 @@ def dskinfo(arg1, directory):
         print("")
         if arg1=="":
             dirt=directory[:directory.find(chr(92))+1]
-            print(color("  Disk ","G") + color(dirt,"B"))
         else:
             if len(arg1)==1: arg1+=":"
             if not arg1[len(arg1)-1:]==chr(92): arg1+=chr(92)
             dirt=arg1[:arg1.find(chr(92))+1]
-            print(color("  Disk ","G") + color(dirt,"B"))
+        print("┌─ "+color("Disk ","G")+color(dirt,"B")+"\n│")
         total,used,free,percent=disk_usage(dirt)
-        print(color("  Total: ","Y-") + color(readable(total),"B"))
-        print(color("  Free: ","Y-") + color(readable(free),"B"))
-        print(color("  Used: ","Y-") + color(readable(used),"B"))
+        print("├  "+color("Total: ","Y-")+color(readable(total),"B"))
+        print("├  "+color("Free: ","Y-")+color(readable(free),"B"))
+        print("├  "+color("Used: ","Y-")+ color(readable(used),"B"))
         if percent>=75:
             percent=color(str(percent) + "%","M")
         elif percent>=50 and percent<75:
@@ -91,6 +91,7 @@ def dskinfo(arg1, directory):
         elif percent>=25 and percent<50:
             percent=color(str(percent) + "%","G")
         else: percent=color(str(percent) + "%","B") 
-        print(color("  Used percent: ","Y-") + percent)
+        print("├  "+color("Used percent: ","Y-") + percent)
+        print("└─")
     except: print(color("   Error","R"))
     print("")
