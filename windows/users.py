@@ -13,7 +13,20 @@ def switch_user(arg1, directory):
         print(color(" Password: ", "G"), end="")
         check_output("runas /user:"+arg1+' "'+pth+' #-FIXSUDIRECT-#"')
         print("\n")
-    except: print(color("\r   Incorrect Password\n", "R"))
+    except: print(color("\r   Cannot log in\n", "R"))
+
+def sudo(arg1,directory):
+    from sys import path
+    from os import system as cmd
+    if not arg1=="":
+        root=str(check_output("whoami"))
+        ext=("start /B "+path[0]+"\\import\\extras"+
+            "\\nircmdc.exe elevatecmd runassystem "
+            +path[0]+"\\import\\fixcmd\\start.cmd")
+        if not root=="b'nt authority\\system\r\n'":
+            if arg1=="su": cmd(ext+" ;"+directory)
+            else: cmd(ext+" go "+directory+"; "+arg1.replace("&",","))
+        else: print(color("\n  You are root\n", "R"))
 
 def run_as_admin(arg1, directory):
     try:
@@ -92,9 +105,10 @@ def delete_group(arg1):
 
 def users(arg, arg1, directory):
     if arg == "su": switch_user(arg1, directory)
-    elif arg == "sudo": run_as_admin(arg1, directory)
     elif arg == "deluser": delete_user(arg1)
     elif arg == "lsusr": list_users()
+    elif arg == "sudo": sudo(arg1, directory)
+    elif arg == "admin": run_as_admin(arg1, directory)
     elif arg == "addgroup": add_group(arg1)
     elif arg == "delgroup": delete_group(arg1)
     elif arg == "lsgrp": list_groups()
