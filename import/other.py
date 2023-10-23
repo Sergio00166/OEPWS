@@ -15,6 +15,13 @@ def readable(num, suffix="B"):
         num /= 1024.0
     return f"{num:.1f}Yi{suffix}"
 
+def createuserexec():
+    from link import mklnk
+    fic=open(path[0]+"\\import\\fixcmd\\start.cmd","w")
+    fic.write("@echo off\ntitle OEPWS shell\nshift\nstart /B /WAIT "+path[0]+"\\Shell.py %*%")
+    dirt=path[0]+"\\import\\fixcmd"; mklnk(dirt,"admin",dirt+"\\start.cmd",dirt)
+    mkadlnk(dirt+"\\admin.lnk")
+
 def mkadlnk(arg):
     with open(arg, 'rb') as file:
         bytes_data = bytearray(file.read())
@@ -52,21 +59,16 @@ def fixfiles(arg):
     else: return ""
 
 def adminname():
-    ext=str(check_output("net localgroup"), encoding="cp857")
+    raw=Popen('net localgroup', shell=True, stdout=PIPE)
+    ext=str(raw.communicate()[0], encoding="cp857")
     ext=ext[ext.find("-\\r\\n*")+6:]; ext=ext[:ext.find("\\r\\n")]
     return ext.lower()
 
-def createuserexec():
-    from link import mklnk
-    fic=open(path[0]+"\\import\\fixcmd\\start.cmd","w")
-    fic.write("@echo off\ntitle OEPWS shell\nshift\nstart /B /WAIT "+path[0]+"\\Shell.py %*%")
-    dirt=path[0]+"\\import\\fixcmd"; mklnk(dirt,"admin",dirt+"\\start.cmd",dirt)
-    mkadlnk(dirt+"\\admin.lnk")
-
-
 def lsusr():
-    raw=str(check_output("net user",shell=True), encoding="cp857")
-    raw=raw[raw.find("----\r")+6:]; fix=[]; raw=raw.split("\r\n")
+    from subprocess import Popen, PIPE
+    raw=Popen('net user', shell=True, stdout=PIPE)
+    raw=str(raw.communicate()[0], encoding="cp857")
+    raw=raw[raw.find("----\r")+6:]; fix=[]; raw=raw.split("\n")
     raw.pop(); raw.pop(); raw.pop(); fix=[]
     for x in raw:
         x=x.split("         ")
@@ -76,7 +78,9 @@ def lsusr():
     return fix
 
 def lsgrp():
-    raw=str(check_output("net localgroup",shell=True), encoding="cp857")
+    from subprocess import Popen, PIPE
+    raw=Popen('net localgroup', shell=True, stdout=PIPE)
+    raw=str(raw.communicate()[0], encoding="cp857")
     raw=raw[raw.find("----\r")+6:]; fix=[]; raw=raw.split("\n")
     raw.pop(); raw.pop(); raw.pop(); raw.pop(0)
     for x in raw: fix.append(x[1:].replace("\n",""))
