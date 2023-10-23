@@ -14,9 +14,9 @@ Extra: if you type the name of an executable without the .exe, this shell will l
 
 ----------------------------------
 
-      alpha v0.1.64.0
+      alpha v0.1.65.0
 
-      Some improvements
+      To run as root (NT authority System) type sudo su (or sudo + command), to run as admin has been moved to the command admin, but the syntax is the same as sudo
       
 ---------------------------------------------------------------------------
 
@@ -42,7 +42,7 @@ Separators are "::", allowing to use all types of system accepted characters wit
 Example *copy test::Users\\test2 from C:\ to D:\\::E:\\folder* <br>
 and also you can use "from"/"in" to indicate where are the files/dir and "to" to indicate the destination
 <br><br>
-Using ";" like linux cli and when using "sudo"+commands using "&"
+Using ";" like linux cli and when using ""+commands using "&"
 <br><br>
 
 *Enviorment variables*
@@ -55,6 +55,14 @@ $ + name > refers to the native enviorment variable from windows cmd
 
 To run an file on the current dir you need to put .\ before the file name (you can use * and ? in the filename)<br><br>
 
+*sudo* <br>
+(+ su) starts command prompt as admin <br>
+(+ command) runs command as root (NT authority System) <br>
+<br><br>
+*admin* <br>
+(+ su) starts command prompt as admin <br>
+(+ command) runs command as admin <br>
+<br><br>
 *sort(mode)* file (in path)<br>
 Sorts by the mode the contents of the dir <br>
 Modes: mtime, ctime, size, alpha (alphabetical)<br><br>
@@ -194,10 +202,6 @@ shows the weather for the city
 <br><br>
 *su* user <br>
 starts command prompt as a user especified <br>
-<br><br>
-*sudo* <br>
-(+ su) starts command prompt as admin <br>
-(+ command) runs command as admin <br>
 <br><br>
 *adduser* -sudo username <br>
 add a user, whith -sudo the created user will have admin permisions
