@@ -7,6 +7,7 @@ from subprocess import check_output
 from other import createuserexec, extusr, extgrp, isadmin
 
 def switch_user(arg1, directory):
+    createuserexec()
     try:
         print("")
         pth = path[0] + "\\import\\fixcmd\\start.cmd"
@@ -15,9 +16,10 @@ def switch_user(arg1, directory):
         print("\n")
     except: print(color("\r   Cannot log in\n", "R"))
 
-def sudo(arg1,directory):
+def root(arg1,directory):
     from sys import path
     from os import system as cmd
+    createuserexec()
     if not arg1=="":
         root=str(check_output("whoami"))
         ext=("start /B "+path[0]+"\\import\\extras"+
@@ -28,7 +30,8 @@ def sudo(arg1,directory):
             else: cmd(ext+" go "+directory+"; "+arg1.replace("&",","))
         else: print(color("\n  You are root\n", "R"))
 
-def run_as_admin(arg1, directory):
+def sudo(arg1, directory):
+    createuserexec()
     try:
         if isadmin(): print(color("\n  You are admin\n", "R"))
         else:
@@ -108,7 +111,7 @@ def users(arg, arg1, directory):
     elif arg == "deluser": delete_user(arg1)
     elif arg == "lsusr": list_users()
     elif arg == "sudo": sudo(arg1, directory)
-    elif arg == "admin": run_as_admin(arg1, directory)
+    elif arg == "root": root(arg1, directory)
     elif arg == "addgroup": add_group(arg1)
     elif arg == "delgroup": delete_group(arg1)
     elif arg == "lsgrp": list_groups()
