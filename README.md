@@ -55,11 +55,11 @@ $ + name > refers to the native enviorment variable from windows cmd
 
 To run an file on the current dir you need to put .\ before the file name (you can use * and ? in the filename)<br><br>
 
-*sudo* <br>
-(+ su) starts command prompt as admin <br>
+*root* <br>
+(+ su) starts command prompt as root <br>
 (+ command) runs command as root (NT authority System) <br>
 <br><br>
-*admin* <br>
+*sudo* <br>
 (+ su) starts command prompt as admin <br>
 (+ command) runs command as admin <br>
 <br><br>
