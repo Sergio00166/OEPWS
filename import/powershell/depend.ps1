@@ -373,3 +373,5 @@ if (-not (Test-Path $chocoPkgDir -PathType Container)) {
 
 Copy-Item -Path $file -Destination $nupkg -Force -ErrorAction SilentlyContinue
 }
+
+powershell choco install ffmpeg
