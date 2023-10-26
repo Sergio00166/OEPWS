@@ -5,7 +5,6 @@ from colors import color
 from pathlib import Path
 from other import fixaddr, fixcrdir
 
-
 def worker(path, level=0):
     global blue, green, reset
     path = Path(path)
@@ -18,12 +17,12 @@ def worker(path, level=0):
         if file.is_dir():
             prefix = "└── " if is_last_item else "├── "
             print("   "+spacing+prefix+blue+file_name+reset)
-            Tree.worker(file, level + 1)
+            worker(file, level + 1)
         else:
             prefix = "└── " if is_last_item else "├── "
             print("   "+spacing+prefix+green+file_name+reset)
 
-def main(arg1, directory):
+def tree(arg1, directory):
     global blue, green, reset
     blue=color("","Bnr")
     green=color("","Gnr")
@@ -38,7 +37,7 @@ def main(arg1, directory):
         dirt=dirt.replace(directory,"")
         if dirt=="": dirt=fixcrdir(directory)
         print("\n   "+blue+dirt+reset)
-        Tree.worker(path); print("")
+        worker(path); print("")
 
 def print_files(files, max_width):
     current_width = 0
