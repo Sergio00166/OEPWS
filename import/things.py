@@ -21,8 +21,8 @@ def things(arg, arg1, directory):
         from os import system as cmd
         cmd("powershell "+arg1)
     elif arg=="tree":
-        from list_tree import Tree
-        Tree.main(arg1, directory)
+        from list_tree import tree
+        tree(arg1, directory)
     elif arg=="benchmk":
         from benchmk import main
         main()
