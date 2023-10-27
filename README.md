@@ -14,9 +14,9 @@ Extra: if you type the name of an executable without the .exe, this shell will l
 
 ----------------------------------
 
-      alpha v0.1.65.0
+      alpha v0.1.66.0
 
-      To run as root (NT authority System) type sudo su (or sudo + command), to run as admin has been moved to the command admin, but the syntax is the same as sudo
+      Improved calc command, now the lists/dicts will work as expected, no code inyection and minor fixes
       
 ---------------------------------------------------------------------------
 
