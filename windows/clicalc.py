@@ -8,7 +8,7 @@ from math import *
 
 def fix(code):
     import ast
-    banned_functions = {'print', 'exit', 'quit', 'exec', 'eval', 'val', 'init', 'fix', 'work', 'main', 'cmd', 'color'}
+    banned_functions = {'print', 'exit', 'quit', 'exec', 'eval', 'input'}
     try:
         tree = ast.parse(code)
         for node in ast.walk(tree):
@@ -34,7 +34,10 @@ def work(arg,mode):
     arg=arg.replace("Ans",str(buffer))
     arg=arg.replace('"',"'")
     if fix(arg):
-        try: result=eval(arg,{},math)
+        try:
+            result=eval(arg,{},math)
+            if type(result)==type(print):
+                result=None
         except: result=None
     else: result=None
     if mode==1: print(resultprt+str(result)); buffer=result
