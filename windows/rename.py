@@ -59,9 +59,6 @@ def main(arg1,directory):
                     if not direct==None:
                         exp='move "'+direct+file+'" "'+direct+dest[x]+'"'
                 else: exp='move "'+directory+fich[x]+'" "'+directory+dest[x]+'"'
-                if not direct==None:
-                    exp=str(exp).replace(chr(92)+chr(92),chr(92))
-                    cmd(exp+" 2>nul", shell=True)
-                else: print(color("\n   Error\n", "R"))
+                exp=str(exp).replace(chr(92)+chr(92),chr(92))
+                cmd(exp+" 2>nul", shell=True)
     except: print(color("\n   Error\n", "R"))
-
