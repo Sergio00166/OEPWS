@@ -14,9 +14,9 @@ Extra: if you type the name of an executable without the .exe, this shell will l
 
 ----------------------------------
 
-      alpha v0.1.66.0
+      alpha v0.1.67.0
 
-      Improved calc command, now the lists/dicts will work as expected, no code inyection and minor fixes
+      Added loop variables
       
 ---------------------------------------------------------------------------
 
@@ -44,7 +44,16 @@ and also you can use "from"/"in" to indicate where are the files/dir and "to" to
 <br><br>
 Using ";" like linux cli and when using ""+commands using "&"
 <br><br>
-
+*loop variables*<br>
+{separator}\<varname\>[operation(args)] command {text1\<varname\>text2}text3<br>
+it concatenates the output from the operation() with the separator <br>
+(if not specified, the default is "::") and combines each occurency with the text1 and text2<br>
+text3 is not affected because it isnt inside {}.<br>
+Current supported operations: ls, list, range<br>
+Example of use:<br>
+{\n}\<var\>[ls()] print {\<var\>}<br>
+Print every file inside the current path
+<br><br>
 *Enviorment variables*
 
 $dir > refers to the actual directory <br>
