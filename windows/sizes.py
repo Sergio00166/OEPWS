@@ -45,6 +45,7 @@ def size(arg1,directory):
     from functools import partial
     from other import fixfiles
     try:
+        arg1=arg1.replace("\\\\","\\")
         print("")
         arg1=arg1.replace("'in'","\f")
         if " in " in arg1:
