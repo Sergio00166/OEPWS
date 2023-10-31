@@ -1,6 +1,7 @@
 #Code by Sergio1260
 
 from glob import glob
+from other import fixaddr
 
 def main(arg,directory):
     try:
@@ -25,7 +26,14 @@ def main(arg,directory):
                     value=directory+value
                 if not value.endswith("\\"): value+="\\"
                 fix=glob(value+"*", recursive=False); out=[]
-                for z in fix: out.append(z.replace("\\","\\\\"))
+                for z in fix:
+                    z=z.split("\\")
+                    file=z[len(z)-1]
+                    dirt=z[:len(z)-1]
+                    dirt="\\".join(dirt)
+                    dirt=fixaddr(dirt)
+                    z=dirt+"\\"+file
+                    out.append(z)
                 
             elif varname=="list": out=value.split(",")
             elif varname=="range":
@@ -44,4 +52,3 @@ def main(arg,directory):
                 command=command.replace("{"+f"{arg1}<{name}>{arg2}"+"}",output)
     except: command=arg
     return command
-        
