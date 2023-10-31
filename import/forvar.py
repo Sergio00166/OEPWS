@@ -32,7 +32,8 @@ def main(arg,directory):
                     dirt=z[:len(z)-1]
                     dirt="\\".join(dirt)
                     dirt=fixaddr(dirt)
-                    z=dirt+"\\"+file
+                    z=dirt+file
+                    z=z.replace("\\","\\\\")
                     out.append(z)
                 
             elif varname=="list": out=value.split(",")
@@ -52,3 +53,4 @@ def main(arg,directory):
                 command=command.replace("{"+f"{arg1}<{name}>{arg2}"+"}",output)
     except: command=arg
     return command
+        
