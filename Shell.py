@@ -5,7 +5,7 @@ from os import environ, getcwd
 from sys import setrecursionlimit, path, argv
 from subprocess import check_output
 
-version="alfa v0.1.66.0"; line=" -"
+version="alfa v0.1.67.0"; line=" -"
 
 def clsmenu(): cmd("CLS"); print(menu,end="\n\n")
 
@@ -31,6 +31,7 @@ def cli(args):
         try: a=str(input())
         except: a=""
     else: a=args+" "
+    a=forvar(a, directory)
     inp=a.replace("';'","\f").split(";"); cont=0
     for a in inp:
         a=var(a+" ").replace("\f",";").replace("';'", ";")
@@ -80,7 +81,7 @@ if __name__ == "__main__":
     menu=str(color(" OEPWS by Sergio1260 ","G")+"\n "+
              color(version,"R")+color(" on ","G")+
              color("Windows OS","B"))
-    clsmenu()
+    clsmenu(); from forvar import main as forvar
     flechas=str(color(" >> ","G-"))
     ferror=color("\n  FATAL ERROR\n","R")
     raw=str(check_output("echo %userprofile%",shell=True))
