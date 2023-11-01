@@ -92,5 +92,5 @@ def ls(arg1, directory):
                         else:  print("├   "+red+"EMPTY DIRECTORY"+reset)
                         print("└─")
                 except: pass
-        else: print("\n   "+color("The dir doesn't exist","R")+"\n")
+        else: print("\n   "+color("The dir doesn't exist","R"))
     print("")
