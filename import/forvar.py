@@ -43,14 +43,13 @@ def main(arg,directory):
                 elif len(value)==2: fix=range(int(value[0]),int(value[1])+1)
                 else: fix=range(int(value[0]),int(value[1]),int(value[0])+1)
                 for x in fix: out.append(str(x))
-            while f"<{name}>" in command:
-                args=command[command.find("{")+1:command.find("}")]
-                cmd=command[:command.find(" ")]
-                arg1=args[:args.find(f"<{name}>")]; ext=[]
-                arg2=args[args.find(f"<{name}>")+len(name)+2:]
-                for x in out: ext.append(arg1+x+arg2)
-                output=separator.join(ext)
-                command=command.replace("{"+f"{arg1}<{name}>{arg2}"+"}",output)
+            args=command[command.find("{")+1:command.find("}")]
+            cmd=command[:command.find(" ")]
+            arg1=args[:args.find(f"<{name}>")]; ext=[]
+            arg2=args[args.find(f"<{name}>")+len(name)+2:]
+            for x in out: ext.append(arg1+x+arg2)
+            output=separator.join(ext)
+            command=command.replace("{"+f"{arg1}<{name}>{arg2}"+"}",output)
     except: command=arg
     return command
         
