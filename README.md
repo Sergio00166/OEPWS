@@ -49,7 +49,7 @@ Using ";" like linux cli and when using ""+commands using "&"
 it concatenates the output from the operation() with the separator <br>
 (if not specified, the default is "::") and combines each occurency with the text1 and text2<br>
 text3 is not affected because it isnt inside {}.<br>
-Current supported operations: ls, list, range<br>
+Current supported operations: ls, list, range, file<br>
 Example of use:<br>
 {\n}\<var\>[ls()] print {\<var\>}<br>
 Print every file inside the current path
