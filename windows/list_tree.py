@@ -32,10 +32,11 @@ def tree(arg1, directory):
     else: path=directory+chr(92)+str(arg1)
     path=fixaddr(path)
     if ":"+chr(92) in arg1: dirt=path
-    else: dirt=path[:len(path)-1].replace(directory,"")
+    else: dirt=path[:len(path)-1]
     if not path==None:
         dirt=dirt.replace(directory,"")
         if dirt=="": dirt=fixcrdir(directory)
+        if dirt.endswith(chr(92)): dirt=dirt[:len(dirt)-1]
         print("\n   "+blue+dirt+reset)
         worker(path); print("")
 

@@ -17,8 +17,8 @@ def get_directory_size(directory):
     except PermissionError: return 0
     return total
 
-def sizwk(i,directory, rd):
-    if path.isdir(i): return dirsize(i,directory, rd)
+def sizwk(i,directory):
+    if path.isdir(i): return dirsize(i,directory)
     else:
         file_size = path.getsize(i)
         if rd: i=i.replace(directory,"")
@@ -26,7 +26,7 @@ def sizwk(i,directory, rd):
         ext+=(color('   Size: ',"Y")+color(readable(file_size),"B")+"\n")
         return ext
 
-def dirsize(arg1,directory, rd):
+def dirsize(arg1,directory):
     if arg1=="": direct=directory
     else:
         if ":\\" in arg1: direct=arg1
@@ -34,7 +34,8 @@ def dirsize(arg1,directory, rd):
     for x in glob(direct, recursive=False):
         size=get_directory_size(x)
         size=readable(size)
-        if rd: x=x.replace(directory,"")
+        if not x.endswith(chr(92)): x+=chr(92)
+        x=x.replace(directory,"")
         if x=="": x=fixcrdir(directory)
         ext=(color("   Directory: ","G")+color(x,"B")+"\n")
         ext+=(color("   Dir size: ","Y")+color(size,"B")+"\n")
@@ -55,13 +56,13 @@ def size(arg1,directory):
             if not dirt[len(dirt)-1:]==chr(92): dirt+=chr(92)
         else: file=arg1
         file=file.replace("\f","in")
-        files=file.split("::"); fix=False
+        files=file.split("::")
         pool=Pool(processes=cpu_count())
         for x in files:
             if " in " in arg1: file=dirt+x
             elif ":\\" in x: file=x
             else: file=directory+x
-            worker=partial(sizwk, directory=directory, rd=fix)
+            worker=partial(sizwk, directory=directory)
             exp=pool.map_async(worker,glob(file, recursive=False))
             out=exp.get()
             if not len(out)==0:

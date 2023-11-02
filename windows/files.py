@@ -107,8 +107,12 @@ def when(arg1, directory):
     yellow=color("","Ynr"); reset=color()
     ext=extra(8,arg1,directory); print("")
     for x in ext:
+        if not x.endswith(chr(92)):
+            x=x+chr(92); fix=True
+        else: fix=False
         file=x.replace(directory,"")
         if len(file)==0: file=fixcrdir(x)
+        if fix: x=x[:len(x)-1]
         if isdir(x): fltp=" Directory "
         else: fltp=" File "
         out= ("┌─"+green+fltp+reset+blue+file+reset+"\n│")
