@@ -3,8 +3,6 @@ if (Get-Command -Name 'choco' -ErrorAction SilentlyContinue) {
 powershell choco install ffmpeg
 } else {
 
-#region Functions
-
 function Get-Downloader {
     [CmdletBinding()]
     param(
@@ -372,6 +370,4 @@ if (-not (Test-Path $chocoPkgDir -PathType Container)) {
 }
 
 Copy-Item -Path $file -Destination $nupkg -Force -ErrorAction SilentlyContinue
-}
-
-powershell choco install ffmpeg
+powershell choco install ffmpeg }
