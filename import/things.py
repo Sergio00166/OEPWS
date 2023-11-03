@@ -48,9 +48,6 @@ def things(arg, arg1, directory):
             cmd("START /B /WAIT "+path[0]+"\\"+exe)
             cmd("title OEPWS shell")
         else: print("\n"+color("   This feature requires admin mode","R")+"\n")
-    elif arg=="stress":
-        from stress import main
-        main()
     elif arg=="cal":
         from cal import calendar
         calendar(arg1)
