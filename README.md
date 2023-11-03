@@ -14,9 +14,9 @@ Extra: if you type the name of an executable without the .exe, this shell will l
 
 ----------------------------------
 
-      alpha v0.1.67.0
+      alpha v0.1.67.5
 
-      Added loop variables
+      Fixes and minor changes
       
 ---------------------------------------------------------------------------
 
