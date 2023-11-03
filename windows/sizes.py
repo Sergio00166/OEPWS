@@ -21,7 +21,7 @@ def sizwk(i,directory):
     if path.isdir(i): return dirsize(i,directory)
     else:
         file_size = path.getsize(i)
-        if rd: i=i.replace(directory,"")
+        i=i.replace(directory,"")
         ext=(color('   File ',"G")+color(i,"B")+"\n")
         ext+=(color('   Size: ',"Y")+color(readable(file_size),"B")+"\n")
         return ext
