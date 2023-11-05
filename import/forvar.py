@@ -56,14 +56,15 @@ def main(arg,directory):
                 fix=open(value, "r", encoding="UTF-8").readlines()
                 for x in fix: out.append(x.replace("\\","\\\\"))
             except: print(error); return ""
-        
-        args=command[command.find("{")+1:command.find("}")]
-        cmd=command[:command.find(" ")]
-        arg1=args[:args.find(f"<{name}>")]; ext=[]
-        arg2=args[args.find(f"<{name}>")+len(name)+2:]
-        for x in out: ext.append(arg1+x+arg2)
-        output=separator.join(ext)
-        
-        return command.replace("{"+f"{arg1}<{name}>{arg2}"+"}",output)
+
+        while "{" in command and "}" in command and "<" in command and ">" in command:
+            args=command[command.find("{")+1:command.find("}")]
+            cmd=command[:command.find(" ")]
+            arg1=args[:args.find(f"<{name}>")]; ext=[]
+            arg2=args[args.find(f"<{name}>")+len(name)+2:]
+            for x in out: ext.append(arg1+x+arg2)
+            output=separator.join(ext)
+            command=command.replace("{"+f"{arg1}<{name}>{arg2}"+"}",output)
+        return command
     
     except: return arg
