@@ -75,6 +75,7 @@ def things(arg, arg1, directory):
     elif arg=="rename":
         from rename import main
         main(arg1,directory)
+    elif arg=="printf": print(arg1)
     elif arg=="depend":
         from os import system as cmd
         from sys import path
