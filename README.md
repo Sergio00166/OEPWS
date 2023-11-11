@@ -232,8 +232,9 @@ list the acl for a file
 *eject* disk <br>
 Unmounts the disc for safe extraction
 <br><br>
-*print text* <br>
-prints in the terminal "text"
+*print/printf text* <br>
+prints in the terminal "text"<br>
+if printf, it will not use scaped chars like \r
 <br><br>
 *mem* <br>
 prints the total/used/free physical memory
