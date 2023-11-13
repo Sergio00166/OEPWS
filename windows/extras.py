@@ -21,8 +21,7 @@ def list_volumes():
     print(color("\n  Volumes: ","G") + color(raw,"B")+"\n")
 
 def kill_proc(arg1):
-    if arg1.endswith('.exe') or arg1.endswith('.EXE'):
-        cmd("TASKKILL /F /IM "+arg1+" >nul 2>nul")
+    if "." in arg1: cmd("TASKKILL /F /IM "+arg1+" >nul 2>nul")
     else: cmd("TASKKILL /F /IM "+arg1+".exe"+" >nul 2>nul")
 
 def print_text(arg1):
