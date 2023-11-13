@@ -30,26 +30,30 @@ def when(arg1, directory):
 
 def chmod(arg1, directory):
     #chmod [user1:r],[user2:f] for file
-    file=arg1[arg1.find(" for ")+5:]
-    args=arg1[:arg1.find("[")]
-    perms=arg1[arg1.find("["):arg1.find(" for ")]
-    perms=perms.split(",")
-    for x in perms:
-        x=x.replace("[","").replace("]","")
-        fix=x.split(":"); user=fix[0]; perm=fix[1]
-        if args=="set ": extra(7,file,directory,"/E /P "+user+":N")
-        for i in perm:
-            if not (i=="" or i=="n"):
-                extra(7,file,directory,"/E /G "+user+":"+i)
+    try:
+        file=arg1[arg1.find(" for ")+5:]
+        args=arg1[:arg1.find("[")]
+        perms=arg1[arg1.find("["):arg1.find(" for ")]
+        perms=perms.split(",")
+        for x in perms:
+            x=x.replace("[","").replace("]","")
+            fix=x.split(":"); user=fix[0]; perm=fix[1]
+            if args=="set ": extra(7,file,directory,"/E /P "+user+":N")
+            for i in perm:
+                if not (i=="" or i=="n"):
+                    extra(7,file,directory,"/E /G "+user+":"+i)
+    except: print(color("\n   Error\n","R"))
 
 def chown(arg1, directory):
     #chmown user1 for file
-    from other import isadmin
-    if isadmin():
-        file=arg1[arg1.find(" for ")+5:]
-        user=arg1[:arg1.find(" for ")]
-        extra(5,file,directory,"/setowner "+user)
-    else: print(color("\n   You must be admin to do that\n","R"))
+    try:
+        from other import isadmin
+        if isadmin():
+            file=arg1[arg1.find(" for ")+5:]
+            user=arg1[:arg1.find(" for ")]
+            extra(5,file,directory,"/setowner "+user)
+        else: print(color("\n   You must be admin to do that\n","R"))
+    except: print(color("\n   Error\n","R"))
 
 def files(arg,arg1,directory):
     if arg=="new":
