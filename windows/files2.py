@@ -4,6 +4,7 @@ from colors import color
 from os import system as cmd
 from dirfil_main import extra
 from other import fixfiles, fixcrdir
+from os.path import isdir
 
 def lsacl(arg1, directory):
     print(""); reset=color()
