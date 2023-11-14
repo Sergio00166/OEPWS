@@ -22,7 +22,7 @@ Extra: if you type the name of an executable without the .exe, this shell will l
 ---------------------------------------------------------------------------
 
 Includes third-party software:  <a href="https://github.com/aristocratos/btop4win">btop4windows (aristocratos)</a>, 
-<a href="https://github.com/gokcehan/lf">FL (gokcehan)</a> , <a href="https://github.com/okibcn/nano-for-windows">nano (okibcn)</a>, and speedtest
+<a href="https://github.com/gokcehan/lf">FL (gokcehan)</a> , <a href="https://github.com/okibcn/nano-for-windows">nano</a>, and speedtest
 
 ---------------------------------------------------------------------------
 
