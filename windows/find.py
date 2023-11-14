@@ -51,8 +51,7 @@ def main(arg1,directory):
                 lines=open(file, "r").readlines()
                 fix=[]; exp={}
                 for x in fin:
-                    if "*" in x: pattern = re.compile(translate(x))
-                    else: pattern = re.compile(x)
+                    pattern = re.compile(x)
                     for i, line in enumerate(lines):
                         match = pattern.search(line)
                         if match: fix.append([i,[x]])
@@ -71,4 +70,4 @@ def main(arg1,directory):
                         print(x)
                         if not x[len(x)-1]=="\n": print("")
                     
-    except:  print(color("\n   Error\n","R"))
+    except:  print(color("   Error\n","R"))
