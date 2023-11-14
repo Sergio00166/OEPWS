@@ -7,8 +7,14 @@ from itertools import chain
 from functools import partial
 from other import fixaddr
 from sys import setrecursionlimit
+import re
+from other import fixcrdir
 
 setrecursionlimit(10**6) # increase the recursion limit
+
+def fileonly(arg):
+    arg=arg.split(chr(92))
+    return arg[len(arg)-1]
 
 def worker(arg, arg2):
     filepath = glob(arg+chr(92)+arg2, recursive=False)
@@ -20,6 +26,7 @@ def lister(arg):
 
 def main(arg,arg1,directory):
     try:
+        print(""); 
         if arg=="locatenr": recurse=False
         else: recurse=True
         arg1=arg1.replace("'in'","\n")
@@ -29,7 +36,7 @@ def main(arg,arg1,directory):
             if not buff[len(buff)-1]==chr(92): buff+=chr(92)
         else: buff2=str(arg1).split("::")
         for x in buff2:
-            x=x.lstrip()
+            pattern=re.compile(x)
             if "in " in arg1:
                 if not ":"+chr(92) in buff: buff=directory+buff
                 if not buff[len(buff)-1:]==chr(92): buff+=chr(92)
@@ -40,7 +47,7 @@ def main(arg,arg1,directory):
             else: buff=directory
             buff=fixaddr(buff)
             if not buff==None:
-                print(""); x=x.replace("\n","in")
+                x=x.replace("\n","in")
                 if recurse==True:
                     prew=glob(buff+"**"+chr(92), recursive=False)
                     pool=Pool(processes=cpu_count()-1); tree=[buff]
@@ -48,28 +55,30 @@ def main(arg,arg1,directory):
                         tree+=prew
                         ext=pool.map_async(lister,prew)
                         prew=list(chain(*ext.get()))    
-                    searcher = partial(worker, arg2=x)
+                    searcher = partial(worker, arg2="*")
                     ext=pool.map_async(searcher,tree); filepath=[]
                     filepath=ext.get()
-                else: filepath=glob(buff+x, recursive=False)
+                else: filepath=glob(buff+"*", recursive=False)
                 if recurse: filepath=[list(chain(*filepath))]
-                if not (len(filepath)==0 or (len(filepath)==1 and len(filepath[0])==0)):
-                    print("┌─> "+color(x,"M")+color(" is located ","G")+"("+color("inside ","G")+color(buff,"B")+")"+color(" on: ","G")+"\n│")
-                    yellow=color("","nrY"); reset=color()
-                    for z in filepath:
-                        if recurse:
-                            for i in z:
+                banner=("┌─> "+color(x,"M")+color(" is located ","G")+"("+color("inside ","G")+color(buff,"B")+")"+color(" on: ","G")+"\n│")
+                yellow=color("","nrY"); reset=color(); out=""
+                for z in filepath:
+                    if recurse:
+                        for i in z:
+                            if pattern.search(fileonly(i)):
                                 i=i.replace(buff,"")
                                 i=i.replace("\\\\","\\").replace("\\\\","\\")
-                                print("├  "+yellow+i+reset)
-                        else:
+                                out+=("├  "+yellow+i+reset+"\n")
+                    elif pattern.search(fileonly(z)):
                             z=z.replace(buff,"")
                             z=str(z).replace("\\\\","\\").replace("\\\\","\\")
-                            print("├  "+yellow+z+reset)
-                    print("└─")
+                            out+("├  "+yellow+z+reset+"\n")
+                
+                if not out=="": print(banner+"\n"+out+"└─")
                 else:
                     if not recurse: ext=" in"
                     else: ext=" inside "
                     print("  "+color(x,"M")+color(" does not exist"+ext,"R")+" "+color(buff,"B"))
-                print("")
-    except: print(color("\n   Error\n","R"))
+
+            print("")
+    except: print(color("   Error\n","R"))
