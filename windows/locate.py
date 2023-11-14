@@ -58,21 +58,16 @@ def main(arg,arg1,directory):
                     searcher = partial(worker, arg2="*")
                     ext=pool.map_async(searcher,tree); filepath=[]
                     filepath=ext.get()
-                else: filepath=glob(buff+"*", recursive=False)
+                else: filepath=[glob(buff+"*", recursive=False)]
                 if recurse: filepath=[list(chain(*filepath))]
                 banner=("┌─> "+color(x,"M")+color(" is located ","G")+"("+color("inside ","G")+color(buff,"B")+")"+color(" on: ","G")+"\n│")
                 yellow=color("","nrY"); reset=color(); out=""
                 for z in filepath:
-                    if recurse:
-                        for i in z:
-                            if pattern.search(fileonly(i)):
-                                i=i.replace(buff,"")
-                                i=i.replace("\\\\","\\").replace("\\\\","\\")
-                                out+=("├  "+yellow+i+reset+"\n")
-                    elif pattern.search(fileonly(z)):
-                            z=z.replace(buff,"")
-                            z=str(z).replace("\\\\","\\").replace("\\\\","\\")
-                            out+("├  "+yellow+z+reset+"\n")
+                    for i in z:
+                        if pattern.search(fileonly(i)):
+                            i=i.replace(buff,"")
+                            i=i.replace("\\\\","\\").replace("\\\\","\\")
+                            out+=("├  "+yellow+i+reset+"\n")
                 
                 if not out=="": print(banner+"\n"+out+"└─")
                 else:
