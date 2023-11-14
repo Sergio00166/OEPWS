@@ -4,7 +4,8 @@ Open Experimental Python-based Windows Shell
 
 A Windows 'shell' with its own simple syntax
 
-And if you write native windows commands "works".
+And if you write native windows commands "works".<br>
+Write # before the command and it will executed on the windows native powershell
 
 To run an executable from the current directory write before the file ".\\"
 
