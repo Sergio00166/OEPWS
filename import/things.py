@@ -17,9 +17,11 @@ def things(arg, arg1, directory):
     elif "read" in arg:
         from readfile import readfile
         readfile(arg,arg1,directory)
-    elif arg=="natives":
+    elif arg=="#":
         from os import system as cmd
-        cmd("powershell "+arg1)
+        dirt=directory[:len(directory)-1]
+        if arg1=="": arg1="powershell"
+        cmd('powershell cd "'+dirt+'"; '+arg1)
     elif arg=="tree":
         from list_tree import tree
         tree(arg1, directory)
