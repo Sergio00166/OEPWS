@@ -16,13 +16,16 @@ def fileonly(arg):
     arg=arg.split(chr(92))
     return arg[len(arg)-1]
 
-def worker(arg, arg2):
-    filepath = glob(arg+chr(92)+arg2, recursive=False)
-    if len(filepath)>0: return filepath
+def worker(arg,pattern):
+    filepath = glob(arg+chr(92)+"*", recursive=False)
+    if len(filepath)>0:
+        out=[]
+        for x in filepath:
+            if pattern.search(fileonly(x)): out.append(x)
+        return out
     else: return []
 
-def lister(arg):
-    return glob(arg+"**"+chr(92), recursive=False)
+def lister(arg): return glob(arg+"**"+chr(92), recursive=False)
 
 def main(arg,arg1,directory):
     try:
@@ -55,25 +58,29 @@ def main(arg,arg1,directory):
                         tree+=prew
                         ext=pool.map_async(lister,prew)
                         prew=list(chain(*ext.get()))    
-                    searcher = partial(worker, arg2="*")
+                    searcher = partial(worker, pattern=pattern)
                     ext=pool.map_async(searcher,tree); filepath=[]
                     filepath=ext.get()
-                else: filepath=[glob(buff+"*", recursive=False)]
+                else:
+                    filepath=glob(buff+"*", recursive=False); out=[]
+                    for z in filepath:
+                        if pattern.search(fileonly(z)): out.append(z)
+                    filepath=[out]
                 if recurse: filepath=[list(chain(*filepath))]
-                banner=("┌─> "+color(x,"M")+color(" is located ","G")+"("+color("inside ","G")+color(buff,"B")+")"+color(" on: ","G")+"\n│")
-                yellow=color("","nrY"); reset=color(); out=""
-                for z in filepath:
-                    for i in z:
-                        if pattern.search(fileonly(i)):
+                yellow=color("","nrY"); reset=color()
+                if not len(filepath[0])==0:
+                    print("┌─> "+color(x,"M")+color(" is located ","G")+"("+color("inside ","G")
+                          +color(buff,"B")+")"+color(" on: ","G")+"\n│")
+                    for z in filepath:
+                        for i in z:
                             i=i.replace(buff,"")
                             i=i.replace("\\\\","\\").replace("\\\\","\\")
-                            out+=("├  "+yellow+i+reset+"\n")
-                
-                if not out=="": print(banner+"\n"+out+"└─")
+                            print("├  "+yellow+i+reset)
+                        print("└─")      
                 else:
                     if not recurse: ext=" in"
                     else: ext=" inside "
                     print("  "+color(x,"M")+color(" does not exist"+ext,"R")+" "+color(buff,"B"))
-
             print("")
+    
     except: print(color("   Error\n","R"))
