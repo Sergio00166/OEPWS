@@ -22,7 +22,7 @@ def when(arg1, directory):
         if len(file)==0: file=fixcrdir(x)
         if fix: x=x[:len(x)-1]
         if isdir(x): fltp=" Directory "
-        else: fltp=" File "
+        else: fltp=" File "; file=file[:len(file)-1]
         out= ("┌─"+green+fltp+reset+blue+file+reset+"\n│")
         out+=("\n├"+yellow+" Modificated: "+reset+ext[x][0]+reset)
         out+=("\n├"+yellow+" Created:     "+reset+ext[x][1]+reset+"\n└─\n")
