@@ -5,7 +5,8 @@ from os.path import getmtime, getctime,getsize, isdir
 from colors import color
 from sizes import get_directory_size as dir_size
 import re
-   
+
+
 def sort(arg,arg1,directory):
     try:
         green=color("","Gnr")
@@ -21,42 +22,41 @@ def sort(arg,arg1,directory):
                 dirt=directory+dirt
         else: dirt=directory
         if arg1=="": arg1=".*"
-        arg1=arg1.split("::")
-        for i in arg1:
-            pattern=re.compile(i); files=[]
-            all_files=glob(dirt+"\\*",recursive=False, include_hidden=True)
-            for x in all_files:
-                if pattern.search(x):
-                    files.append(x)
+        pattern=re.compile(arg1); files=[]
+        all_files=glob(dirt+"\\*",recursive=False, include_hidden=True)
+        for x in all_files:
+            if pattern.search(x): files.append(x)
+        if not len(files)==0:
             
             if mode=="mtime":
-                out=sorted(files, key=lambda x: getmtime(x))
                 print("\n┌─"+green+" Directory "+reset+blue+dirt+reset+"\n│")
+                out=sorted(files, key=lambda x: getmtime(x))
                 for x in  reversed(out):
                     x=x.replace(directory,"")
                     print("├   "+yellow+x+reset)
                 print("└─") 
                     
             elif mode=="ctime":
-                out=sorted(files, key=lambda x: getctime(x))
                 print("\n┌─"+green+" Directory "+reset+blue+dirt+reset+"\n│")
+                out=sorted(files, key=lambda x: getctime(x))
                 for x in  reversed(out):
                     x=x.replace(directory,"")
                     print("├   "+yellow+x+reset)
                 print("└─") 
                     
             elif mode=="alpha":
+                print("\n┌─"+green+" Directory "+reset+blue+dirt+reset+"\n│")
                 fix=[]; dic={}
                 for z in files:
                     xd=z.split(chr(92))
                     xd=xd[len(xd)-1].lower()
                     z=z.replace(directory,"")
                     fix.append(xd); dic[xd]=z
-                print("\n┌─"+green+" Directory "+reset+blue+dirt+reset+"\n│")
                 for x in sorted(fix): print("├   "+yellow+dic[x]+reset)
                 print("└─")    
                         
             elif mode=="size":
+                print("\n┌─"+green+" Directory "+reset+blue+dirt+reset+"\n│")
                 fix=[]; dic={}
                 for z in files:
                     if isdir(z): size=dir_size(z)
@@ -65,12 +65,12 @@ def sort(arg,arg1,directory):
                     if size in dic: dic[size]=dic[size]+"\n"+z
                     else: fix.append(size); dic[size]=z
                 out=reversed(sorted(fix))
-                print("\n┌─"+green+" Directory "+reset+blue+dirt+reset+"\n│")
                 for x in out:
                     ext=dic[x].split("\n")
                     for p in ext:
                         print("├   "+yellow+p+reset)
                 print("└─")
-                
+            
+        else: print("\n  "+color(arg1,"M")+color(" does not exist in","R")+" "+color(dirt,"B")+"\n")
     except: print(color("\n   Error\n","R"))
     
