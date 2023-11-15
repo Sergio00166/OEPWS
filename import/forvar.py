@@ -8,7 +8,8 @@ error=("\n  "+color("ForVar:","M")+" "+color("Error","R")+"\n")
 
 def main(arg,directory):
     try:
-        if arg.startswith("[") or arg.startswith("{"):
+        if arg.startswith("<") or arg.startswith("{"):
+            if not ">[" in arg: print(error); return ""
             separator="::"; ext=arg.find("] ")
             command=arg[ext+1:]; x=arg[:ext]
             
@@ -69,5 +70,5 @@ def main(arg,directory):
             return command
         else: return arg
     
-    except: return arg
+    except: print(error); return ""
 
