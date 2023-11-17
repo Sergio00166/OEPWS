@@ -8,13 +8,15 @@ from other import createuserexec, extusr, extgrp, isadmin
 
 def switch_user(arg1, directory):
     createuserexec()
-    try:
-        print("")
-        pth = path[0] + "\\import\\fixcmd\\start.cmd"
-        print(color(" Password: ", "G"), end="")
-        check_output("runas /user:"+arg1+' "'+pth+' #-FIXSUDIRECT-#"')
-        print("\n")
-    except: print(color("\r   Cannot log in\n", "R"))
+    if extusr(arg1):
+        try:
+            print("")
+            pth = path[0] + "\\import\\fixcmd\\start.cmd"
+            print(color(" Password: ", "G"), end="")
+            check_output("runas /user:"+arg1+' "'+pth+' #-FIXSUDIRECT-#"')
+            print("\n")
+        except: print(color("\r   Cannot log in\n", "R"))
+    else: print(color("\n   User ","R")+color(arg1,"B")+color(" don't exist\n","R"))
 
 def root(arg1,directory):
     from sys import path
@@ -71,7 +73,7 @@ def delete_user(arg1):
     try:
         if isadmin():
             if extusr(arg1): cmd("NET USER " + arg1 + " /DELETE >nul")
-            else: print(color("\n   User ", "R") + color(arg1, "B") + color(" doesn't exist\n", "R"))
+            else: print(color("\n   User ", "R") + color(arg1, "B") + color(" don't exist\n", "R"))
         else: print(color("\n   You must be admin to do that\n", "R"))
     except: pass
 
