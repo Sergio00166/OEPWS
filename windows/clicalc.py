@@ -52,7 +52,7 @@ def main(arg1=False):
             arg=input()
         else: arg=arg1
         if arg=="exit": print(""); break
-        elif arg=="clear": cmd("CLS")
+        elif arg=="clear": print("\033c")
         elif arg=="flush": letras={":a":0,":b":0,":c":0,":d":0}
         else:
             if "set" in arg:
