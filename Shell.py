@@ -7,7 +7,7 @@ from subprocess import check_output
 
 version="alfa v0.1.68.0"; line=" -"
 
-def clsmenu(): cmd("CLS"); print(menu,end="\n\n")
+def clsmenu(): print("\033c"+menu,end="\n\n")
 
 def var(arg1):
     direct=directory[:len(directory)-1]
