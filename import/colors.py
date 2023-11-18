@@ -5,7 +5,7 @@ def color(arg="",color=""):
     elif color=="Bnr": return "[34m[1m"+arg
     elif color=="G": return "[32m[1m"+arg+"[0m"
     elif color=="Gnr": return "[32m[1m"+arg
-    elif color=="G-": return "[32m[2m"+arg+"[0m"
+    elif color=="G-": return "[32m[22m"+arg+"[0m"
     elif color=="R": return "[31m[1m"+arg+"[0m"
     elif color=="Rnr": return "[31m[1m"+arg
     elif color=="W": return "[37m[1m"+arg+"[0m"
