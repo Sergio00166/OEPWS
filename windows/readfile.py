@@ -9,6 +9,7 @@ from colors import color
 from sys import setrecursionlimit
 from other import fixfiles as fixfl
 from time import sleep as delay
+from other import fixcrdir
 
 setrecursionlimit(10**6) # increase the recursion limit
 
@@ -36,17 +37,11 @@ def readwk(x, mode, direct):
     x=fixfl(x)
     if isfile(x):
         try:
-            try: fic=open(x, "r", encoding="UTF-8").readlines(); fix=False
-            except: fic=open(x, "r", encoding="mbcs").readlines(); fix=True
+            try: fic=open(x, "r", encoding="UTF-8").readlines()
+            except: fic=open(x, "r", encoding="mbcs").readlines()
             file=x.replace(direct,"")
             banner=color("File ","G")+color(file,"B")
-            if fix:
-                out="\n# "+banner+color(" > ","M")+color("Binary file detected, printing first lines","R")+"\n\n"
-                fic=fic[:10]
-                if mode[1]: return readwork1(fic)
-                else: return out+readwork1(fic)
-                
-            elif not len(fic)==0:
+            if not len(fic)==0:
                 if mode[0] or (fix and len(fic)>999):
                     return "\n# "+banner+"\n\n"+readwork1(fic)
                 elif mode[1]: return readwork1(fic)
@@ -54,7 +49,7 @@ def readwk(x, mode, direct):
             else:
                 if mode[1]: return ""
                 else: return "\n# "+banner+color(" > ","M")+color("EMPTY FILE","R")+"\n"
-        except: return ""
+        except: return "\n   "+color("Error reading ","R")+color(fixcrdir(x+chr(92)),"B")+"\n"
     else: return ""
 
 def main(arg1, directory, args):
