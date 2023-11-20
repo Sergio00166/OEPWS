@@ -32,9 +32,9 @@ def main(arg1,directory):
                         if x[len(x)-1:]==chr(92) or isdir(x):
                             if x[len(x)-1:]==chr(92): x=x[:len(x)-1]
                             exp='robocopy /E "'+x+'" "'+y+'"'
-                        else: exp='xcopy "'+x+'" "'+y+'"'    
-                        exp=str(exp).replace(chr(92)+chr(92),chr(92))
-                        cmd(exp+" 2>nul", shell=True)
+                        else: exp='xcopy "'+x+'" "'+y+'"'
+                        
+                        cmd(exp+" 2>nul")
         else:
             fich=arg1[:to].split("::")
             dest=arg1[to+4:].split("::")
@@ -51,7 +51,7 @@ def main(arg1,directory):
                     if x[len(x)-1:]==chr(92) or isdir(x):
                         if x[len(x)-1:]==chr(92): x=x[:len(x)-1]
                         exp='robocopy /E "'+x+'" "'+y+'"'
-                    else: exp='xcopy "'+x+'" "'+y+'"'   
-                    exp=str(exp).replace(chr(92)+chr(92),chr(92))
-                    cmd(exp+" 2>nul", shell=True)
+                    else: exp='xcopy "'+x+'" "'+y+'"'
+                    cmd(exp+" 2>nul")
+
     except: print(color("\n   Error\n", "R"))
