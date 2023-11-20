@@ -15,13 +15,18 @@ def sort(arg,arg1,directory):
         reset=color()
         mode=arg[5:len(arg)-1]
         arg1=arg1.replace("'in'","\f")
-        if " in " in arg1:
+        if arg1=="": arg1=".*"
+        elif " in " in arg1:
             dirt=arg1[arg1.find(" in ")+4:]
             arg1=arg1[:arg1.find(" in ")]
             if not ":\\" in dirt:
                 dirt=directory+dirt
-        else: dirt=directory
-        if arg1=="": arg1=".*"
+        else:
+            if ":\\" in arg1: dirt=arg1
+            else: dirt=directory+"\\"+arg1
+            dirt+="\\"; arg1=".*"
+            dirt=dirt.replace("\\\\","\\")
+        
         pattern=re.compile(arg1); files=[]
         all_files=glob(dirt+"\\*",recursive=False, include_hidden=True)
         for x in all_files:
@@ -32,7 +37,7 @@ def sort(arg,arg1,directory):
                 print("\n┌─"+green+" Directory "+reset+blue+dirt+reset+"\n│")
                 out=sorted(files, key=lambda x: getmtime(x))
                 for x in  reversed(out):
-                    x=x.replace(directory,"")
+                    x=x.replace(dirt,"")
                     print("├   "+yellow+x+reset)
                 print("└─") 
                     
@@ -40,7 +45,7 @@ def sort(arg,arg1,directory):
                 print("\n┌─"+green+" Directory "+reset+blue+dirt+reset+"\n│")
                 out=sorted(files, key=lambda x: getctime(x))
                 for x in  reversed(out):
-                    x=x.replace(directory,"")
+                    x=x.replace(dirt,"")
                     print("├   "+yellow+x+reset)
                 print("└─") 
                     
@@ -50,7 +55,7 @@ def sort(arg,arg1,directory):
                 for z in files:
                     xd=z.split(chr(92))
                     xd=xd[len(xd)-1].lower()
-                    z=z.replace(directory,"")
+                    z=z.replace(dirt,"")
                     fix.append(xd); dic[xd]=z
                 for x in sorted(fix): print("├   "+yellow+dic[x]+reset)
                 print("└─")    
@@ -61,7 +66,7 @@ def sort(arg,arg1,directory):
                 for z in files:
                     if isdir(z): size=dir_size(z)
                     else: size=getsize(z)
-                    z=z.replace(directory,"")
+                    z=z.replace(dirt,"")
                     if size in dic: dic[size]=dic[size]+"\n"+z
                     else: fix.append(size); dic[size]=z
                 out=reversed(sorted(fix))
