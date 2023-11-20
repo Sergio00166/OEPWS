@@ -14,11 +14,11 @@ def sys_repair(arg1):
         elif "-dsk " in arg1: cmd("CHKDSK "+arg1[arg1.find("-dsk")+5:]+" /f /r /x")
     else: print(color("\n   This feature requires admin mode\n","R"))
 
-def list_volumes():
+def list_drives():
     raw=str(check_output("fsutil fsinfo drives", shell=False))
     raw=raw[raw.find(": ")+2:raw.find("\\r\\n'")]
     raw=raw.replace(chr(92)+chr(92),chr(92))
-    print(color("\n  Volumes: ","G") + color(raw,"B")+"\n")
+    print(color("\n  Drives: ","G") + color(raw,"B")+"\n")
 
 def kill_proc(arg1):
     if "." in arg1: cmd("TASKKILL /F /IM "+arg1+" >nul 2>nul")
@@ -67,7 +67,7 @@ def memusage():
 
 def extras(arg,arg1,directory):
     if arg=="repair": sys_repair(arg1)
-    elif arg=="volumes": list_volumes()
+    elif arg=="drives": list_drives()
     elif arg=="time":
         import time
         print(color("\n  The time is: ","Y-")
