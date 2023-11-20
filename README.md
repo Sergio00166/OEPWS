@@ -15,9 +15,9 @@ Extra: if you type the name of an executable without the .exe, this shell will l
 
 ----------------------------------
 
-      alpha v0.1.68.0
+      alpha v0.1.68.2
 
-      Added REGEX for the more useful commands (locate and sort)
+      Fixes
       
 ---------------------------------------------------------------------------
 
