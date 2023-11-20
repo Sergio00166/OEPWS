@@ -98,6 +98,9 @@ def extgrp(arg):
     return False
 
 def isadmin():
-    try: open("C:\\tmp","w"); return True
+    try:
+        open("C:\\tmp","w")
+        cmd("DEL C:\\tmp >nul 2>nul")
+        return True
     except: return False
     

@@ -9,7 +9,7 @@ except: mp3loaded=False
     
 dic={"directory":["go","flmgr","cd","eject"],"files":["when","new","no","edit","write","flush","chmod","chown","lsacl"],
      "users":["su","sudo","root","deluser","crex","lsusr","addgroup","delgroup","lsgrp"],
-     "extras":["speedtest","pwdgen","weather","volumes","restart","shutdown","repair","time","flushdns","kill","print","mem"]}
+     "extras":["speedtest","pwdgen","weather","drives","restart","shutdown","repair","time","flushdns","kill","print","mem"]}
 
 def slc(arg,arg1):
     try: dic[arg].index(arg1); return True
@@ -52,8 +52,7 @@ def database(arg,arg1,directory,oldir):
     else:
         out=Queue()
         proc=Process(target=cmd, args=(arg,arg1,directory,oldir,out,))
-        proc.start(); ext=out.get(); proc.join()
-        directory=ext[0]
+        proc.start(); ext=out.get(); proc.join(); directory=ext[0]
         if not ext[1]:
             from startcmd import main as runcmd
             if runcmd(arg, arg1, directory):
