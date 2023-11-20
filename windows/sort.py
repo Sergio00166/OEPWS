@@ -15,17 +15,15 @@ def sort(arg,arg1,directory):
         reset=color()
         mode=arg[5:len(arg)-1]
         arg1=arg1.replace("'in'","\f")
-        if arg1=="": arg1=".*"
+        if arg1=="": arg1=".*"; dirt=directory
         elif " in " in arg1:
             dirt=arg1[arg1.find(" in ")+4:]
             arg1=arg1[:arg1.find(" in ")]
-            if not ":\\" in dirt:
-                dirt=directory+dirt
-        else:
-            if ":\\" in arg1: dirt=arg1
-            else: dirt=directory+"\\"+arg1
-            dirt+="\\"; arg1=".*"
-            dirt=dirt.replace("\\\\","\\")
+            if not ":\\" in dirt: dirt=directory+dirt
+            dirt+=chr(92)
+        elif ":\\" in arg1: dirt=arg1; arg1=".*"
+        else: dirt=directory
+        dirt=dirt.replace("\\\\","\\")
         
         pattern=re.compile(arg1); files=[]
         all_files=glob(dirt+"\\*",recursive=False, include_hidden=True)
