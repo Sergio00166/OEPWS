@@ -4,7 +4,8 @@ from subprocess import check_output as cmd
 from sys import path
 from colors import color
 from other import fixaddr, fixfiles
-from os.path import isdir, exists
+from os.path import isdir
+from glob import glob
 #def cmd(arg, shell): print(arg)
 
 def main(arg1,directory):
@@ -25,11 +26,11 @@ def main(arg1,directory):
                 y=fixfiles(y)
                 for x in fich:
                     x=x.replace("\n","from").replace("\f","to")
-                    if exists(x):
+                    if not ":\\" in x: x=fix+x
+                    else: x=x
+                    if len(glob(x, recursive=False))>0:
                         fix=fixfiles(direct)
                         if not len(fix)==0:
-                            if not ":\\" in x: x=fix+x
-                            else: x=x
                             if x[len(x)-1:]==chr(92) or isdir(x):
                                 if x[len(x)-1:]==chr(92): x=x[:len(x)-1]
                                 exp='robocopy /E "'+x+'" "'+y+'"'
@@ -48,9 +49,9 @@ def main(arg1,directory):
                     y=fixaddr(y)
                 for x in fich:
                     x=x.replace("\n","from").replace("\f","to")
-                    if exists(x):
-                        if not ":\\" in x: x=directory+x
-                        else: x=x
+                    if not ":\\" in x: x=directory+x
+                    else: x=x
+                    if len(glob(x, recursive=False))>0:
                         if x[len(x)-1:]==chr(92) or isdir(x):
                             if x[len(x)-1:]==chr(92): x=x[:len(x)-1]
                             exp='robocopy /E "'+x+'" "'+y+'"'
