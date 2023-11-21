@@ -42,8 +42,7 @@ def readwk(x, mode, direct):
             file=x.replace(direct,"")
             banner=color("File ","G")+color(file,"B")
             if not len(fic)==0:
-                if mode[0] or (fix and len(fic)>999):
-                    return "\n# "+banner+"\n\n"+readwork1(fic)
+                if mode[0]: return "\n# "+banner+"\n\n"+readwork1(fic)
                 elif mode[1]: return readwork1(fic)
                 else: return "\n┌── "+banner+readwork2(fic)
             else:
