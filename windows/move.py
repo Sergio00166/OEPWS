@@ -6,7 +6,7 @@ from colors import color
 from other import fixaddr, fixfiles
 from os.path import isdir
 from glob import glob
-#def cmd(arg): print(arg)
+#def cmd(arg, shell=False): print(arg)
 
 def main(arg1,directory):
     try:
@@ -24,10 +24,10 @@ def main(arg1,directory):
             y=fixfiles(y)
             for x in fich:
                 x=x.replace("\n","from").replace("\f","to")
+                fix=fixfiles(direct)
                 if not ":\\" in x: x=fix+x
                 else: x=x
                 if len(glob(x, recursive=False))>0:
-                    fix=fixfiles(direct)
                     if not len(fix)==0:
                         if x[len(x)-1:]==chr(92) or isdir(x):
                             if x[len(x)-1:]==chr(92): x=x[:len(x)-1]

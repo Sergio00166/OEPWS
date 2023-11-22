@@ -25,11 +25,11 @@ def main(arg1,directory):
                 if not ":\\" in y: y=directory+y
                 y=fixfiles(y)
                 for x in fich:
+                    fix=fixfiles(direct)
                     x=x.replace("\n","from").replace("\f","to")
                     if not ":\\" in x: x=fix+x
                     else: x=x
                     if len(glob(x, recursive=False))>0:
-                        fix=fixfiles(direct)
                         if not len(fix)==0:
                             if x[len(x)-1:]==chr(92) or isdir(x):
                                 if x[len(x)-1:]==chr(92): x=x[:len(x)-1]
