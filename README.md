@@ -1,6 +1,6 @@
 #OEPWS
 
-Open Experimental Python-based Windows Shell
+Open simplE Python-based Windows Shell
 
 A Windows 'shell' with its own simple syntax
 
