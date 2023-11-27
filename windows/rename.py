@@ -1,10 +1,8 @@
 #Code by Sergio1260
 
-from subprocess import check_output as cmd
-from sys import path
+from os import system as cmd
 from colors import color
-from other import fixaddr, fixfiles
-from os.path import isdir
+from other import fixaddr
 #def cmd(arg, shell): print(arg)
 
 def main(arg1,directory):
@@ -42,7 +40,11 @@ def main(arg1,directory):
                         buff=fixaddr(buff, True)
                     exp='move "'+fl+'" "'+dt+'"'
                     exp=str(exp).replace(chr(92)+chr(92),chr(92))
-                    cmd(exp+" 2>nul", shell=True)
+                    
+                    if not cmd(exp+" >nul 2>nul")==0:
+                        print("\n   "+color("Permision denied renaming ","R")
+                          +color(fich[x].replace(directory,""),"B")+"\n")
+                    
             else: print(color("\n   Error\n", "R"))
         else:
             fich=arg1[:to]
@@ -60,5 +62,9 @@ def main(arg1,directory):
                         exp='move "'+direct+file+'" "'+direct+dest[x]+'"'
                 else: exp='move "'+directory+fich[x]+'" "'+directory+dest[x]+'"'
                 exp=str(exp).replace(chr(92)+chr(92),chr(92))
-                cmd(exp+" 2>nul", shell=True)
+                
+                if not cmd(exp+" >nul 2>nul")==0:
+                    print("\n   "+color("Permision denied renaming ","R")
+                          +color(fich[x].replace(directory,""),"B")+"\n")
+                        
     except: print(color("\n   Error\n", "R"))

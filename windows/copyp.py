@@ -1,12 +1,11 @@
 #Code by Sergio1260
 
-from subprocess import check_output as cmd
-from sys import path
+from os import system as cmd
 from colors import color
 from other import fixaddr, fixfiles
 from os.path import isdir
 from glob import glob
-#def cmd(arg, shell): print(arg)
+#def cmd(arg): print(arg)
 
 def main(arg1,directory):
     try:
@@ -34,9 +33,12 @@ def main(arg1,directory):
                             if x[len(x)-1:]==chr(92) or isdir(x):
                                 if x[len(x)-1:]==chr(92): x=x[:len(x)-1]
                                 exp='robocopy /E "'+x+'" "'+y+'"'
-                            else: exp='xcopy "'+x+'" "'+y+'"'   
-                            try: cmd(exp)
-                            except: pass
+                            else: exp='xcopy "'+x+'" "'+y+'"'
+                            
+                            if not cmd(exp+" >nul 2>nul")==0:
+                                print("\n   "+color("Permision denied copying ","R")
+                                  +color(x.replace(directory,""),"B")+"\n")
+                                
                     else: print("\n   "+color("The target ","R")+color(x,"B")+color(" do not exist","R")+"\n")
         else:
             fich=arg1[:to].split("::")
@@ -56,8 +58,11 @@ def main(arg1,directory):
                             if x[len(x)-1:]==chr(92): x=x[:len(x)-1]
                             exp='robocopy /E "'+x+'" "'+y+'"'
                         else: exp='xcopy "'+x+'" "'+y+'"'
-                        try: cmd(exp)
-                        except: pass
+    
+                        if not cmd(exp+" >nul 2>nul")==0:
+                            print("\n   "+color("Permision denied copying ","R")
+                                  +color(x.replace(directory,""),"B")+"\n")
+                            
                     else: print("\n   "+color("The target ","R")+color(x,"B")+color(" do not exist","R")+"\n")
 
     except: print(color("\n   Error\n", "R"))

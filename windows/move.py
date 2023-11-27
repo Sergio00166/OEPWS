@@ -1,7 +1,6 @@
 #Code by Sergio1260
 
-from subprocess import check_output as cmd
-from sys import path
+from os import system as cmd
 from colors import color
 from other import fixaddr, fixfiles
 from os.path import isdir
@@ -32,9 +31,12 @@ def main(arg1,directory):
                         if x[len(x)-1:]==chr(92) or isdir(x):
                             if x[len(x)-1:]==chr(92): x=x[:len(x)-1]
                             exp='robocopy /E /MOVE "'+x+'" "'+y+'"'
-                        else: exp='move "'+x+'" "'+y+'"'    
-                        try: cmd(exp, shell=True)
-                        except: pass
+                        else: exp='move /Y "'+x+'" "'+y+'" 2>nul'
+                        
+                        if not cmd(exp+" >nul")==0:
+                            print("\n   "+color("Permision denied moving ","R")
+                                  +color(x.replace(directory,""),"B")+"\n")
+                            
                 else: print("\n   "+color("The target ","R")+color(x,"B")+color(" do not exist","R")+"\n")
         else:
             fich=arg1[:to].split("::")
@@ -51,9 +53,12 @@ def main(arg1,directory):
                     if x[len(x)-1:]==chr(92) or isdir(x):
                         if x[len(x)-1:]==chr(92): x=x[:len(x)-1]
                         exp='robocopy /E /MOVE "'+x+'" "'+y+'"'
-                    else: exp='move "'+x+'" "'+y+'"'   
-                    try: cmd(exp, shell=True)
-                    except: pass
+                    else: exp='move /Y "'+x+'" "'+y+'" 2>nul'
+                    
+                    if not cmd(exp+" >nul")==0:
+                        print("\n   "+color("Permision denied moving ","R")
+                              +color(x.replace(directory,""),"B")+"\n")
+                        
                 else: print("\n   "+color("The target ","R")+color(x,"B")+color(" do not exist","R")+"\n")
     
     except: print(color("\n   Error\n", "R"))
