@@ -12,26 +12,27 @@ def create_file(file):
     from os.path import exists
     if not exists(file):
         if file.endswith(chr(92)):
-            cmd('mkdir "' + file[:len(file)-1] + '" 2>nul')
+            try: check_output('mkdir "'+file[:len(file)-1]+'"')
+            except: raise PermissionError
         else: open(file, "w")
     else: print("\n  " + color(file, "G") + color(" already exists\n", "R"))
 
 def delete_file(file):
     from os.path import isfile
     file = glob(file, recursive=False)
-    for x in file:
-        if isfile(x): cmd('DEL /f /q "' + x + '" >nul 2>nul')
-        else: cmd('RD /s /q "' + x + '" >nul 2>nul')
+    if not len(file)==0:
+        for x in file:
+            try:
+                if isfile(x):
+                    check_output('DEL /f /q "'+x+'"')
+                else: check_output('RD /s /q "'+x+'"')
+            except: raise PermissionError
+    else: print(color("\n   File/dir not found\n","R"))
 
-def fix_files(exp):
-    from other import fixfiles
-    file = fixfiles(exp[1:len(exp)-1])
+def flush_file(arg):
+    file = glob(arg, recursive=False)
     if not len(file) == 0:
-        fix = glob(file, recursive=False)
-        if not len(fix) == 0:
-            for x in fix:
-                open(x, "w")
-        else: print(color("\n   It doesn't exist\n", "R"))
+        for x in file: open(x, "w")
     else: print(color("\n   It doesn't exist\n", "R"))
 
 def write_to_file(file, extra, extra2):
@@ -76,7 +77,7 @@ def work(exp, mode, extra="", extra2=""):
             print(color("\n   Error\n", "R"))
         else: create_file(exp[1:len(exp)-1])
     elif mode == 2: file = exp[1:len(exp)-1]; delete_file(file)
-    elif mode == 3: fix_files(exp[1:len(exp)-1])
+    elif mode == 3: flush_file(exp[1:len(exp)-1])
     elif mode == 4: write_to_file(exp[1:len(exp)-1], extra, extra2)
     elif mode == 5: change_permissions(exp, extra)
     elif mode == 6: list_permissions(exp)
