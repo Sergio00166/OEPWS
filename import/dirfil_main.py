@@ -12,7 +12,7 @@ def create_file(file):
     from os.path import exists
     if not exists(file):
         if file.endswith(chr(92)):
-            try: check_output('mkdir "'+file[:len(file)-1]+'"')
+            try: check_output('mkdir "'+file[:len(file)-1]+'"', shell=True)
             except: raise PermissionError
         else: open(file, "w")
     else: print("\n  " + color(file, "G") + color(" already exists\n", "R"))
