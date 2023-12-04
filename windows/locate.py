@@ -7,6 +7,7 @@ from itertools import chain
 from functools import partial
 from other import fixaddr
 from sys import setrecursionlimit
+from os.path import isdir
 import re
 from other import fixcrdir
 
@@ -39,6 +40,10 @@ def main(arg,arg1,directory):
             if not buff[len(buff)-1]==chr(92): buff+=chr(92)
         else: buff2=str(arg1).split("::")
         for x in buff2:
+            if x.endswith(chr(92)):
+                x=x[:len(x)-1]
+                onlydir=True
+            else: onlydir=False
             pattern=re.compile(x)
             if "in " in arg1:
                 if not ":"+chr(92) in buff: buff=directory+buff
@@ -64,7 +69,10 @@ def main(arg,arg1,directory):
                 else:
                     filepath=glob(buff+"*", recursive=False); out=[]
                     for z in filepath:
-                        if pattern.search(fileonly(z)): out.append(z)
+                        if pattern.search(fileonly(z)):
+                            if onlydir:
+                                if isdir(z): out.append(z)
+                            else: out.append(z)
                     filepath=[out]
                 if recurse: filepath=[list(chain(*filepath))]
                 yellow=color("","nrY"); reset=color()
