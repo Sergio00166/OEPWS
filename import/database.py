@@ -16,23 +16,26 @@ def slc(arg,arg1):
     except: return False
 
 def cmd(arg,arg1,directory,oldir, out):
-    status=True
-    if slc("directory",arg):
-        from direct import direct
-        directory=direct(arg,arg1,directory,oldir)
-    elif slc("files",arg):
-        from files import files
-        files(arg,arg1,directory)
-    elif slc("users",arg):
-        from users import users
-        users(arg,arg1,directory)
-    elif slc("extras",arg):
-        from extras import extras
-        extras(arg,arg1,directory)
-    else:
-        from things import things
-        status=things(arg,arg1,directory)
-    out.put([directory,status])
+    try:
+        status=True
+        if slc("directory",arg):
+            from direct import direct
+            directory=direct(arg,arg1,directory,oldir)
+        elif slc("files",arg):
+            from files import files
+            files(arg,arg1,directory)
+        elif slc("users",arg):
+            from users import users
+            users(arg,arg1,directory)
+        elif slc("extras",arg):
+            from extras import extras
+            extras(arg,arg1,directory)
+        else:
+            from things import things
+            status=things(arg,arg1,directory)
+        out.put([directory,status])
+    except KeyboardInterrupt:
+        out.put([directory,None])
       
 def database(arg,arg1,directory,oldir):
     global mp3loaded, mp3
@@ -53,7 +56,7 @@ def database(arg,arg1,directory,oldir):
         out=Queue()
         proc=Process(target=cmd, args=(arg,arg1,directory,oldir,out,))
         proc.start(); ext=out.get(); proc.join(); directory=ext[0]
-        if not ext[1]:
+        if not (ext[1]==None or ext[1]):
             from startcmd import main as runcmd
             if runcmd(arg, arg1, directory):
                 print(color("\n  Command not found","R"))
