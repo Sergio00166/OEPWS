@@ -65,5 +65,6 @@ def main(arg1=False):
         if arg1!=False: print(""); break
 
 if __name__=="__main__":
+    path.append(path[0]+chr(92)+"..\\import")
     path.append(path[0]+chr(92)+"..\\import\\other")
     main()
