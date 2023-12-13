@@ -5,7 +5,7 @@ from os import environ, getcwd
 from sys import setrecursionlimit, path, argv
 from subprocess import check_output
 
-version="alfa v0.1.68.4"; line=" -"
+version="alfa v0.1.68.4"
 
 def clsmenu(): cmd("cls"); print(menu,end="\n\n")
 
@@ -32,7 +32,7 @@ def cli(args):
         except: a=""
     else: a=args+" "
     a=forvar(a, directory)
-    inp=a.replace("';'","\f").split(";"); cont=0
+    inp=a.replace("';'","\f").split(";")
     for a in inp:
         a=var(a+" ").replace("\f",";").replace("';'", ";")
         a=a.lstrip().rstrip()
@@ -51,9 +51,6 @@ def cli(args):
                 except KeyboardInterrupt: pass
                 except: print(ferror)
                 if arg=="flmgr": clsmenu()
-                if not len(inp)==1 and not cont==len(inp)-1:
-                    if not args==False and cont==0: cont+=1
-                    else: print(line); cont+=1
                 if not len(oldir)==1:
                     if not directory==oldir[1]: oldir.pop(0)
     if args: input("Press any key to exit . . . ")
