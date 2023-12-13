@@ -28,6 +28,9 @@ def things(arg, arg1, directory):
     elif arg=="benchmk":
         from benchmk import main
         main()
+    elif arg=="stress":
+        from stress_test import main
+        main()
     elif arg=="calc":
         from clicalc import main as clicalc
         from os import system as cmd

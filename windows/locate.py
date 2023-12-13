@@ -17,15 +17,12 @@ def fileonly(arg):
     arg=arg.split(chr(92))
     return arg[len(arg)-1]
 
-def worker(arg,pattern,onlydir):
+def worker(arg,pattern):
     filepath = glob(arg+chr(92)+"*", recursive=False)
     if len(filepath)>0:
         out=[]
         for x in filepath:
-            if pattern.search(fileonly(x)):
-                if onlydir:
-                    if isdir(x): out.append(x)
-                else: out.append(x)
+            if pattern.search(fileonly(x)): out.append(x)
         return out
     else: return []
 
@@ -66,7 +63,7 @@ def main(arg,arg1,directory):
                         tree+=prew
                         ext=pool.map_async(lister,prew)
                         prew=list(chain(*ext.get()))    
-                    searcher = partial(worker, pattern=pattern,onlydir=onlydir)
+                    searcher = partial(worker, pattern=pattern)
                     ext=pool.map_async(searcher,tree); filepath=[]
                     filepath=ext.get()
                 else:
