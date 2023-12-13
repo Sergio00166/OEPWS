@@ -11,7 +11,7 @@ def switch_user(arg1, directory):
     if extusr(arg1):
         try:
             print("")
-            pth = path[0] + "\\import\\fixcmd\\start.cmd"
+            pth = 'python "'+path[0]+'\\shell.py"'
             print(color(" Password: ", "G"), end="")
             check_output("runas /user:"+arg1+' "'+pth+' #-FIXSUDIRECT-#"')
             print("\n")
@@ -26,7 +26,8 @@ def root(arg1,directory):
         root=str(check_output("whoami"))
         ext=("start /B "+path[0]+"\\import\\extras"+
             "\\nircmdc.exe elevatecmd runassystem "
-            +path[0]+"\\import\\fixcmd\\start.cmd")
+            +'python "'+path[0]+'\\shell.py"')
+        print(ext)
         if not root=="b'nt authority\\system\r\n'":
             if arg1=="su": cmd(ext+" ;"+directory)
             else: cmd(ext+" go "+directory+"; "+arg1.replace("&",","))
@@ -39,8 +40,8 @@ def sudo(arg1, directory):
         else:
             if arg1 == "su":
                 createuserexec()
-                cmd(path[0] + "\\import\\fixcmd\\admin.lnk ;"+directory)
-            else: cmd(path[0] + '\\import\\fixcmd\\admin.lnk go '+directory+"; "+arg1.replace("&", ";"))
+                cmd(path[0] + "\\import\\admin.lnk ;"+directory)
+            else: cmd(path[0] + '\\import\\admin.lnk go '+directory+"; "+arg1.replace("&", ";"))
     except: pass
 
 def add_user(arg1):

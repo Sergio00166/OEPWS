@@ -15,9 +15,9 @@ Extra: if you type the name of an executable without the .exe, this shell will l
 
 ----------------------------------
 
-      alpha v0.1.68.2
+      alpha v0.1.68.4
 
-      Fixes
+      Some changes
       
 ---------------------------------------------------------------------------
 
@@ -206,6 +206,9 @@ exits the program
 <br><br>
 *benchmk* <br>
 cpu benchmark
+<br><br>
+*stress* <br>
+cpu stress test
 <br><br>
 *weather City* <br>
 shows the weather for the city

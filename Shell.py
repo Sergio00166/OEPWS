@@ -5,7 +5,7 @@ from os import environ, getcwd
 from sys import setrecursionlimit, path, argv
 from subprocess import check_output
 
-version="alfa v0.1.68.3"; line=" -"
+version="alfa v0.1.68.4"; line=" -"
 
 def clsmenu(): cmd("cls"); print(menu,end="\n\n")
 
@@ -72,12 +72,14 @@ def main(args):
         while True: cli(False)
         
 if __name__ == "__main__":
+    cmd('TITLE OEPWS shell')
     setrecursionlimit(10**6)
     for x in path:
         if "site-packages" in x: path.remove(x)
     for x in path:
         if "site-packages" in x: path.remove(x)
     path.append(path[0]+chr(92)+"import")
+    path.append(path[0]+chr(92)+"import\\other")
     from colors import color
     menu=str(color(" OEPWS by Sergio1260 ","G")+"\n "+
              color(version,"R")+color(" on ","G")+

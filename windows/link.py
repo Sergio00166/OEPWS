@@ -6,7 +6,7 @@ from os import system as cmd
 from other import fixfiles, fixaddr
 
 def mklnk(dirname,name,refer,rpth):
-    cmd("powershell $WshShell=New-Object -comObject WScript.Shell;"+
+    print("powershell $WshShell=New-Object -comObject WScript.Shell;"+
         "$Shortcut=$WshShell.CreateShortcut('"+dirname+chr(92)+name+".lnk')"
         ";$Shortcut.TargetPath='"+refer+"';$Shortcut.WorkingDirectory='"
         +rpth+"';$Shortcut.Save()")
