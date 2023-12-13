@@ -5,7 +5,7 @@ from os import environ, getcwd
 from sys import setrecursionlimit, path, argv
 from subprocess import check_output
 
-version="alfa v0.1.68.2"; line=" -"
+version="alfa v0.1.68.3"; line=" -"
 
 def clsmenu(): cmd("cls"); print(menu,end="\n\n")
 
@@ -48,6 +48,7 @@ def cli(args):
             if not arg=="":
                 if arg=="sudo": arg1=arg1.replace(";","';'")
                 try: directory=database(arg,arg1,directory,str(oldir[0]))
+                except KeyboardInterrupt: pass
                 except: print(ferror)
                 if arg=="flmgr": clsmenu()
                 if not len(inp)==1 and not cont==len(inp)-1:
