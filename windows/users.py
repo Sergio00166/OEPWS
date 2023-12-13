@@ -27,7 +27,6 @@ def root(arg1,directory):
         ext=("start /B "+path[0]+"\\import\\extras"+
             "\\nircmdc.exe elevatecmd runassystem "
             +'python "'+path[0]+'\\shell.py"')
-        print(ext)
         if not root=="b'nt authority\\system\r\n'":
             if arg1=="su": cmd(ext+" ;"+directory)
             else: cmd(ext+" go "+directory+"; "+arg1.replace("&",","))
