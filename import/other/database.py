@@ -8,7 +8,7 @@ try:
 except: mp3loaded=False
     
 dic={"directory":["go","flmgr","cd","eject"],"files":["when","new","no","edit","write","flush","chmod","chown","lsacl"],
-     "users":["su","sudo","root","deluser","crex","lsusr","addgroup","delgroup","lsgrp"],
+     "users":["su","sudo","root","deluser","lsusr","addgroup","delgroup","lsgrp"],
      "extras":["speedtest","pwdgen","weather","drives","restart","shutdown","repair","time","flushdns","kill","print","mem"]}
 
 def slc(arg,arg1):
