@@ -117,4 +117,3 @@ def users(arg, arg1, directory):
     elif arg == "addgroup": add_group(arg1)
     elif arg == "delgroup": delete_group(arg1)
     elif arg == "lsgrp": list_groups()
-    elif arg == "crex": createuserexec()
