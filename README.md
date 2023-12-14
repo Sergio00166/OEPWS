@@ -32,8 +32,6 @@ UTF-8 support (requires the 'Beta: Use Unicode UTF-8 for worldwide language supp
 Recomended to use with Windows Terminal, in the "import" directory there are a file named 
 "WinTermADD.py" allowing you to install a profile in the Windows Terminal easily
 
-*You need to write "crex" the first time you launch it to allow the command "sudo" work properly*
-
 ---------------------------------------------------------------------------
 
 *Syntax:*
