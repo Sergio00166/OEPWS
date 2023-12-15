@@ -5,9 +5,16 @@ def things(arg, arg1, directory):
     if arg=="ls":
         from list_tree import ls
         ls(arg1, directory)
+    elif arg=="natives":
+        from os import system as cmd
+        cmd("cmd /C "+arg1)
     elif arg=="sys":
         from sysinfo import sysinfo
         sysinfo()
+    elif arg=="flmgr":
+        from os import system as cmd
+        from sys import path
+        cmd(path[0]+"\\import\\extras\\lf.exe "+directory)
     elif "sort(" in arg:
         from sort import sort
         sort(arg,arg1,directory)

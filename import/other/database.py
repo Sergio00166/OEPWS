@@ -7,7 +7,7 @@ try:
     mp3loaded=True
 except: mp3loaded=False
     
-dic={"directory":["go","flmgr","cd","eject"],"files":["when","new","no","edit","write","flush","chmod","chown","lsacl"],
+dic={"directory":["go","cd","eject"],"files":["when","new","no","edit","write","flush","chmod","chown","lsacl"],
      "users":["su","sudo","root","deluser","lsusr","addgroup","delgroup","lsgrp"],
      "extras":["speedtest","pwdgen","weather","drives","restart","shutdown","repair","time","flushdns","kill","print","mem"]}
 
