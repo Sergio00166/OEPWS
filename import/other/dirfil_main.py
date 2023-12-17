@@ -23,8 +23,7 @@ def delete_file(file):
     if not len(file)==0:
         for x in file:
             try:
-                if isfile(x):
-                    check_output('DEL /f /q "'+x+'"', shell=True)
+                if isfile(x): check_output('powershell DEL "'+x+'"')
                 else: check_output('RD /s /q "'+x+'"', shell=True)
             except: raise PermissionError
     else: print(color("\n   File/dir not found\n","R"))
