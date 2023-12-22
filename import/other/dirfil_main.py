@@ -15,7 +15,7 @@ def create_file(file):
             try: check_output('mkdir "'+file[:len(file)-1]+'"', shell=True)
             except: raise PermissionError
         else: open(file, "w")
-    else: print("\n  " + color(file, "G") + color(" already exists\n", "R"))
+    else: print("\n  "+color(file,"G")+color(" already exists\n","R"))
 
 def delete_file(file):
     from os.path import isfile
@@ -23,10 +23,8 @@ def delete_file(file):
     if not len(file)==0:
         for x in file:
             try:
-                if isfile(x):
-                    x=x.replace("[","?").replace("]","?").replace("'","?")
-                    check_output('powershell "DEL '+"'"+x+"'"+'"', shell=False)
-                else: check_output('RD /s /q "'+x+'"', shell=True)
+                if isfile(x): check_output('DEL /Q /F "'+x+'"')
+                else: check_output('RD /s /q "'+x+'"')
             except: raise PermissionError
     else: print(color("\n   File/dir not found\n","R"))
 
@@ -38,8 +36,7 @@ def flush_file(arg):
 
 def write_to_file(file, extra, extra2):
     file = open(file, extra2, encoding="UTF-8")
-    file.write(extra)
-    file.close()
+    file.write(extra); file.close()
 
 def change_permissions(exp, extra):
     try: check_output('ICACLS ' + exp + ' ' + extra, shell=True)
@@ -66,9 +63,9 @@ def modcrtime(arg,directory):
     files=glob(arg, recursive=False)
     for x in files:
         try: mod=dt.fromtimestamp(getmtime(x)).strftime("%d-%m-%Y %H:%M:%S")
-        except: mod="##-##-#### ##:##:##"
+        except: mod=color("Cannot get mtime","R")
         try: crea=dt.fromtimestamp(getctime(x)).strftime("%d-%m-%Y %H:%M:%S")
-        except: crea="##-##-#### ##:##:##"
+        except: crea=color("Cannot get ctime","R")
         mctime[x]=[mod,crea]
     
 def work(exp, mode, extra="", extra2=""):
