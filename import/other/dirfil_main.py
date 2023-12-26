@@ -23,8 +23,9 @@ def delete_file(file):
     if not len(file)==0:
         for x in file:
             try:
-                if isfile(x): check_output('DEL /Q /F "'+x+'"')
-                else: check_output('RD /s /q "'+x+'"')
+                if isfile(x):
+                    check_output('DEL /Q /F "'+x+'"',shell=True)
+                else: check_output('RD /s /q "'+x+'"',shell=True)
             except: raise PermissionError
     else: print(color("\n   File/dir not found\n","R"))
 
