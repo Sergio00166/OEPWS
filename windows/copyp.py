@@ -33,7 +33,7 @@ def main(arg1,directory):
                             if x[len(x)-1:]==chr(92) or isdir(x):
                                 if x[len(x)-1:]==chr(92): x=x[:len(x)-1]
                                 exp='robocopy /E "'+x+'" "'+y+'"'
-                            else: exp='xcopy "'+x+'" "'+y+'"'
+                            else: exp='xcopy /Y "'+x+'" "'+y+'"'
                             
                             if not cmd(exp+" >nul 2>nul")==0:
                                 print("\n   "+color("Permision denied copying ","R")
@@ -57,7 +57,7 @@ def main(arg1,directory):
                         if x[len(x)-1:]==chr(92) or isdir(x):
                             if x[len(x)-1:]==chr(92): x=x[:len(x)-1]
                             exp='robocopy /E "'+x+'" "'+y+'"'
-                        else: exp='xcopy "'+x+'" "'+y+'"'
+                        else: exp='xcopy /Y "'+x+'" "'+y+'"'
     
                         if not cmd(exp+" >nul 2>nul")==0:
                             print("\n   "+color("Permision denied copying ","R")
