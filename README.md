@@ -185,9 +185,6 @@ opens a cli calculator interface or returns the result of the args
 *dskperf -read -write -mode -drive C*
 mode can be rand or seq
 <br><br>
-*mp3dl url* <br>
-downloads a mp3 file from the YouTube video
-<br><br>
 *mp3 -file file.mp3* <br>
 -pause -quit <br>
 whith no args:<br>
