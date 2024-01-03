@@ -1,5 +1,7 @@
 #OEPWS
 
+STATUS: NO LONGER WORKING ON IT
+
 Open simplE Python-based Windows Shell
 
 A Windows 'shell' with its own simple syntax
