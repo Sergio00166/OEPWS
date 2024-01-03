@@ -1,6 +1,6 @@
 #OEPWS
 
-STATUS: NO LONGER WORKING ON IT
+STATUS: NO LONGER ADDING FEATURES
 
 Open simplE Python-based Windows Shell
 
