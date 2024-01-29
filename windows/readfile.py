@@ -61,7 +61,7 @@ def main(arg1, directory, args):
             direct+=chr(92)
         arg1=arg1[:arg1.find("from ")]
     else: direct=directory
-    fix=arg1.replace("\n","from").split("::")
+    fix=arg1.replace("\n","from").rstrip().split("::")
     for arg1 in fix:
         if not ":\\" in arg1: arg1=direct+arg1
         lista=fixfiles(arg1)
