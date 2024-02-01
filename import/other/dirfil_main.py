@@ -101,7 +101,7 @@ def extra(mode, arg1, directory, extra="", extra2=""):
             for x in dire:
                 exp = '"'+direct+x+'"'
                 exp = str(exp).replace(chr(92)+chr(92), chr(92))
-                work(exp, mode)
+                work(exp,mode,extra,extra2)
             if mode == 6: return lstext
             elif mode == 8: return mctime
         except PermissionError: print(color("\n   Permission denied\n", "R"))
