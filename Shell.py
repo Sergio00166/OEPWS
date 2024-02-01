@@ -69,3 +69,32 @@ def main(args):
         else: cli(args)
     else:
         while True: cli(False)
+
+if __name__ == "__main__":
+    setrecursionlimit(10**6)
+    for x in path:
+        if "site-packages" in x: path.remove(x)
+    for x in path:
+        if "site-packages" in x: path.remove(x)
+    path.append(path[0]+chr(92)+"import")
+    path.append(path[0]+chr(92)+"import\\other")
+    from colors import color
+    menu=str(color(" OEPWS by Sergio1260 ","G")+"\n "+
+             color(version,"R")+color(" on ","G")+
+             color("Windows OS","B"))
+    clsmenu(); from forvar import main as forvar
+    flechas=str(color(" >> ","G-"))
+    ferror=color("\n  FATAL ERROR\n","R")
+    raw=str(check_output("echo %userprofile%",shell=True))
+    userdir=raw[2:len(raw)-4].replace(chr(92)+chr(92),chr(92))
+    userdir=userdir.replace(chr(92),chr(92)+chr(92))
+    path.append(path[0] + chr(92) + 'windows')
+    from database import database
+    user=str(check_output("whoami")); oldir=[]
+    user=user[2:len(user)-5]; args=" ".join(argv[1:])
+    user=user[user.find(chr(92)+chr(92))+2:]
+    del raw; directory=getcwd()+chr(92)
+    directory=directory.replace("\\\\","\\")
+    oldir.append(directory)
+    fix="\r "+str(color(user,"B"))+str(color(" ","B-"))
+    main(args)
