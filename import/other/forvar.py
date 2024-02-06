@@ -54,6 +54,7 @@ def main(arg,directory):
                 
             elif varname=="file":
                 out=[]
+                if not ":\\" in value: value=directory+value
                 try:
                     fix=open(value, "r", encoding="UTF-8").readlines()
                     for x in fix: out.append(x.replace("\\","\\\\"))
