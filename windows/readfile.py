@@ -56,7 +56,7 @@ def main(arg1, directory, args):
     arg1=arg1.replace("'from'","\n")
     if "from " in arg1:
         direct=arg1[arg1.find("from ")+5:]
-        if not ":\\" in direct: direct=directory+direct
+        if not ":\\" in direct: direct=directory+chr(92)+direct
         if not direct[len(direct)-1]==chr(92):
             direct+=chr(92)
         arg1=arg1[:arg1.find("from ")]
