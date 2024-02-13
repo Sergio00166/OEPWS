@@ -1,0 +1,58 @@
+#Code by Sergio1260
+
+from os import system as cmd
+from syntax import parse_syntax
+from colors import color
+from os.path import isdir
+#def cmd(arg): print(arg)
+
+def copy(arg1,directory):
+    try:
+        print("")
+        fich,dest=parse_syntax(arg1, directory)
+        for y in dest:
+            y=y.replace(chr(92),chr(92)+chr(92))
+            for x in fich:
+                if x[len(x)-1:]==chr(92) or isdir(x):
+                    if x[len(x)-1:]==chr(92): x=x[:len(x)-1]
+                    exp='robocopy /E /NJH /NFL /MT "'+x+'" "'+y+'"'
+                else: exp='xcopy /Y "'+x+'" "'+y+'"'
+                cmd(exp)
+        print("")            
+    except SyntaxError: print(color("\n   Bad Syntax\n", "R"))
+    except: print(color("\n   Error\n", "R"))
+
+def move(arg1,directory):
+    try:
+        print("")
+        fich,dest=parse_syntax(arg1, directory)
+        dest=dest.replace(chr(92),chr(92)+chr(92))
+        for x in fich:
+            if x[len(x)-1:]==chr(92) or isdir(x):
+                if x[len(x)-1:]==chr(92): x=x[:len(x)-1]
+                exp='robocopy /E /MOVE /NJH /NFL /MT "'+x+'" "'+dest+'"'
+            else: exp='move /Y "'+x+'" "'+dest+'"'
+            cmd(exp)
+        print("")           
+    except SyntaxError: print(color("\n   Bad Syntax\n", "R"))
+    except: print(color("\n   Error\n", "R"))
+
+def rename(arg1,directory):
+    try:
+        print("")
+        fich,dest=parse_syntax(arg1, directory)
+        for x in range(0,len(fich)):
+            exp='move "'+fich[x]+'" "'+dest[x]+'"'
+            exp=str(exp).replace(chr(92)+chr(92),chr(92))
+            cmd(exp)
+        print("")
+    except SyntaxError: print(color("\n   Bad Syntax\n", "R"))
+    except: print(color("\n   Error\n", "R"))
+
+
+def cmr(arg,arg1,directory):
+    if arg=="copy": copy(arg1,directory)
+    elif arg=="move": move(arg1,directory)
+    elif arg=="rename": rename(arg1,directory)
+
+    
