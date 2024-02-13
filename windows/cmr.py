@@ -19,14 +19,15 @@ def copy(arg1,directory):
                 else: exp='xcopy /Y "'+x+'" "'+y+'"'
                 cmd(exp)
         print("")            
-    except SyntaxError: print(color("\n   Bad Syntax\n", "R"))
-    except: print(color("\n   Error\n", "R"))
+    except SyntaxError: print(color("   Bad Syntax\n", "R"))
+    except: print(color("   Error\n", "R"))
 
 def move(arg1,directory):
     try:
         print("")
         fich,dest=parse_syntax(arg1, directory)
-        dest=dest.replace(chr(92),chr(92)+chr(92))
+        if len(dest)>1: raise ValueError
+        dest=dest[0]
         for x in fich:
             if x[len(x)-1:]==chr(92) or isdir(x):
                 if x[len(x)-1:]==chr(92): x=x[:len(x)-1]
@@ -34,25 +35,23 @@ def move(arg1,directory):
             else: exp='move /Y "'+x+'" "'+dest+'"'
             cmd(exp)
         print("")           
-    except SyntaxError: print(color("\n   Bad Syntax\n", "R"))
-    except: print(color("\n   Error\n", "R"))
+    except SyntaxError: print(color("   Bad Syntax\n", "R"))
+    except ValueError: print(color("   Too many destinations\n", "R"))
+    except: print(color("   Error\n", "R"))
 
 def rename(arg1,directory):
     try:
-        print("")
         fich,dest=parse_syntax(arg1, directory)
         for x in range(0,len(fich)):
             exp='move "'+fich[x]+'" "'+dest[x]+'"'
             exp=str(exp).replace(chr(92)+chr(92),chr(92))
             cmd(exp)
         print("")
-    except SyntaxError: print(color("\n   Bad Syntax\n", "R"))
-    except: print(color("\n   Error\n", "R"))
+    except SyntaxError: print(color("   Bad Syntax\n", "R"))
+    except: print(color("   Error\n", "R"))
 
 
 def cmr(arg,arg1,directory):
     if arg=="copy": copy(arg1,directory)
     elif arg=="move": move(arg1,directory)
     elif arg=="rename": rename(arg1,directory)
-
-    
