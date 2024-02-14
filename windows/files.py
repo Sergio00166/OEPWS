@@ -1,69 +1,69 @@
 #Code by Sergio1260
 
 from colors import color
-from dirfil_main import extra
-from os.path import isdir
+from os.path import isdir, isfile
 from other import fixcrdir
+from syntax import parse_syntax
+from os import system as cmd
+
+from files1 import *
 from files2 import *
 
+
 def delete(arg1, directory):
-    if not arg1=="": extra(2,arg1,directory)
+    if not arg1=="":
+        try:
+            file = parse_syntax(arg1,directory,["from",None])
+            if not len(file)==0:
+                for x in file:
+                    if isfile(x): cmd('DEL /Q /F "'+x+'" 2>nul')
+                    else: cmd('RD /s /q "'+x+'" 2>nul')
+        except SyntaxError: print(color("\n   Syntax Error\n","R"))
     else: print(color("\n   Error\n","R"))
 
-def when(arg1, directory):
-    green=color("","Gnr"); blue=color("","Bnr")
-    yellow=color("","Ynr"); reset=color()
-    ext=extra(8,arg1,directory); print("")
-    for x in ext:
-        if not x.endswith(chr(92)):
-            x=x+chr(92); fix=True
-        else: fix=False
-        file=x.replace(directory,"")
-        if len(file)==0: file=fixcrdir(x)
-        if fix: x=x[:len(x)-1]
-        if isdir(x): fltp=" Directory "
-        else: fltp=" File "; file=file[:len(file)-1]
-        out= ("┌─"+green+fltp+reset+blue+file+reset+"\n│")
-        out+=("\n├"+yellow+" Modificated: "+reset+ext[x][0]+reset)
-        out+=("\n├"+yellow+" Created:     "+reset+ext[x][1]+reset+"\n└─\n")
-        print(out)
 
-def chmod(arg1, directory):
-    #chmod [user1:r],[user2:f] for file
+def flush(arg1,directory):
+    from glob import glob
     try:
-        file=arg1[arg1.find(" for ")+5:]
-        args=arg1[:arg1.find("[")]
-        perms=arg1[arg1.find("["):arg1.find(" for ")]
-        perms=perms.split(",")
-        for x in perms:
-            x=x.replace("[","").replace("]","")
-            fix=x.split(":"); user=fix[0]; perm=fix[1]
-            if args=="set ": extra(7,file,directory,"/E /P "+user+":N")
-            for i in perm:
-                if not (i=="" or i=="n"):
-                    extra(7,file,directory,"/E /G "+user+":"+i)
+        arg=parse_syntax(arg1,directory,["in",None])
+        for x in arg:
+            print(x)
+            file = glob(x, recursive=False)
+            if not len(file) == 0:
+                for x in file: open(x, "w")
+            else: print(color("\n   It doesn't exist\n", "R"))
+            
+    except SyntaxError: print(color("\n   Syntax Error\n","R"))
     except: print(color("\n   Error\n","R"))
 
-def chown(arg1, directory):
-    #chmown user1 for file
+  
+def newfile(arg1,directory):
+    from os.path import exists
+    
     try:
-        from other import isadmin
-        if isadmin():
-            file=arg1[arg1.find(" for ")+5:]
-            user=arg1[:arg1.find(" for ")]
-            extra(5,file,directory,"/setowner "+user)
-        else: print(color("\n   You must be admin to do that\n","R"))
+        file=parse_syntax(arg1,directory,["in",None])
+        for x in file:
+            if not exists(x):
+                if x.endswith(chr(92)):
+                    try: cmd('mkdir "'+x[:-1]+'" 2>nul >nul')
+                    except: raise PermissionError
+                else: fic=open(x, "w"); fic.close()
+            else: print("\n  "+color(file,"G")+color(" already exists\n","R"))
+            
+    except SyntaxError: print(color("\n   Syntax Error\n","R"))
+    except PermissionError: print(color("\n   Permission denied\n", "R"))
     except: print(color("\n   Error\n","R"))
+
 
 def files(arg,arg1,directory):
     if arg=="new":
-        if not arg1=="": extra(1,arg1,directory)
+        if not arg1=="": newfile(arg1,directory)
         else: print(color("\n   Error\n","R"))
     elif arg=="no": delete(arg1, directory)
     elif arg=="when": when(arg1, directory)
     elif arg=="edit": edit_file(arg1, directory)
     elif arg=="write": write_to_file(arg1, directory)
-    elif arg=="flush": extra(3,arg1,directory)
+    elif arg=="flush": flush(arg1,directory)
     elif arg=="chmod": chmod(arg1, directory)           
     elif arg=="chown": chown(arg1, directory)     
     elif arg=="lsacl": lsacl(arg1, directory)

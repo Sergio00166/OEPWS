@@ -9,7 +9,7 @@ from os.path import isdir
 def copy(arg1,directory):
     try:
         print("")
-        fich,dest=parse_syntax(arg1, directory)
+        fich, dest = parse_syntax(arg1, directory, ["from","to"])
         for y in dest:
             y=y.replace(chr(92),chr(92)+chr(92))
             for x in fich:
@@ -25,7 +25,7 @@ def copy(arg1,directory):
 def move(arg1,directory):
     try:
         print("")
-        fich,dest=parse_syntax(arg1, directory)
+        fich, dest = parse_syntax(arg1, directory, ["from","to"])
         if len(dest)>1: raise ValueError
         dest=dest[0]
         for x in fich:
@@ -41,7 +41,7 @@ def move(arg1,directory):
 
 def rename(arg1,directory):
     try:
-        fich,dest=parse_syntax(arg1, directory)
+        fich, dest = parse_syntax(arg1, directory, ["from","to"])
         for x in range(0,len(fich)):
             exp='move "'+fich[x]+'" "'+dest[x]+'"'
             exp=str(exp).replace(chr(92)+chr(92),chr(92))
@@ -55,3 +55,5 @@ def cmr(arg,arg1,directory):
     if arg=="copy": copy(arg1,directory)
     elif arg=="move": move(arg1,directory)
     elif arg=="rename": rename(arg1,directory)
+
+    
