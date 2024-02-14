@@ -1,41 +1,72 @@
 # Code by Sergio1260
 
-from os import getcwd
 from os.path import join, isabs
 
 
-def parse_syntax(code, directory):
+def parse_basic_syntax(code, directory, mode="in"):
+
+    sep = '" ' + mode + ' "'
+    if sep in code:
+        code = code.split(sep)
+        args = code[0][1:]
+        file = code[1][:-1]
+        file = file.split('" "')
+    else:
+        args = code[1:-1]
+        file = [directory]
+    args = args.split('" "')
+    
+    return args, file
+
+
+def parse_syntax(code, directory, mode=["from", "to"]):
+
+    from_str = '" ' + mode[0] + ' "'
+    dest_str = mode[1]
+    if not dest_str == None:
+        dest_str = '" ' + dest_str + ' "'
+
     try:
-        
-        if '" from "' in code:
-            code=code.split('" from "')
-            arg=code[0]
-            code=code[1].split('" to "')
-            from_arg=code[0]
+        is_from = from_str in code
+        if is_from:
+            code = code.split(from_str)
+            arg = code[0]
+            if not dest_str == None:
+                code = code[1].split(dest_str)
+                from_arg = code[0]
+                to = code[1]
+            else: from_arg = code[1][:-1]
             if not isabs(from_arg):
-                from_arg=join(directory, from_arg)
-            to=code[1]
-            
+                from_arg = join(directory, from_arg)
+
         else:
-            code=code.split('" to "')
-            arg=code[0]
-            from_arg=directory
-            to=code[1]
-            
-        arg=arg.split('" "')
-        to=to.split('" "')
-        arg[0]=arg[0][1:]
-        to[-1]=to[-1][:-1]
-        out=[]; out1=[]
-        
+            from_arg = directory
+            if not dest_str == None:
+                code = code.split(dest_str)
+                arg = code[0]
+                to = code[1]
+            else: arg = code
+
+        arg = arg.split('" "')
+        arg[0] = arg[0][1:]
+        out = []
+
+        if dest_str == None and not is_from:
+            arg[-1] = arg[-1][:-1]
+
         for x in arg:
             if isabs(x): out.append(x)
             else: out.append(join(from_arg, x))
 
-        for x in to:
-            if isabs(x): out1.append(x)
-            else: out1.append(join(directory, x))
-        
-        return out, out1
-    
+        if not dest_str == None:
+            to = to.split('" "')
+            to[-1] = to[-1][:-1]
+            out1 = []
+            for x in to:
+                if isabs(x): out1.append(x)
+                else: out1.append(join(directory, x))
+            return out, out1
+
+        else: return out
+
     except: raise SyntaxError
