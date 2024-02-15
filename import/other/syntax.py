@@ -2,24 +2,13 @@
 
 from os.path import join, isabs
 
-
-def parse_basic_syntax(code, directory, mode="in"):
-
-    sep = '" ' + mode + ' "'
-    if sep in code:
-        code = code.split(sep)
-        args = code[0][1:]
-        file = code[1][:-1]
-        file = file.split('" "')
-    else:
-        args = code[1:-1]
-        file = [directory]
-    args = args.split('" "')
-    
-    return args, file
-
-
 def parse_syntax(code, directory, mode=["from", "to"]):
+
+    # Example
+    # If second mode is None
+    # read "file" from "path"
+    # If second mode is "to"
+    # copy "file" from "path" to "destination"
 
     from_str = '" ' + mode[0] + ' "'
     dest_str = mode[1]
@@ -70,3 +59,4 @@ def parse_syntax(code, directory, mode=["from", "to"]):
         else: return out
 
     except: raise SyntaxError
+
