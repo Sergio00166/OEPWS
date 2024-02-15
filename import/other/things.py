@@ -78,15 +78,9 @@ def things(arg, arg1, directory):
     elif arg=="dskinfo":
         from sizes import dskinfo
         dskinfo(arg1, directory)
-    elif arg=="copy":
-        from copyp import main
-        main(arg1,directory)
-    elif arg=="move":
-        from move import main
-        main(arg1,directory)
-    elif arg=="rename":
-        from rename import main
-        main(arg1,directory)
+    elif arg in ["copy","move","rename"]:
+        from cmr import cmr
+        cmr(arg,arg1,directory)
     elif arg=="printf": print(arg1)
     elif arg=="depend":
         from os import system as cmd
