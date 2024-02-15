@@ -10,6 +10,7 @@ from sys import setrecursionlimit
 from other import fixfiles as fixfl
 from time import sleep as delay
 from other import fixcrdir
+from syntax import parse_syntax
 
 setrecursionlimit(10**6) # increase the recursion limit
 
@@ -52,29 +53,20 @@ def readwk(x, mode, direct):
     else: return ""
 
 def main(arg1, directory, args):
-    arg1=arg1.lstrip().rstrip()
-    arg1=arg1.replace("'from'","\n")
-    if "from " in arg1:
-        direct=arg1[arg1.find("from ")+5:]
-        if not ":\\" in direct: direct=directory+direct
-        if not direct[len(direct)-1]==chr(92):
-            direct+=chr(92)
-        arg1=arg1[:arg1.find("from ")]
-    else: direct=directory
-    fix=arg1.replace("\n","from").rstrip().split("::")
-    for arg1 in fix:
-        if not ":\\" in arg1: arg1=direct+arg1
-        lista=fixfiles(arg1)
-        if not len(lista)==0:
-            if args[1]: print("")
-            if len(lista)>1:
-                pool=Pool(processes=cpu_count())
-                worker=partial(readwk, mode=args, direct=directory)
-                exp=pool.map_async(worker,lista)
-                for x in exp.get(): print(x, end="")
-                print("")
-            else: print(readwk(lista[0],args, directory))
-        else: print(color("\n   It doesn't exist\n","R"))
+    out = parse_syntax(arg1, directory, ["from",None])
+    lista = []
+    for x in out: lista+=glob(x,recursive=False)
+    
+    if not len(lista)==0:
+        if args[1]: print("")
+        if len(lista)>1:
+            pool=Pool(processes=cpu_count())
+            worker=partial(readwk, mode=args, direct=directory)
+            exp=pool.map_async(worker,lista)
+            for x in exp.get(): print(x, end="")
+            print("")
+        else: print(readwk(lista[0],args, directory))
+    else: print(color("\n   It doesn't exist\n","R"))
 
 def readfile(arg,arg1,directory):
     args=[False,False,False]

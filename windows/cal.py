@@ -39,11 +39,14 @@ def format_year(arg):
     print(calendar_str)
 
 def calendar(arg1):
-    current_year = date.today().year
-    current_month = date.today().month
+        current_year = date.today().year
+        current_month = date.today().month
 
-    try:
-        if "year" in arg1 and "month" in arg1:
+    #try:
+        if "month" in arg1:
+            
+        
+        elif "year" in arg1 and "month" in arg1:
             if arg1.find("year") <= arg1.find("month"):
                 year = arg1[arg1.find("year") + 5:arg1.find("month") - 1]
                 mes = arg1[arg1.find("month") + 6:]
@@ -71,5 +74,5 @@ def calendar(arg1):
 
         else: print(color("\n   Bad syntax\n", "R"))
 
-    except: print(color("\n   Bad syntax\n", "R"))
+    #except: print(color("\n   Bad syntax\n", "R"))
 

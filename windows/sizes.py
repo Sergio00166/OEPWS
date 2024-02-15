@@ -4,6 +4,7 @@ from os import path, scandir
 from colors import color
 from glob import glob
 from other import readable, fixcrdir
+from syntax import parse_syntax
 
 def get_directory_size(directory):
     total = 0
@@ -44,31 +45,19 @@ def dirsize(arg1,directory):
 def size(arg1,directory):
     from multiprocessing import Pool, cpu_count
     from functools import partial
-    from other import fixfiles
     try:
-        arg1=arg1.replace("\\\\","\\")
         print("")
-        arg1=arg1.replace("'in'","\f")
-        if " in " in arg1:
-            z=arg1.find(" in ")
-            dirt=arg1[z+4:]
-            file=arg1[:z]
-            if not dirt[len(dirt)-1:]==chr(92): dirt+=chr(92)
-        else: file=arg1
-        file=file.replace("\f","in")
-        files=file.split("::")
+        files = parse_syntax(arg1,directory,["in",None])
+        files = [content for file in files for content in glob(file, recursive=False)]  
+        worker=partial(sizwk, directory=directory)
         pool=Pool(processes=cpu_count())
-        for x in files:
-            if " in " in arg1: file=dirt+x
-            elif ":\\" in x: file=x
-            else: file=directory+x
-            worker=partial(sizwk, directory=directory)
-            exp=pool.map_async(worker,glob(file, recursive=False))
-            out=exp.get()
-            if not len(out)==0:
-                for i in out:
-                    print(i.replace(directory,""))
-            else: print(color("   It doesn't exist","R")+"\n")
+        exp=pool.map_async(worker,files)
+        out=exp.get()
+        if not len(out)==0:
+            for i in out:
+                print(i.replace(directory,""))
+        else: print(color("   It doesn't exist","R")+"\n")
+    except SyntaxError: print(color("   Syntax Error","R"))
     except: print(color("   Error\n","R"))
 
 def dskinfo(arg1, directory):

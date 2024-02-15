@@ -5,13 +5,22 @@ from colors import color
 from multiprocessing import cpu_count, Pool
 from itertools import chain
 from functools import partial
-from other import fixaddr
 from sys import setrecursionlimit
-from os.path import isdir
+from os.path import isdir, isabs
 import re
-from other import fixcrdir
 
 setrecursionlimit(10**6) # increase the recursion limit
+
+def parse_syntax(code, directory, mode="in"):
+    sep='" '+mode+' "'
+    try:
+        if sep in code:
+            code=code.split(sep);args=code[0][1:]
+            file=code[1][:-1].split('" "')
+        else: args=code[1:-1]; file=[directory]
+        args=args.split('" "')
+        return args, file
+    except: raise SyntaxError
 
 def fileonly(arg):
     arg=arg.split(chr(92))
@@ -36,29 +45,19 @@ def main(arg,arg1,directory):
         print(""); 
         if arg=="locatenr": recurse=False
         else: recurse=True
-        arg1=arg1.replace("'in'","\n")
-        if "in " in arg1:
-            ins=arg1.find(" in "); buff=arg1[ins+4:]
-            buff2=str(arg1[:ins]).split("::")
-            if not buff[len(buff)-1]==chr(92): buff+=chr(92)
-        else: buff2=str(arg1).split("::")
+
+        buff2,buff = parse_basic_syntax(arg1, directory, "in")
+        buff = buff[0]
+        if not isabs(buff): buff=directory+buff
+        if not buff.endswith(chr(92)): buff+=chr(92)
+        
         for x in buff2:
             if x.endswith(chr(92)):
                 x=x[:len(x)-1]
                 onlydir=True
             else: onlydir=False
             pattern=re.compile(x)
-            if "in " in arg1:
-                if not ":"+chr(92) in buff: buff=directory+buff
-                if not buff[len(buff)-1:]==chr(92): buff+=chr(92)
-            elif ":\\" in x:
-                buff=""; fix=x.split(chr(92))
-                fix.pop(); x=fix[len(fix)-1]; fix.pop()
-                for i in fix: buff+=i+chr(92)
-            else: buff=directory
-            buff=fixaddr(buff)
             if not buff==None:
-                x=x.replace("\n","in")
                 if recurse==True:
                     prew=glob(buff+"**"+chr(92), recursive=False)
                     pool=Pool(processes=cpu_count()-1); tree=[buff]
@@ -80,6 +79,7 @@ def main(arg,arg1,directory):
                 if recurse: filepath=[list(chain(*filepath))]
                 yellow=color("","nrY"); reset=color()
                 if not len(filepath[0])==0:
+                    if onlydir: x+=chr(92)
                     print("┌─> "+color(x,"M")+color(" is located ","G")+"("+color("inside ","G")
                           +color(buff,"B")+")"+color(" on: ","G")+"\n│")
                     for z in filepath:

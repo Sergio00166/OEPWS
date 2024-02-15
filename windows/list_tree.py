@@ -4,6 +4,7 @@ from glob import glob
 from colors import color
 from pathlib import Path
 from other import fixaddr, fixcrdir
+from syntax import parse_syntax
 
 def worker(path, level=0):
     global blue, green, reset
@@ -27,15 +28,9 @@ def tree(arg1, directory):
     blue=color("","Bnr")
     green=color("","Gnr")
     reset=color()
-    if arg1=="": path=directory
-    elif ":"+chr(92) in arg1: path=str(arg1)
-    else: path=directory+chr(92)+str(arg1)
-    path=fixaddr(path)
-    if ":"+chr(92) in arg1: dirt=path
-    else: dirt=path[:len(path)-1]
+    path=parse_syntax(arg1,directory,["in",None])[0]
+    dirt=path.split(chr(92))[-1]
     if not path==None:
-        dirt=dirt.replace(directory,"")
-        if dirt=="": dirt=fixcrdir(directory)
         if dirt.endswith(chr(92)): dirt=dirt[:len(dirt)-1]
         print("\n   "+blue+dirt+reset)
         worker(path); print("")
@@ -58,14 +53,10 @@ def ls(arg1, directory):
     from os import get_terminal_size
     green=color("","Gnr"); blue=color("","Bnr")
     magenta=color("","Mnr"); red=color("","Rnr")
-    reset=color(); arg1=arg1.replace("\\\\","\\")
-    if arg1=="": dirt=directory
-    elif arg1=="\\": dirt="\\"
-    elif ":\\" in arg1: dirt=arg1
-    elif not chr(92) in arg1: dirt=directory+arg1+chr(92)
-    else: dirt=directory+arg1
-    if not dirt[len(dirt)-1:]==chr(92): dirt+=chr(92)
-    dirt=dirt.split("::")
+    reset=color()
+
+    dirt=parse_syntax(arg1,directory,["from",None])
+
     for y in dirt:
         buff=glob(y, recursive=False)
         if not len(buff)==0:
