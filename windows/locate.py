@@ -11,7 +11,7 @@ import re
 
 setrecursionlimit(10**6) # increase the recursion limit
 
-def parse_syntax(code, directory, mode="in"):
+def parse_basic_syntax(code, directory, mode="in"):
     sep='" '+mode+' "'
     try:
         if sep in code:
