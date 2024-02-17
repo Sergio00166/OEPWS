@@ -10,10 +10,10 @@ def parse_syntax(code, directory, mode=["from", "to"]):
     # If second mode is "to"
     # copy "file" from "path" to "destination"
 
-    from_str = '" ' + mode[0] + ' "'
+    from_str = '" '+mode[0]+' "'
     dest_str = mode[1]
     if not dest_str == None:
-        dest_str = '" ' + dest_str + ' "'
+        dest_str = '" '+dest_str+' "'
 
     try:
         is_from = from_str in code
@@ -59,4 +59,3 @@ def parse_syntax(code, directory, mode=["from", "to"]):
         else: return out
 
     except: raise SyntaxError
-

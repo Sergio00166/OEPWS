@@ -11,10 +11,11 @@ def things(arg, arg1, directory):
     elif arg=="sys":
         from sysinfo import sysinfo
         sysinfo()
-    elif arg=="flmgr":
+    elif arg=="www":
         from os import system as cmd
         from sys import path
-        cmd(path[0]+"\\import\\extras\\lf.exe "+directory)
+        cmd(path[0]+"\\import\\extras\\elinks\\elinks.exe "+arg1)
+        print("r\033c")
     elif "sort(" in arg:
         from sort import sort
         sort(arg,arg1,directory)
