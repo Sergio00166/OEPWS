@@ -71,6 +71,7 @@ def main(args):
         while True: cli(False)
 
 if __name__ == "__main__":
+    cmd("title OEPWS shell")
     setrecursionlimit(10**6)
     for x in path:
         if "site-packages" in x: path.remove(x)
