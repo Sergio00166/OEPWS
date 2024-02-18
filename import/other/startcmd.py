@@ -4,7 +4,7 @@ from multiprocessing import Pool
 from glob import glob
 from itertools import chain
 from functools import partial
-from os import system as cmd
+from subprocess import Popen
 from sys import path
 
 from multiprocessing import cpu_count
@@ -42,15 +42,14 @@ def startcmd(val,arg2, directory):
     out=list(chain(*ext.get()))
     if not len(out)==0:
         out=out[0].replace("\\\\","\\")
-        if arg2=="": text=('start /D "'+directory+'" /WAIT /B " " "'+out+'"')
-        else: text=('start /D "'+directory+'" /WAIT /B " " "'+out+'" '+arg2)
-        if cmd(text)==1: return True
+        out=f'cd "{directory}" ; &"{out}"'
+        if not arg2=="": out+=' "{arg2}"'
+        com=["powershell.exe", "-Command", out]
+        process = Popen(com); process.wait()
+        if process.returncode==1: return True
     else: return True
 
 def main(arg1, arg2, directory):
-    directory=fixaddr(directory)
-    fix=arg1+" "+arg2
-    com=('powershell Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy Bypass -Force; ')
-    if not chr(92) in arg1: com+=(path[0]+'\\import\\powershell\\trycmd.ps1 "'+directory+'" "'+"'"+fix+"'"+'"')
-    else: com+=(path[0]+'\\import\\powershell\\trycmd.ps1 \\"'+directory+'\\" \\"'+fix+'\\"')
-    if cmd(com)==1: return startcmd(arg1,arg2,directory)
+    com=["powershell.exe", "-File", path[0]+'\\import\\powershell\\trycmd.ps1']
+    com+=[fixaddr(directory), arg1+" "+arg2]; process = Popen(com); process.wait()
+    if process.returncode==1: return startcmd(arg1,arg2,directory)
