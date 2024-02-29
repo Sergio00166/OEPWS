@@ -45,6 +45,9 @@ def readwk(x, mode, direct):
             if not len(fic)==0:
                 if mode[0]: return "\n# "+banner+"\n\n"+readwork1(fic)
                 elif mode[1]: return readwork1(fic)
+                elif mode[2]:
+                    outb="\n┌─ "+banner+"\n└─ "+color("lines: ","Y")
+                    return outb+color(str(len(readwork1(fic))),"B")+"\n"
                 else: return "\n┌── "+banner+readwork2(fic)
             else:
                 if mode[1]: return ""
@@ -72,5 +75,6 @@ def readfile(arg,arg1,directory):
     args=[False,False,False]
     if arg=="readc": args[1]=True
     if arg=="readn": args[0]=True
+    if arg=="readcl": args[2]=True
     main(arg1, directory, args)
        

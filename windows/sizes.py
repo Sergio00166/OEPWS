@@ -23,8 +23,8 @@ def sizwk(i,directory):
     else:
         file_size = path.getsize(i)
         i=i.replace(directory,"")
-        ext=(color('   File ',"G")+color(i,"B")+"\n")
-        ext+=(color('   Size: ',"Y")+color(readable(file_size),"B")+"\n")
+        ext=("┌─ "+color('File ',"G")+color(i,"B")+"\n└─ ")
+        ext+=(color('Size: ',"Y")+color(readable(file_size),"B")+"\n")
         return ext
 
 def dirsize(arg1,directory):
@@ -38,8 +38,8 @@ def dirsize(arg1,directory):
         if not x.endswith(chr(92)): x+=chr(92)
         x=x.replace(directory,"")
         if x=="": x=fixcrdir(directory)
-        ext=(color("   Directory: ","G")+color(x,"B")+"\n")
-        ext+=(color("   Dir size: ","Y")+color(size,"B")+"\n")
+        ext=("┌─ "+color("Directory: ","G")+color(x,"B")+"\n└─ ")
+        ext+=(color("Dir size: ","Y")+color(size,"B")+"\n")
     return ext
 
 def size(arg1,directory):

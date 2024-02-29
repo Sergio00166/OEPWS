@@ -28,13 +28,12 @@ def sort(arg,arg1,directory):
             arg1=arg1[:len(arg1)-1]
             onlydir=True
         else: onlydir=False
-        pattern=re.compile(arg1); files=[]
-        all_files=glob(dirt+"\\*",recursive=False, include_hidden=True)
+        files=[]
+        all_files=glob(dirt+chr(92)+arg1,recursive=False, include_hidden=True)
         for x in all_files:
-            if pattern.search(x):
-                if onlydir:
-                    if isdir(x): files.append(x)
-                else: files.append(x)
+            if onlydir:
+                if isdir(x): files.append(x)
+            else: files.append(x)
                 
         if not len(files)==0:
             
