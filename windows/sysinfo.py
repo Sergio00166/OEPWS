@@ -18,22 +18,20 @@ def async_worker():
     disk=psutil.disk_usage("C:\\")
     size=color(readable(disk.total),"B")
     free=color(readable(disk.free),"B")
-    ram_info="RAM:    "+reset+ram+"  "+green+"    Swap:  "+reset+vram
+    ram_info="RAM:   "+reset+ram+"  "+green+"   Swap:  "+reset+vram
     storage=color("Total ","Y")+reset+size+" "+color("   Free ","Y")+reset+free+" "
-    line.append(blue+"                                          "+green+"Host:   "+reset)
-    line.append(blue+"        ▄▄▄▄▄▄▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄▄▄▄▄         "+green+"OS:     "+reset)
-    line.append(blue+"        ████████████ ████████████         "+green+"Ver:    "+reset);line.append(green+"    Uptime:  "+reset)
-    line.append(blue+"        ████████████ ████████████         "+green+"Owner:  "+reset)
-    line.append(blue+"        ████████████ ████████████         "+green+"WkGrp:  "+reset)
-    line.append(blue+"        ████████████ ████████████         "+green+"Mfr:    "+reset)
-    line.append(blue+"        ▄▄▄▄▄▄▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄▄▄▄▄         "+green+"Model:  "+reset)
-    line.append(blue+"        ████████████ ████████████         "+green+"CPU:    "+reset)
+    line.append(blue+"        ▄▄▄▄▄▄▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄▄▄▄▄         "+green+"OS:    "+reset)
+    line.append(blue+"        ████████████ ████████████         "+green+"Ver:   "+reset);line.append(green+"     Uptime:  "+reset)
+    line.append(blue+"        ████████████ ████████████         "+green+"Host:  "+reset)
+    line.append(blue+"        ████████████ ████████████         "+green+"Mfr:   "+reset)
+    line.append(blue+"        ████████████ ████████████         "+green+"Model: "+reset)
+    line.append(blue+"        ▄▄▄▄▄▄▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄▄▄▄▄         "+green+"CPU:   "+reset)
     line.append(blue+"        ████████████ ████████████         "+green+ram_info)
-    line.append(blue+"        ████████████ ████████████         "+green+"Disk C: "+reset+storage)
-    line.append(blue+"        ████████████ ████████████         "+green+"BIOS:   "+reset)
-    line.append(blue+"                                          "+green+"TZ:     "+reset)
-    line.append(green+"   Lang: "+reset)
-    line.append("                                          "+green+"GPUs:   "+reset)
+    line.append(blue+"        ████████████ ████████████         "+green+"C:\\    "+reset+storage)
+    line.append(blue+"        ████████████ ████████████         "+green+"BIOS:  "+reset)
+    line.append(blue+"        ████████████ ████████████         "+green+"TZ:    "+reset); line.append(green+"   Lang: "+reset)
+    line.append(blue+"           MICROSOFT WINDOWS™             "+green+"GPUs:  "+reset)
+
     
 def sysinfo():
     global line
@@ -42,14 +40,13 @@ def sysinfo():
     raw=str(check_output("powershell -noprofile -executionpolicy bypass -file "+file), encoding="cp857")
     raw=raw[:len(raw)-1]
     raw=raw.split("\r\n")
-    raw.pop(8); raw.pop(9)
-    tz=raw[11]; tz=tz[:tz.find(")")+1]
+    raw.pop(6); raw.pop(7)
+    tz=raw[9]; tz=tz[:tz.find(")")+1]
     thr.join()
-    out="\n"+line[0]+raw[0]+"\n"+line[1]+raw[1]+"\n"+line[2]+raw[2]+line[3]+raw[3]+"\n"
-    out+=line[4]+raw[4]+"\n"+line[5]+raw[5]+"\n"+line[6]+raw[6]+"\n"+line[7]+raw[7]+"\n"
-    out+=line[8]+raw[8]+"\n"+line[9]+"\n"+line[10]+"\n"+line[11]+raw[9]+" ("+raw[10]+")\n"
-    out+=line[12]+tz+line[13]+raw[12]+"\n"+line[14]+raw[13]
-    print(out)
-    if not len(raw)<14:
-        for x in range(14,len(raw)): print(" "*50+str(raw[x]))
-    print("")
+    out="\n"+line[0]+raw[1]+"\n"+line[1]+raw[2]+line[2]+raw[3]+"\n"+line[3]+raw[0]
+    out+="\n"+line[4]+raw[4]+"\n"+line[5]+raw[5]+"\n"+line[6]+raw[6]+"\n"+line[7]
+    out+="\n"+line[8]+"\n"+line[9]+raw[8]+"  /|"+raw[7]+"|\\\n"+line[10]+tz
+    out+=line[11]+raw[10]+"\n"+line[12]+raw[11]
+    if not len(raw)<12:
+        for x in range(12,len(raw)): out+=" "*50+str(raw[x])
+    print(out+"\n\n")
