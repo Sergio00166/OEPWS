@@ -5,9 +5,6 @@ def things(arg, arg1, directory):
     if arg=="ls":
         from list_tree import ls
         ls(arg1, directory)
-    elif arg=="natives":
-        from os import system as cmd
-        cmd("cmd /C "+arg1)
     elif arg=="sys":
         from sysinfo import sysinfo
         sysinfo()
@@ -89,6 +86,11 @@ def things(arg, arg1, directory):
         cmd("powershell Set-ExecutionPolicy -Scope CurrentUser"+
             "-ExecutionPolicy Bypass -Force; "+path[0]+
             '\\import\\powershell\\depend.ps1')
+    elif arg=="pbte":
+        from os import system as cmd
+        from sys import path
+        cmd(path[0]+"\\import\\extras\\pBTE\\pBTE.py "+arg1)
+        
     else: status=False
     
     return status
