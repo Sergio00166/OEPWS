@@ -143,7 +143,8 @@ def open_file(args):
         elif key==keys["return"]: pass
         
         elif key==keys["ctrl+n"]:
-            arr=[""]; text=""; offset=0
+            arr=[""]; text=""
+            pointer=1; offset=0; line=1
             filename=getcwd()+sep+"NewFile"
             exit(); break
         
