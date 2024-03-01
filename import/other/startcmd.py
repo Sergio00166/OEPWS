@@ -43,5 +43,6 @@ def startcmd(val,arg2, directory):
 def main(arg1, arg2, directory):
     com=["powershell.exe","-Command"]
     com+=[path[0]+'\\import\\powershell\\trycmd.ps1']
-    com+=[directory, arg1+" "+arg2]; process = Popen(com); process.wait()
+    com+=[directory,'"'+arg1+" "+arg2+'"']
+    process = Popen(com); process.wait()
     if process.returncode==1: return startcmd(arg1,arg2,directory)

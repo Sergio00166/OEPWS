@@ -5,7 +5,8 @@ if not __name__=="__main__":
 
     from os import getcwd, sep
     from sys import argv, path
-    from os.path import exists, isabs
+    from os.path import isabs, isdir
+    from glob import glob
     from functions import get_size
     from upd_scr import update_scr
     from keys_func import keys_func
@@ -34,23 +35,26 @@ if not __name__=="__main__":
                 char = sys.stdin.read(1).encode('utf-8')
             finally: termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
             return char
+
     
     #Check if we have arguments via cli, if not create an empty one
     if not len(argv)==1:
-        filename=" ".join(argv[1:])
-
-        #If file exist open it if not create an empty list
-        if exists(filename): 
-            tmp=open(filename, "r", encoding="UTF-8").readlines(); arr=[]
+        out=[glob(x,recursive=False) for x in argv[1:]]
+        out=[i for x in out for i in x if not isdir(i)]
+        files = []
+        for x in out:
+            try:
+                for i in open(x, "r", encoding="UTF-8").readlines():
+                    if '\x00' in i: raise ValueError
+                files.append(x)
+            except: pass
+        if len(files)>0: 
+            tmp=open(files[0], "r", encoding="UTF-8").readlines(); arr=[]
             for x in tmp: arr.append(x.replace("\r","").replace("\n","").replace("\f",""))
-            arr.append("")
-        else: arr=[""]
-        
-    else: #Create an empty new file
-        filename="NewFile"; arr=[""] 
+            arr.append(""); filename=files[0]; files=files[1:]
+        else: filename=getcwd()+sep+"NewFile"; arr=[""]; files=[]    
+    else: filename=getcwd()+sep+"NewFile"; arr=[""]; files=[] 
 
-    if not isabs(filename): #Fix file path
-        filename=getcwd()+sep+filename 
 
     # Creates a list of banned chars code
     values=["0","1","2","3","4","5","6","7","8","9","a","b","c","d","e","f"]

@@ -61,7 +61,14 @@ while True:
         # Set time after reading key from keyboard and stopping the update Thread
         start=time(); key=getch(); end=time(); run_thread=False
         # If key is Ctrl + Q (quit) exit the program and clear the screen
-        if key==keys["ctrl+q"]:  kill=True; update_thr.join(); print("\033c",end=""); break    
+        if key==keys["ctrl+q"]:
+            if len(files)>0:
+                tmp=open(files[0], "r", encoding="UTF-8").readlines(); arr=[]
+                for x in tmp: arr.append(x.replace("\r","").replace("\n","").replace("\f",""))
+                arr.append(""); filename=files[0]; files=files[1:]; text=arr[0]
+                pointer=1; line=1; offset=0; print("\033c",end="")
+
+            else: kill=True; update_thr.join(); print("\033c",end=""); break    
         else: #Call keys functions (Yeah, its a lot of args and returned values)
             text,pointer,oldptr,line,offset,columns,banoff,arr,rows,\
             max_len,filename,status,status_st,copy_buffer,fixstr,fix,\

@@ -91,12 +91,14 @@ def fix_cursor_pos(text,pointer,columns,black,reset):
     return pointer+1, text
 
 def fixfilename(filename, columns):
-    if len(filename)+31>columns: #If filename overflows
+    if len(filename)+32>columns: #If filename overflows
         flfix=filename.split(sep)
         filename=flfix[len(flfix)-1]
         if len(filename)+31>columns: #If still not fiting
             middle = len(filename) // 2
             filename=filename[:middle-1]+'*'+filename[middle+2:]
+            if len(filename)+31>columns:
+                filename=filename[:columns-32]+"*"
     return filename
 
 def scr_arr2str(arr,line,offset,pointer,black,reset,columns,rows,banoff):
