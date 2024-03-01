@@ -47,7 +47,7 @@ def readwk(x, mode, direct):
                 elif mode[1]: return readwork1(fic)
                 elif mode[2]:
                     outb="\n┌─ "+banner+"\n└─ "+color("lines: ","Y")
-                    return outb+color(str(len(readwork1(fic))),"B")+"\n"
+                    return outb+color(str(len(fic)),"B")+"\n"
                 else: return "\n┌── "+banner+readwork2(fic)
             else:
                 if mode[1]: return ""
