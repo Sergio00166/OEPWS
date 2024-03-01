@@ -9,14 +9,6 @@ from sys import path
 
 from multiprocessing import cpu_count
 
-def fixaddr(arg):
-    fixdrt=""
-    for x in arg.split("\\"):
-        if not x=="":
-            if " " in x: x="'"+x+"'"
-            fixdrt+=x+chr(92)
-    return fixdrt[:len(fixdrt)-1]
-
 def worker(arg, arg2):
     filepath=glob(arg+chr(92)+arg2+".exe", recursive=False)
     if len(filepath)>0: return filepath
@@ -43,13 +35,13 @@ def startcmd(val,arg2, directory):
     if not len(out)==0:
         out=out[0].replace("\\\\","\\")
         out=f'cd "{directory}" ; &"{out}"'
-        if not arg2=="": out+=' "{arg2}"'
+        if not arg2=="": out+=" "+arg2
         com=["powershell.exe", "-Command", out]
         process = Popen(com); process.wait()
-        if process.returncode==1: return True
+        #if process.returncode==1: return True
     else: return True
 
 def main(arg1, arg2, directory):
     com=["powershell.exe", "-File", path[0]+'\\import\\powershell\\trycmd.ps1']
-    com+=[fixaddr(directory), arg1+" "+arg2]; process = Popen(com); process.wait()
+    com+=[directory, arg1+" "+arg2]; process = Popen(com); process.wait()
     if process.returncode==1: return startcmd(arg1,arg2,directory)
