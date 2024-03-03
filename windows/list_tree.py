@@ -63,8 +63,8 @@ def ls(arg1, directory):
             for x in buff:
                 try:
                     if ":"+chr(92) in arg1 or arg1=="": dirt=x
-                    else: dirt=x[:len(x)-1].replace(directory,"")
-                    if not dirt[len(dirt)-1]==chr(92): dirt+=chr(92)
+                    else: dirt=x.replace(directory,"")
+                    if not dirt.endswith(chr(92)): dirt+=chr(92)
                     if dirt==directory: dirt=fixcrdir(directory)+chr(92)
                     else: dirt=dirt.replace(directory,"")
                     x=fixaddr(x, True); exp=""
