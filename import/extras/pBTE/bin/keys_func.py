@@ -41,12 +41,12 @@ def keys_func(key,text,pointer,oldptr,line,offset,columns,banoff,arr,rows,\
             pointer=len(text)+1; oldptr=pointer
             
         elif special_key==keys["repag"]:
-            line, offset, text =\
-            repag(line,offset,banoff,rows,arr,sep)
+            line, offset, text, pointer, oldptr =\
+            repag(line,offset,banoff,rows,arr,sep,pointer,oldptr)
             
         elif special_key==keys["avpag"]:
-            line, offset, text =\
-            avpag(line,offset,banoff,rows,arr,sep)
+            line, offset, text, pointer, oldptr =\
+            avpag(line,offset,banoff,rows,arr,sep,pointer,oldptr)
 
 
     elif key==keys["delete"]:
@@ -65,7 +65,7 @@ def keys_func(key,text,pointer,oldptr,line,offset,columns,banoff,arr,rows,\
         
     elif key==keys["ctrl+x"]:
         copy_buffer, arr, text, line, offset, select =\
-        cut(select,arr,line,offset,banoff,text,status_st,copy_buffer)
+        cut(select,arr,line,offset,banoff,text,status_st,copy_buffer,pointer)
         
     elif key==keys["ctrl+c"]:
         copy_buffer, select =\

@@ -43,10 +43,10 @@ def paste(copy_buffer,arr,line,offset,banoff,pointer,text,status_st):
             p1=arr[:line+offset-banoff]; p2=arr[line+offset-banoff+1:]
             fix1=text[:pointer-1]; fix2=text[+pointer-1:]
             out=fix1+copy_buffer+fix2; arr=p1+[out]+p2; text=out
-            pointer=len(fix1+copy_buffer); status_st=False
+            pointer=len(fix1+copy_buffer)+1; status_st=False
     return pointer,arr,text,status_st,copy_buffer
     
-def cut(select,arr,line,offset,banoff,text,status_st,copy_buffer):
+def cut(select,arr,line,offset,banoff,text,status_st,copy_buffer,pointer):
     if not len(select)==0:
         p1=arr[:sum(select[0])]; p2=arr[sum(select[1]):]
         start=sum(select[0])-1
@@ -55,7 +55,7 @@ def cut(select,arr,line,offset,banoff,text,status_st,copy_buffer):
         if not start==0: copy_buffer=copy_buffer[1:]
         line=select[0][0]+banoff; offset=select[0][1]
         select = []; arr = p1 + p2
-    elif line+offset>len(arr)-1:
+    elif line+offset-banoff==len(arr)-1:
         copy_buffer=text[pointer-1:]
         text=text[:pointer-1]
     else:
@@ -66,21 +66,23 @@ def cut(select,arr,line,offset,banoff,text,status_st,copy_buffer):
 
     return copy_buffer,arr,text,line,offset,select
 
-def repag(line,offset,banoff,rows,arr,sep):
+def repag(line,offset,banoff,rows,arr,sep,pointer,oldptr):
     p1=line+offset-banoff-rows
     if p1<0: p1=0
     line, offset, text =\
     CalcRelLine(p1,arr,offset,line,banoff,rows)
     if not sep==chr(92): getch()
-    return line, offset, text
+    pointer,oldptr = fixlenline(text,pointer,oldptr)
+    return line, offset, text, pointer, oldptr
 
-def avpag(line,offset,banoff,rows,arr,sep):
+def avpag(line,offset,banoff,rows,arr,sep,pointer,oldptr):
     p1=line+offset-banoff+rows
     if p1>=len(arr): p1="-"
     line, offset, text =\
     CalcRelLine(p1,arr,offset,line,banoff,rows)
     if not sep==chr(92): getch()
-    return line, offset, text
+    pointer,oldptr = fixlenline(text,pointer,oldptr)
+    return line, offset, text, pointer, oldptr
 
 def copy(select,arr,line,offset,banoff,pointer):
     if not len(select)==0:
