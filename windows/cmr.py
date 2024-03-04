@@ -39,8 +39,9 @@ def move(arg1,directory):
     except ValueError: print(color("   Too many destinations\n", "R"))
     except: print(color("   Error\n", "R"))
 
-def rename(arg1,directory):
+def rmov(arg1,directory):
     try:
+        print("")
         fich, dest = parse_syntax(arg1, directory, ["from","to"])
         for x in range(0,len(fich)):
             exp='move "'+fich[x]+'" "'+dest[x]+'"'
@@ -54,6 +55,6 @@ def rename(arg1,directory):
 def cmr(arg,arg1,directory):
     if arg=="copy": copy(arg1,directory)
     elif arg=="move": move(arg1,directory)
-    elif arg=="rename": rename(arg1,directory)
+    elif arg=="rmov": rmov(arg1,directory)
 
     

@@ -97,7 +97,7 @@ def things(arg, arg1, directory):
         from sizes import dskinfo
         dskinfo(arg1, directory)
         
-    elif arg in ["copy","move","rename"]:
+    elif arg in ["copy","move","rmov"]:
         from cmr import cmr
         cmr(arg,arg1,directory)
         
@@ -109,7 +109,7 @@ def things(arg, arg1, directory):
         cmd("powershell Set-ExecutionPolicy -Scope CurrentUser"+
             "-ExecutionPolicy Bypass -Force; "+path[0]+
             '\\import\\powershell\\depend.ps1')
-        
+         
     elif arg=="edit":
         from sys import path
         from syntax import parse_syntax
