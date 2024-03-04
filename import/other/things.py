@@ -110,17 +110,17 @@ def things(arg, arg1, directory):
             "-ExecutionPolicy Bypass -Force; "+path[0]+
             '\\import\\powershell\\depend.ps1')
         
-        
     elif arg=="edit":
         from sys import path
         from syntax import parse_syntax
         from colors import color
         from os import system as cmd
         nano=path[0]+"\\import\\extras"+chr(92)+"nano.exe "
-        if len(arg1)==0: arg1 = '"NewFile"'
-        try:
-            files=parse_syntax(arg1,directory,["from",None])
-            cmd("START /B /WAIT "+nano+'"'+'" "'.join(files)+'"')
+        files=parse_syntax(arg1,directory,["from",None])
+        fix=files[0].replace("\\\\","\\")
+        if len(files)==1 and fix==directory:
+            files = [directory+'NewFile']
+        try: cmd("START /B /WAIT "+nano+'"'+'" "'.join(files)+'"')
         except: print(color("\n   Error\n","R"))
         
     else: status=False
