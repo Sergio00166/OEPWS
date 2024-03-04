@@ -140,8 +140,10 @@ prints the hour
 *copy* and *move* <br>
 copy fich from path to path path2
 <br><br>
-*rename* name from path to newname <br>
-renames a file 
+*rmov* name from path to newname <br>
+moves ONE file to ONE destination EACH
+like rmov 1 2 to 1 2
+moves 1 to 1 and 2 to 2
 <br><br>
 *edit* file from path <br>
 edits the specified file with the nano editor
