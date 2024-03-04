@@ -111,22 +111,17 @@ def things(arg, arg1, directory):
             '\\import\\powershell\\depend.ps1')
         
         
-    elif arg=="nano" or arg=="edit":
+    elif arg=="edit":
         from sys import path
         from syntax import parse_syntax
         from colors import color
         from os import system as cmd
-        from glob import glob
-        from os import R_OK, access
-        from os.path import isdir
         nano=path[0]+"\\import\\extras"+chr(92)+"nano.exe "
         if len(arg1)==0: arg1 = '"NewFile"'
         try:
             files=parse_syntax(arg1,directory,["from",None])
-            if arg=="nano": cmd("START /B /WAIT "+nano+'"'+'" "'.join(files)+'"')
-            else: cmd(path[0]+"\\import\\extras\\pBTE\\pBTE.py "+'"'+'" "'.join(files)+'"')
-        except PermissionError: print(color("\n   Syntax Error\n","R"))
-        #except: print(color("\n   Error\n","R"))
+            cmd("START /B /WAIT "+nano+'"'+'" "'.join(files)+'"')
+        except: print(color("\n   Error\n","R"))
         
     else: status=False
     
