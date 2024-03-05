@@ -27,7 +27,6 @@ def flush(arg1,directory):
     try:
         arg=parse_syntax(arg1,directory,["in",None])
         for x in arg:
-            print(x)
             file = glob(x, recursive=False)
             if not len(file) == 0:
                 for x in file: open(x, "w")
