@@ -4,6 +4,7 @@ from glob import glob
 from os.path import getmtime, getctime,getsize, isdir
 from colors import color
 from sizes import get_directory_size as dir_size
+from syntax import parse_syntax
 import re
 
 
@@ -14,23 +15,17 @@ def sort(arg,arg1,directory):
         yellow=color("","Ynr")
         reset=color()
         mode=arg[5:len(arg)-1]
-        arg1=arg1.replace("'in'","\f")
-        if arg1=="": arg1=".*"; dirt=directory
-        elif " in " in arg1:
-            dirt=arg1[arg1.find(" in ")+4:]
-            arg1=arg1[:arg1.find(" in ")]
-            if not ":\\" in dirt: dirt=directory+dirt
-            dirt+=chr(92)
-        elif ":\\" in arg1: dirt=arg1; arg1=".*"
-        else: dirt=directory
-        dirt=dirt.replace("\\\\","\\")
+        if arg1=="": arg1='"*"'
+        arg1 = parse_syntax(arg1,directory,["in",None])[0]
         if arg1.endswith(chr(92)):
             arg1=arg1[:len(arg1)-1]
             onlydir=True
         else: onlydir=False
         files=[]
-        all_files=glob(dirt+chr(92)+arg1,recursive=False, include_hidden=True)
+        dirt=chr(92).join(arg1.split(chr(92))[:-1])+chr(92)
+        all_files=glob(arg1,recursive=False, include_hidden=True)
         for x in all_files:
+            
             if onlydir:
                 if isdir(x): files.append(x)
             else: files.append(x)
