@@ -29,16 +29,15 @@ def fileonly(arg):
 def worker(arg,pattern,onlydir):
     filepath = glob(arg+chr(92)+"*", recursive=False)
     if len(filepath)>0:
-        out=[]
+        out=[]; dirs=[]
         for x in filepath:
+            if isdir(x): dirs.append(x)
             if pattern.search(fileonly(x)):
                 if onlydir:
                     if isdir(x): out.append(x)
                 else: out.append(x)
-        return out
-    else: return []
-
-def lister(arg): return glob(arg+"**"+chr(92), recursive=False)
+        return [dirs,out]
+    else: return [[],[]]
 
 def main(arg,arg1,directory):
     try:
@@ -60,38 +59,32 @@ def main(arg,arg1,directory):
             if not buff==None:
                 if recurse==True:
                     prew=glob(buff+"**"+chr(92), recursive=False)
-                    pool=Pool(processes=cpu_count()-1); tree=[buff]
+                    pool=Pool(processes=cpu_count()-1); filepath=[]
                     while not len(prew)==0:
-                        tree+=prew
-                        ext=pool.map_async(lister,prew)
-                        prew=list(chain(*ext.get()))    
-                    searcher = partial(worker, pattern=pattern,onlydir=onlydir)
-                    ext=pool.map_async(searcher,tree); filepath=[]
-                    filepath=ext.get()
+                        lister = partial(worker, pattern=pattern,onlydir=onlydir)
+                        ext=pool.map_async(lister,prew).get()
+                        prew = list(chain.from_iterable([sublista[0] for sublista in ext]))
+                        filepath += list(chain.from_iterable([sublista[1] for sublista in ext]))     
                 else:
-                    filepath=glob(buff+"*", recursive=False); out=[]
-                    for z in filepath:
+                    filepath=[]
+                    for z in glob(buff+"*", recursive=False):
                         if pattern.search(fileonly(z)):
                             if onlydir:
-                                if isdir(z): out.append(z)
-                            else: out.append(z)
-                    filepath=[out]
-                if recurse: filepath=[list(chain(*filepath))]
+                                if isdir(z): filepath.append(z)
+                            else: filepath.append(z)
+                            
                 yellow=color("","nrY"); reset=color()
-                if not len(filepath[0])==0:
+                if not len(filepath)==0:
                     if onlydir: x+=chr(92)
-                    print("┌─> "+color(x,"M")+color(" is located ","G")+"("+color("inside ","G")
-                          +color(buff,"B")+")"+color(" on: ","G")+"\n│")
-                    for z in filepath:
-                        for i in z:
-                            i=i.replace(buff,"")
-                            i=i.replace("\\\\","\\").replace("\\\\","\\")
-                            print("├  "+yellow+i+reset)
-                        print("└─")      
+                    print("┌─> "+color(x,"M")+color(" is located on:","G")+"\n│")
+                    for i in filepath:
+                        i=i.replace("\\\\","\\").replace("\\\\","\\")
+                        print("├  "+yellow+i+reset)
+                    print("└─")      
                 else:
                     if not recurse: ext=" in"
                     else: ext=" inside "
-                    print("  "+color(x,"M")+color(" does not exist"+ext,"R")+" "+color(buff,"B"))
+                    print("  "+color(x,"M")+color(" does not exist"+ext,"R")+color(buff,"B"))
             print("")
     
     except: print(color("   Error\n","R"))
