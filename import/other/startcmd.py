@@ -41,8 +41,11 @@ def startcmd(val,arg2, directory):
     else: return True
 
 def main(arg1, arg2, directory):
-    com=["powershell.exe","-Command"]
+    com=["powershell.exe","Set-ExecutionPolicy -Scope "
+         +"CurrentUser -ExecutionPolicy Bypass -Force;"]
     com+=[path[0]+'\\import\\powershell\\trycmd.ps1']
-    com+=[directory,'"'+arg1+" "+arg2+'"']
-    process = Popen(com); process.wait()
-    if process.returncode==1: return startcmd(arg1,arg2,directory)
+    com+=[directory+' "'+arg1+" "+arg2+'"']
+    try:
+        process = Popen(com); process.wait()
+        if process.returncode==1: return startcmd(arg1,arg2,directory)
+    except KeyboardInterrupt: pass
