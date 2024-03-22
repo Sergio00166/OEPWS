@@ -47,7 +47,7 @@ def pwdgen(arg1):
         a=""
         for x in range(0,int(arg1)):
             a += chr(rand(32,126))
-        print(color("\n  Genarated Password:","G"), a, "\n")
+        print("\n"+a+"\n")
     except: print(color("\n   Error\n","R"))
 
 def weather(arg1):
