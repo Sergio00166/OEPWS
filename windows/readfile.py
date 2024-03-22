@@ -14,10 +14,17 @@ from syntax import parse_syntax
 
 setrecursionlimit(10**6) # increase the recursion limit
 
+green=color(color="Gnr")
+blue=color(color="Bnr")
+yellow=color(color="Ynr")
+red=color(color="Rnr")
+magenta=color(color="Mnr")
+reset=color()
+
 def fixfiles(arg): return glob(arg, recursive=False)
 
 def readwork1(fic):
-    ext=""; text=color("","Ynr"); reset=color()
+    ext=""; text=color("","Ynr")
     for x in fic:
         ext+=text+x+reset
         if not x[len(x)-1:]=="\n":
@@ -25,7 +32,7 @@ def readwork1(fic):
     return ext
          
 def readwork2(fic):
-    cont=1; ext="\n│\n"; text=color("","Ynr"); reset=color()
+    cont=1; ext="\n│\n"; text=color("","Ynr")
     for x in fic:
         if len(str(cont))==1: fix="├──"
         if len(str(cont))==2: fix="├─"
@@ -41,18 +48,18 @@ def readwk(x, mode, direct):
             try: fic=open(x, "r", encoding="UTF-8").readlines()
             except: fic=open(x, "r", encoding="mbcs").readlines()
             file=x.replace(direct,"")
-            banner=color("File ","G")+color(file,"B")
+            banner=green+"File "+reset+blue+file+reset
             if not len(fic)==0:
                 if mode[0]: return "\n# "+banner+"\n\n"+readwork1(fic)
                 elif mode[1]: return readwork1(fic)
                 elif mode[2]:
-                    outb="\n┌─ "+banner+"\n└─ "+color("lines: ","Y")
-                    return outb+color(str(len(fic)),"B")+"\n"
+                    outb="\n┌─ "+banner+"\n└─ "+yellow+"lines: "+reset
+                    return outb+blue+str(len(fic))+reset+"\n"
                 else: return "\n┌── "+banner+readwork2(fic)
             else:
                 if mode[1]: return ""
-                else: return "\n# "+banner+color(" > ","M")+color("EMPTY FILE","R")+"\n"
-        except: return "\n   "+color("Error reading ","R")+color(fixcrdir(x+chr(92)),"B")+"\n"
+                else: return "\n# "+banner+magenta+" > "+reset+red+"EMPTY FILE"+reset+"\n"
+        except: return "\n   "+red+"Error reading "+reset+blue+fixcrdir(x+chr(92))+reset+"\n"
     else: return ""
 
 def main(arg1, directory, args):
@@ -66,7 +73,9 @@ def main(arg1, directory, args):
             pool=Pool(processes=cpu_count())
             worker=partial(readwk, mode=args, direct=directory)
             exp=pool.map_async(worker,lista)
-            for x in exp.get(): print(x, end="")
+            out=exp.get()
+            pool.close()
+            for x in out: print(x, end="")
             print("")
         else: print(readwk(lista[0],args, directory))
     else: print(color("\n   It doesn't exist\n","R"))

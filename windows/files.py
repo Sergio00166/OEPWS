@@ -60,7 +60,6 @@ def files(arg,arg1,directory):
         else: print(color("\n   Error\n","R"))
     elif arg=="no": delete(arg1, directory)
     elif arg=="when": when(arg1, directory)
-    elif arg=="edit": edit_file(arg1, directory)
     elif arg=="write": write_to_file(arg1, directory)
     elif arg=="flush": flush(arg1,directory)
     elif arg=="chmod": chmod(arg1, directory)           

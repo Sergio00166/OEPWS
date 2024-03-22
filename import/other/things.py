@@ -115,12 +115,12 @@ def things(arg, arg1, directory):
         from syntax import parse_syntax
         from colors import color
         from os import system as cmd
-        nano=path[0]+"\\import\\extras"+chr(92)+"nano.exe "
+        nano=path[0]+"\\import\\extras\\pBTE\\pBTE.py "
         files=parse_syntax(arg1,directory,["from",None])
         fix=files[0].replace("\\\\","\\")
         if len(files)==1 and fix==directory:
             files = [directory+'NewFile']
-        try: cmd("START /B /WAIT "+nano+'"'+'" "'.join(files)+'"')
+        try: cmd("START /B /WAIT python "+nano+'"'+'" "'.join(files)+'"')
         except: print(color("\n   Error\n","R"))
         
     else: status=False

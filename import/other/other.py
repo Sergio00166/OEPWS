@@ -71,8 +71,9 @@ def adminname():
 def lsusr():
     from subprocess import Popen, PIPE
     raw=Popen('net user', shell=True, stdout=PIPE)
-    raw=str(raw.communicate()[0], encoding="cp857")
-    raw=raw[raw.find("----\r")+6:]; fix=[]; raw=raw.split("\n")
+    raw=str(raw.communicate()[0],encoding="UTF-8")
+    raw=raw[raw.find("----\r\n")+6:]
+    fix=[]; raw=raw.split("\r\n")
     raw.pop(); raw.pop(); raw.pop(); fix=[]
     for x in raw:
         x=x.split("         ")
@@ -84,8 +85,9 @@ def lsusr():
 def lsgrp():
     from subprocess import Popen, PIPE
     raw=Popen('net localgroup', shell=True, stdout=PIPE)
-    raw=str(raw.communicate()[0], encoding="cp857")
-    raw=raw[raw.find("----\r")+6:]; fix=[]; raw=raw.split("\n")
+    raw=str(raw.communicate()[0],encoding="UTF-8")
+    raw=raw[raw.find("----\r\n")+6:]
+    fix=[]; raw=raw.split("\r\n")
     raw.pop(); raw.pop(); raw.pop(); raw.pop(0)
     for x in raw: fix.append(x[1:].replace("\n",""))
     return fix

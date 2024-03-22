@@ -15,7 +15,7 @@ def sort(arg,arg1,directory):
         yellow=color("","Ynr")
         reset=color()
         mode=arg[5:len(arg)-1]
-        if arg1=="": arg1='"*"'
+        if arg1=="": arg1="'*'"
         arg1 = parse_syntax(arg1,directory,["in",None])[0]
         if arg1.endswith(chr(92)):
             arg1=arg1[:len(arg1)-1]

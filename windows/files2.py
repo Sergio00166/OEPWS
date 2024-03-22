@@ -45,15 +45,6 @@ def lsacl(arg1, directory):
     except SyntaxError: print(color("   Syntax Error\n","R"))
     except: print(color("   Error\n","R"))
 
-    
-def edit_file(arg1, directory):
-    from sys import path
-    nano=path[0]+"\\import\\extras"+chr(92)+"nano.exe "
-    if not len(arg1)==0:
-        files=parse_syntax(arg1,directory,["from",None])
-        for x in files: cmd("START /B /WAIT "+nano+'"'+x+'"')
-    else: print(color("\n   Error\n","R"))
-
 
 def write_to_file(arg1, directory):
     try:

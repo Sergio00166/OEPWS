@@ -5,7 +5,7 @@ from re import findall
 
 def parser(text, keywords):
     try:
-        pattern = r'"([^"]+)"|(\b\w+\b)'
+        pattern = r"'([^']+)'|(\b\w+\b)"
         matches = findall(pattern, text)
         keyword_indices = []
         for keyword in keywords:
@@ -49,5 +49,16 @@ def parse_syntax(code, directory, mode=["from", "to"]):
         out = [x if isabs(x) else join(from_arg, x) for x in arg]
         if lenm>1: return out, [x if isabs(x) else join(directory, x) for x in to]
         else: return out
+    except: raise SyntaxError
+
+def parse_basic_syntax(code, directory, mode="in"):
+    sep="' "+mode+" '"
+    try:
+        if sep in code:
+            code=code.split(sep);args=code[0][1:]
+            file=code[1][:-1].split("' '")
+        else: args=code[1:-1]; file=[directory]
+        args=args.split("' '")
+        return args, file
     except: raise SyntaxError
 
