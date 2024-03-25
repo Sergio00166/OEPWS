@@ -57,7 +57,11 @@ def main(arg,directory):
                 if not ":\\" in value: value=directory+value
                 try:
                     fix=open(value, "r", encoding="UTF-8").readlines()
-                    for x in fix: out.append(x.replace("\\","\\\\"))
+                    for x in fix:
+                        if x.endswith("\n"):
+                            x=x[:-1]
+                        x.replace("\\n","\n")
+                        out.append(x)
                 except: print(error); return ""
 
             while "{" in command and "}" in command and "<" in command and ">" in command:
