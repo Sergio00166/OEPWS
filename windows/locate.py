@@ -39,12 +39,11 @@ def proc(x,buff,recurse):
     if not buff==None:
         if recurse==True:
             pool=Pool(processes=cpu_count()-1)
+            lister = partial(worker, pattern=pattern,onlydir=onlydir)
             prew,filepath = worker(buff,pattern,onlydir)
             while not len(prew)==0:
-                lister = partial(worker, pattern=pattern,onlydir=onlydir)
-                ext=pool.map_async(lister,prew).get()
-                prew = list(chain.from_iterable([sublista[0] for sublista in ext]))
-                filepath += list(chain.from_iterable([sublista[1] for sublista in ext]))
+                ext=pool.map_async(lister,prew).get(); prew=[]
+                for x in ext: prew+=x[0]; filepath+=x[1]
         else:
             filepath=[]
             for z in glob(buff+"*", recursive=False):
