@@ -59,7 +59,7 @@ def readwk(x, mode, direct):
             else:
                 if mode[1]: return ""
                 else: return "\n# "+banner+magenta+" > "+reset+red+"EMPTY FILE"+reset+"\n"
-        except: return "\n   "+red+"Error reading "+reset+blue+fixcrdir(x+chr(92))+reset+"\n"
+        except: return ""
     else: return ""
 
 def main(arg1, directory, args):

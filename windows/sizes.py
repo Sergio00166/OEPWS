@@ -6,6 +6,8 @@ from glob import glob
 from other import readable, fixcrdir
 from syntax import parse_syntax
 
+colors=[color("","Gnr"),color("","Ynr"),color("","Bnr"),color()]
+
 def get_directory_size(directory):
     total = 0
     try:
@@ -18,28 +20,30 @@ def get_directory_size(directory):
     except PermissionError: return 0
     return total
 
-def sizwk(i,directory):
-    if path.isdir(i): return dirsize(i,directory)
+def sizwk(i,directory,colors):
+    green,yellow,blue,reset = colors
+    if path.isdir(i): return dirsize(i,directory,colors)
     else:
         file_size = path.getsize(i)
         i=i.replace(directory,"")
-        ext=("┌─ "+color('File ',"G")+color(i,"B")+"\n└─ ")
-        ext+=(color('Size: ',"Y")+color(readable(file_size),"B")+"\n")
+        ext=("┌─ "+green+'File '+reset+blue+i+reset+"\n└─ ")
+        ext+=(yellow+'Size: '+reset+blue+readable(file_size)+reset+"\n")
         return ext
 
-def dirsize(arg1,directory):
+def dirsize(arg1,directory,colors):
     if arg1=="": direct=directory
     else:
         if ":\\" in arg1: direct=arg1
         else: direct=directory + arg1
+    green,yellow,blue,reset = colors
     for x in glob(direct, recursive=False):
         size=get_directory_size(x)
         size=readable(size)
         if not x.endswith(chr(92)): x+=chr(92)
         x=x.replace(directory,"")
         if x=="": x=fixcrdir(directory)
-        ext=("┌─ "+color("Directory: ","G")+color(x,"B")+"\n└─ ")
-        ext+=(color("Dir size: ","Y")+color(size,"B")+"\n")
+        ext=("┌─ "+green+"Directory: "+reset+blue+x+reset+"\n└─ ")
+        ext+=(yellow+"Dir size: "+reset+blue+size+reset+"\n")
     return ext
 
 def size(arg1,directory):
@@ -49,7 +53,7 @@ def size(arg1,directory):
         print("")
         files = parse_syntax(arg1,directory,["in",None])
         files = [content for file in files for content in glob(file, recursive=False)]  
-        worker=partial(sizwk, directory=directory)
+        worker=partial(sizwk, directory=directory, colors=colors)
         pool=Pool(processes=cpu_count())
         exp=pool.map_async(worker,files)
         out=exp.get()

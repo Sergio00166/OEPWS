@@ -34,4 +34,4 @@ def create_link(arg, arg1, directory):
         else: print(color("\n   The file/dir doesn't exist\n", "R"))
         
     except SyntaxError: print(color("\n   Bad syntax\n", "R"))
-    #except: print(color("\n   Error\n", "R"))
+    except: print(color("\n   Error\n", "R"))

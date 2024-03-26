@@ -43,23 +43,25 @@ def main(arg1,directory):
         for x in filedir:
             for file in glob(x, recursive=False):
                 if isfile(file):
-                    lines=open(file, "r").readlines()
-                    fix=[]; exp={}
-                    for x in fin:
-                        pattern = re.compile(x)
-                        for i, line in enumerate(lines):
-                            match = pattern.search(line)
-                            if match: fix.append([i,[x]])
-                    for index, txt in fix:
-                        if index in exp:
-                            exp[index].extend(txt)
-                        else: exp[index] = txt
-                    exp = [[k, v] for k, v in exp.items()]
-                    exp=sorted(exp, key=lambda item: item[0])
-                    out=[finwk(x, file, lines) for x in exp]
-                    if not len(out)==0:
-                        for x in out:
-                            print(x)
-                            if not x[len(x)-1]=="\n": print("")
+                    try:
+                        lines=open(file, "r").readlines()
+                        fix=[]; exp={}
+                        for x in fin:
+                            pattern = re.compile(x)
+                            for i, line in enumerate(lines):
+                                match = pattern.search(line)
+                                if match: fix.append([i,[x]])
+                        for index, txt in fix:
+                            if index in exp:
+                                exp[index].extend(txt)
+                            else: exp[index] = txt
+                        exp = [[k, v] for k, v in exp.items()]
+                        exp=sorted(exp, key=lambda item: item[0])
+                        out=[finwk(x, file, lines) for x in exp]
+                        if not len(out)==0:
+                            for x in out:
+                                print(x)
+                                if not x[len(x)-1]=="\n": print("")
+                    except: pass
                     
     except:  print(color("   Error\n","R"))
