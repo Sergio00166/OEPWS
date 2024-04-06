@@ -15,11 +15,10 @@ def create_link(arg, arg1, directory):
     try:
         if arg=="links": symb = True
         else: symb = False
-        arg1=arg1.split('" to "')
-        refer=parse_syntax(arg1[0]+'"',directory,["in",None])
+        arg1=arg1.split("' to '")
+        refer=parse_syntax(arg1[0]+"'",directory,["in",None])
         refer=glob(refer[0],recursive=False)
-        
-        file=parse_syntax('"'+arg1[1],directory,["in",None])[0]
+        file=parse_syntax("'"+arg1[1],directory,["in",None])[0]
         name=file.split(chr(92))[-1]
         dirname=chr(92).join(file.split(chr(92))[:-1])
         dirname=glob(dirname,recursive=False)
