@@ -5,6 +5,7 @@ from os.path import isdir, isfile
 from other import fixcrdir
 from syntax import parse_syntax
 from os import system as cmd
+from glob import glob
 
 from files1 import *
 from files2 import *
@@ -13,9 +14,10 @@ from files2 import *
 def delete(arg1, directory):
     if not arg1=="":
         try:
-            file = parse_syntax(arg1,directory,["from",None])
+            file = parse_syntax(arg1,directory,["from",None]); files=[]
             if not len(file)==0:
-                for x in file:
+                for x in file: files.extend(glob(x, recursive=False, include_hidden=True))
+                for x in files: 
                     if isfile(x): cmd('DEL /Q /F "'+x+'" 2>nul')
                     else: cmd('RD /s /q "'+x+'" 2>nul')
         except SyntaxError: print(color("\n   Syntax Error\n","R"))

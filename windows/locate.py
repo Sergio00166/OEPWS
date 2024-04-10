@@ -18,7 +18,7 @@ def fileonly(arg):
     return arg[len(arg)-1]
 
 def worker(arg,pattern,onlydir):
-    filepath = glob(arg+chr(92)+"*", recursive=False)
+    filepath = glob(arg+chr(92)+"*", recursive=False, include_hidden=True)
     if len(filepath)>0:
         out=[]; dirs=[]
         for x in filepath:
@@ -36,21 +36,13 @@ def proc(x,buff,recurse):
         onlydir=True
     else: onlydir=False
     pattern=re.compile(x)
-    if not buff==None:
-        if recurse==True:
-            pool=Pool(processes=cpu_count()-1)
-            lister = partial(worker, pattern=pattern,onlydir=onlydir)
-            prew,filepath = worker(buff,pattern,onlydir)
-            while not len(prew)==0:
-                ext=pool.map_async(lister,prew).get(); prew=[]
-                for x in ext: prew+=x[0]; filepath+=x[1]
-        else:
-            filepath=[]
-            for z in glob(buff+"*", recursive=False):
-                if pattern.search(fileonly(z)):
-                    if onlydir:
-                        if isdir(z): filepath.append(z)
-                    else: filepath.append(z)
+    prew,filepath = worker(buff[:-1],pattern,onlydir)
+    if not buff==None and recurse:
+        pool=Pool(processes=cpu_count()-1)
+        lister = partial(worker, pattern=pattern,onlydir=onlydir)
+        while not len(prew)==0:
+            ext=pool.map_async(lister,prew).get(); prew=[]
+            for x in ext: prew+=x[0]; filepath+=x[1]
             
     return filepath,onlydir
 
@@ -75,7 +67,7 @@ def main(arg,arg1,directory):
                     print("├  "+yellow+i+reset)
                 print("└─")      
             else:
-                if not recurse: ext=" in"
+                if not recurse: ext=" in "
                 else: ext=" inside "
                 print("  "+color(x,"M")+color(" does not exist"+ext,"R")+color(buff,"B"))
         print("")
