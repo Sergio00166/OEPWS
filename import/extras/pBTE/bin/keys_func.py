@@ -18,10 +18,14 @@ def keys_func(key,text,pointer,oldptr,line,offset,columns,banoff,arr,rows,\
             getch(); getch(); special_key=getch()
 
         if special_key==keys["supr"]:
-            text, arr, line, offset, status_st, select =\
-            supr(pointer,max_len,text,offset,banoff,arr,line,status_st,select)
+            text, arr, line, offset, select =\
+            supr(pointer,max_len,text,offset,banoff,arr,line,select)
             if not sep==chr(92): getch()
+            status_st = False
             
+        # Not implemented yet
+        elif special_key==keys["insert"] and (not sep==chr(92)): getch()
+
         elif special_key==keys["arr_up"] or special_key==keys["ctrl+arr_up"]:
             pointer, oldptr, text, offset, line, select =\
             up(line,offset,arr,text,banoff,oldptr,rows,pointer,special_key,keys,select,fix)
@@ -39,27 +43,32 @@ def keys_func(key,text,pointer,oldptr,line,offset,columns,banoff,arr,rows,\
             left(pointer,oldptr,line,offset,banoff,text,arr)
             
         elif special_key==keys["start"]:
-            pointer=1; p_offset=0; oldptr=pointer
+            pointer=1; p_offset=0; oldptr=pointer; select=[]
             
         elif special_key==keys["end"]:
-            pointer=len(text)+1; oldptr=pointer
+            pointer=len(text)+1; oldptr=pointer; select=[]
             
         elif special_key==keys["repag"]:
             line, offset, text, pointer, oldptr =\
             repag(line,offset,banoff,rows,arr,sep,pointer,oldptr)
+            if not sep==chr(92): getch()
+            select=[]
             
         elif special_key==keys["avpag"]:
             line, offset, text, pointer, oldptr =\
             avpag(line,offset,banoff,rows,arr,sep,pointer,oldptr)
-
+            if not sep==chr(92): getch()
+            select=[]
 
     elif key==keys["delete"]:
         line,offset, text, arr, pointer, select =\
         backspace(pointer,text,offset,line,arr,banoff,select)
+        status_st = False
 
     elif key==keys["return"]:
         line, offset, arr, pointer, text, staus, select =\
         newline(text,pointer,offset,banoff,line,arr,rows,status,select)
+        status_st = False
 
     elif key==keys["ctrl+s"]:
         out=open(filename,"w",encoding="UTF-8")

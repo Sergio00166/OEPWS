@@ -3,21 +3,18 @@
 from functions import *
 
 
-def supr(pointer,max_len,text,offset,banoff,arr,line,status_st,select):
+def supr(pointer,max_len,text,offset,banoff,arr,line,select):
     if len(select)==0:
-        try:
-            if not pointer==max_len+1:
-                p1=list(text); p1.pop(pointer-1)
-                text="".join(p1)
-            elif not line+offset==1: #move all to previous line
-                seltext=arr[line+offset-banoff+1]
-                arr[line+offset-banoff+1]=text+seltext
-                arr.pop(line+offset-banoff+1)
-                text=text+seltext
-        except: pass
-        status_st=False
+        if not pointer==max_len+1:
+            p1=list(text); p1.pop(pointer-1)
+            text="".join(p1)
+        elif not line+offset==len(arr): #move all to previous line
+            seltext=arr[line+offset-banoff+1]
+            arr[line+offset-banoff+1]=text+seltext
+            arr.pop(line+offset-banoff+1)
+            text=text+seltext
     else: select,arr,text,line,offset = del_sel(select,arr,banoff)
-    return text, arr, line, offset, status_st, select
+    return text, arr, line, offset, select
 
 def goto(rows, banoff, line, arr, offset, black, reset):
     print("\r\033[%d;%dH"%(rows+banoff+2,1),end="")
@@ -67,7 +64,6 @@ def repag(line,offset,banoff,rows,arr,sep,pointer,oldptr):
     if p1<0: p1=0
     line, offset, text =\
     CalcRelLine(p1,arr,offset,line,banoff,rows)
-    if not sep==chr(92): getch()
     pointer,oldptr = fixlenline(text,pointer,oldptr)
     return line, offset, text, pointer, oldptr
 
@@ -76,7 +72,6 @@ def avpag(line,offset,banoff,rows,arr,sep,pointer,oldptr):
     if p1>=len(arr): p1="-"
     line, offset, text =\
     CalcRelLine(p1,arr,offset,line,banoff,rows)
-    if not sep==chr(92): getch()
     pointer,oldptr = fixlenline(text,pointer,oldptr)
     return line, offset, text, pointer, oldptr
 

@@ -4,41 +4,67 @@ from functions import get_size, fixfilename, scr_arr2str
 
 
 def update_scr(black,reset,status,banoff,offset,line,pointer,arr,banner,filename,rows,columns,rrw=False,select=[]):
+    # Create the string that represents on which line we are
     position=black+"  "+str(line+offset-banoff)+" "*(4-len(str(line+offset-banoff)))
+    # Create a part of the banner (position and status strings)
     outb=position+black+" "+reset+status+banner+black+"    "+reset
+    # Now set the filenamevar with the fixed filename string and
+    # sets the cls var with the clear screen scape code
     filename = fixfilename(filename, columns); cls="\r\033[%d;%dH"%(1, 1)
+    # Get the text that will be on screen and update the pointer value
     all_file,pointer = scr_arr2str(arr,line,offset,pointer,black,reset,columns,rows,banoff)
+    # Initialize the menu with all the banner
     menu=cls+outb+black+" "*(columns-31-len(filename))
 
     # Highlight selector
-    if len(select)>0:  
+    if len(select)>0:
+        # Get values from the select list
         start=select[0][0]; end=select[1][0]
         end+=select[1][1]-select[0][1]
         start-=select[1][1]-select[0][1]
+        # Fix start value
         if start<0: start=0
+        # Split lines
         all_file=all_file.split("\n")
+        # Get the text that is upper the selected region
         p0="\n".join(all_file[:start])
+        # Get the text that is below the selected region
         p2="\n".join(all_file[end:])
+        # Get the text that is selected
         p1=all_file[start:end]; out=[]
+        # Get the len of the higligh ascii code
         lenght=len(black+"*"+reset)
+        # For each line of p1
         for x in p1:
+            # Checks if the line rendered continues to the right
+            # (having the flag that marks that)
             if x.endswith(black+">"+reset):
                 out.append(x[:-lenght]+reset+">"+black)
+            # Checks if the line rendered continues to the left
+            # (having the flag that marks that)
             elif x.startswith(black+"<"+reset):
                 out.append(x[:-lenght]+reset+"<"+black)
+            # If none of the above simply add is to out dic
             else: out.append(x)
+        # Create a string from the list
         p1="\n".join(out)
+        # Now create the all file string. Adding the
+        # ascii chars to p1 (the selected string)
         all_file=p0+black+p1+reset+p2
-
+    # Add to the screen string the rest of the screen
     menu+=filename+" "+reset+"\n"+all_file
-    
+    # If raw mode is specified return the screen string
     if rrw: return menu
     else:
+        # if not add the ansii code to move the
+        # cursor where it is stored in line and
+        # pointer vars and prints it
         menu+=("\r\033[%d;%dH"%(line+1, pointer))
         print(menu, end="")
 
 
 def menu_updsrc(arg,mode=None,updo=False):
+    # Extract args
     black,reset,status,banoff,offset,line,\
     pointer,arr,banner,filename,rows,columns=arg
     # Save old vars and get new values

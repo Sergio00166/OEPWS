@@ -21,7 +21,7 @@ if not __name__=="__main__":
     black=Back.WHITE+Style.DIM+Fore.BLACK+Style.DIM; deinit()
     rows,columns=get_size(); ch_T_SP=False
     
-    version="α v0.5.1"
+    version="v0.5.3  "
     
     if sep==chr(92): #Windows
         from msvcrt import getch
@@ -67,29 +67,33 @@ if not __name__=="__main__":
     text=arr[0]; pointer=offset=0; line=banoff=1
     banner=black+" "*3+"pBTE "+version+reset
     copy_buffer=""; fix=False; oldptr=p_offset=0
-    select=[]
+    select=[]; end=1; start=0
 
     #Flag to show after saving the file
     saved_txt=black+"SAVED"+reset; status=saved_df=black+" "*5+reset; status_st=0
+    
+    print("\033c", end="") # Clear the screen
 
-    print("\033c", end=""); end=1; start=0
 
+
+    # Here we have all the mapped scape codes for the keys and for Windows and Linux
+    
     if sep==chr(92):
         keys = {"special":b'\xe0',"delete":b'\x08',"return":b'\r',"ctrl+s":b'\x13',
                 "ctrl+n":b'\x0e',"ctrl+x":b'\x18',"ctrl+c":b'\x03',"ctrl+p":b'\x10',
                 "ctrl+g":b'\x07',"ctrl+a":b'\x01',"ctrl+o":b'\x0f',"ctrl+t":b'\x14',
                 "ctrl+b":b'\x02',"ctrl+q":b'\x11',"arr_up":b'H',"arr_down":b'P',
-                "arr_right":b'M',"arr_left":b'K',"supr":b'S',"start":b'G',
-                "end":b'O',"repag":b'I',"avpag":b'Q',"tab":b'\t',"ctrl+arr_up":b'\x8d',
+                "arr_right":b'M',"arr_left":b'K',"supr":b'S',"start":b'G',"end":b'O',
+                "repag":b'I',"avpag":b'Q',"tab":b'\t',"insert":b'\R',"ctrl+arr_up":b'\x8d',
                 "ctrl+arr_down":b'\x91',"ctrl+arr_left":b's',"ctrl+arr_right":b't'}
     else:
         keys = {"special":b'\x1b',"delete":b'\x7f',"return":b'\r',"ctrl+s":b'\x13',
                 "ctrl+n":b'\x0e',"ctrl+x":b'\x18',"ctrl+c":b'\x03',"ctrl+p":b'\x10',
                 "ctrl+g":b'\x07',"ctrl+a":b'\x01',"ctrl+o":b'\x0f',"ctrl+t":b'\x14',
                 "ctrl+b":b'\x02',"ctrl+q":b'\x11',"arr_up":b'A',"arr_down":b'B',
-                "arr_right":b'C',"arr_left":b'D',"supr":b'3',"start":b'H',
-                "end":b'F',"repag":b'5',"avpag":b'6',"tab":b'\t',"ctrl+arr_up":b'A',
-                "ctrl+arr_down":b'B',"ctrl+arr_left":b'D',"ctrl+arr_right":b'D'}
+                "arr_right":b'C',"arr_left":b'D',"supr":b'3',"start":b'H',"end":b'F',
+                "repag":b'5',"avpag":b'6',"tab":b'\t',"insert":b'2',"ctrl+arr_up":b'A',
+                "ctrl+arr_down":b'B',"ctrl+arr_left":b'D',"ctrl+arr_right":b'C'}
 
 
     

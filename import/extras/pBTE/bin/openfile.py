@@ -73,7 +73,7 @@ def open_file(args):
             if key==keys["tab"]:
                 if not (openfile==sep or len(openfile)==0):
                     if not complete: content=glob(openfile+"*",recursive=False)
-                    if len(content)>1: complete=True
+                    if len(content)>0: complete=True
                     if cmp_counter>=len(content): cmp_counter = 0
                     if complete:
                         openfile=content[cmp_counter]

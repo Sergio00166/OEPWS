@@ -75,7 +75,7 @@ def save_as(args):
             if key==keys["tab"]:
                 if not (filewrite==sep or len(filewrite)==0):
                     if not complete: content=glob(filewrite+"*",recursive=False)
-                    if len(content)>1: complete=True
+                    if len(content)>0: complete=True
                     if cmp_counter>=len(content): cmp_counter = 0
                     if complete:
                         filewrite=content[cmp_counter]

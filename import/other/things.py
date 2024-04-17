@@ -39,13 +39,13 @@ def things(arg, arg1, directory):
         from list_tree import tree
         tree(arg1, directory)
         
-    elif arg=="benchmk":
-        from benchmk import main
-        main()
-        
-    elif arg=="stress":
-        from stress_test import main
-        main()
+    elif arg=="stress" or arg=="benchmk":
+        from sys import path
+        from os import system as cmd
+        exe="import\\extras\\pySysBench\\pySysBench.py"
+        exe="START /B /WAIT "+path[0]+"\\"+exe
+        if arg=="stress": exe+=" stress"
+        cmd(exe)
         
     elif arg=="calc":
         from clicalc import main as clicalc
