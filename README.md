@@ -1,10 +1,10 @@
 #OEPWS
 
-DISCONTINUED
-
 Open simplE Python-based Windows Shell
 
 A Windows 'shell' with its own simple syntax
+
+Includes my pBTE custom text editor and my pySysBench CPU stability and benchmark tool
 
 And if you write native windows commands "works".<br>
 Write # before the command and it will executed on the windows native powershell
@@ -23,8 +23,7 @@ Extra: if you type the name of an executable without the .exe, this shell will l
       
 ---------------------------------------------------------------------------
 
-Includes third-party software:  <a href="https://github.com/aristocratos/btop4win">btop4windows (aristocratos)</a>, 
-<a href="https://github.com/gokcehan/lf">FL (gokcehan)</a> , <a href="https://github.com/okibcn/nano-for-windows">nano</a>, and speedtest
+Includes third-party software:  <a href="https://github.com/aristocratos/btop4win">btop4windows (aristocratos)</a>, and speedtest
 
 ---------------------------------------------------------------------------
 
