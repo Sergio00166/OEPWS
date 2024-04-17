@@ -87,8 +87,8 @@ def keys_func(key,text,pointer,oldptr,line,offset,columns,banoff,arr,rows,\
         pointer, arr, text, status_st, copy_buffer =\
         paste(copy_buffer,arr,line,offset,banoff,pointer,text,status_st)                                              
             
-    elif key==keys["ctrl+g"]: line, offset ,text =\
-        goto(rows,banoff,line,arr,offset,black,reset)
+    elif key==keys["ctrl+g"]: line, offset, text =\
+        goto(columns,rows,banoff,line,arr,offset,black)
 
     elif key==keys["ctrl+a"]:
         args = (filename,black,reset,rows,banoff,arr,columns,\

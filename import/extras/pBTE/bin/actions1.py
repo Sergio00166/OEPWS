@@ -16,13 +16,14 @@ def supr(pointer,max_len,text,offset,banoff,arr,line,select):
     else: select,arr,text,line,offset = del_sel(select,arr,banoff)
     return text, arr, line, offset, select
 
-def goto(rows, banoff, line, arr, offset, black, reset):
+def goto(columns, rows, banoff, line, arr, offset, black):
     print("\r\033[%d;%dH"%(rows+banoff+2,1),end="")
-    print(" "+black+"Go to line:"+reset, end=" "); p1=input()
+    print(black+(" "*(columns+2))+"\r", end="")
+    print(" Go to line: ", end=""); p1=input()
     print("\r\033[%d;%dH"%(line, 1),end="")
     line,offset,text = CalcRelLine(p1,arr,offset,line,banoff,rows)
     print("\033c", end="")
-    return line, offset,text 
+    return line, offset, text 
 
     
 def paste(copy_buffer,arr,line,offset,banoff,pointer,text,status_st):
