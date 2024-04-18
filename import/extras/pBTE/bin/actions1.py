@@ -17,11 +17,13 @@ def supr(pointer,max_len,text,offset,banoff,arr,line,select):
     return text, arr, line, offset, select
 
 def goto(columns, rows, banoff, line, arr, offset, black):
-    print("\r\033[%d;%dH"%(rows+banoff+2,1),end="")
-    print(black+(" "*(columns+2))+"\r", end="")
-    print(" Go to line: ", end=""); p1=input()
-    print("\r\033[%d;%dH"%(line, 1),end="")
-    line,offset,text = CalcRelLine(p1,arr,offset,line,banoff,rows)
+    try:
+        print("\r\033[%d;%dH"%(rows+banoff+2,1),end="")
+        print(black+(" "*(columns+2))+"\r", end="")
+        print(" Go to line: ", end=""); p1=input()
+        print("\r\033[%d;%dH"%(line, 1),end="")
+        line,offset,text = CalcRelLine(p1,arr,offset,line,banoff,rows)
+    except: pass
     print("\033c", end="")
     return line, offset, text 
 

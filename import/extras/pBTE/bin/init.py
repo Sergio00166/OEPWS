@@ -21,7 +21,7 @@ if not __name__=="__main__":
     black=Back.WHITE+Style.DIM+Fore.BLACK+Style.DIM; deinit()
     rows,columns=get_size(); ch_T_SP=False
     
-    version="v0.5.3  "
+    version="v0.5.3.3"
     
     if sep==chr(92): #Windows
         from msvcrt import getch
