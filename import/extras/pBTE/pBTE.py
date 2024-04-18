@@ -66,7 +66,7 @@ while True:
                 tmp=open(files[0], "r", encoding="UTF-8").readlines(); arr=[]
                 for x in tmp: arr.append(x.replace("\r","").replace("\n","").replace("\f",""))
                 arr.append(""); filename=files[0]; files=files[1:]; text=arr[0]
-                pointer=1; line=1; offset=0; print("\033c",end="")
+                pointer=1; line=1; offset=0; status_st=False; print("\033c",end="")
 
             else: kill=True; update_thr.join(); print("\033c",end=""); break    
         else: #Call keys functions (Yeah, its a lot of args and returned values)
