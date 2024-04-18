@@ -10,7 +10,7 @@ def main(arg,directory):
     try:
         if arg.startswith("<") or arg.startswith("{"):
             if not ">[" in arg: print(error); return ""
-            separator="::"; ext=arg.find("] ")
+            separator=" "; ext=arg.find("] ")
             command=arg[ext+1:]; x=arg[:ext]
             
             if x[0]=="{":
