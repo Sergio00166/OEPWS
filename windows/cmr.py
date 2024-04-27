@@ -17,7 +17,7 @@ def copy(arg1,directory):
                     if x[len(x)-1:]==chr(92): x=x[:len(x)-1]
                     exp='robocopy /E /NJH /NFL /MT "'+x+'" "'+y+'"'
                 else: exp='xcopy /Y "'+x+'" "'+y+'"'
-                cmd(exp, shell=True).communicate()
+                cmd(["powershell",exp], shell=True).communicate()
         print("")            
     except SyntaxError: print(color("   Bad Syntax\n", "R"))
     except: print(color("   Error\n", "R"))
@@ -33,7 +33,7 @@ def move(arg1,directory):
                 if x[len(x)-1:]==chr(92): x=x[:len(x)-1]
                 exp='robocopy /E /MOVE /NJH /NFL /MT "'+x+'" "'+dest+'"'
             else: exp='move /Y "'+x+'" "'+dest+'"'
-            cmd(exp, shell=True).communicate()
+            cmd(["powershell",exp], shell=True).communicate()
         print("")           
     except SyntaxError: print(color("   Bad Syntax\n", "R"))
     except ValueError: print(color("   Too many destinations\n", "R"))
@@ -46,7 +46,7 @@ def rmov(arg1,directory):
         for x in range(0,len(fich)):
             exp='move "'+fich[x]+'" "'+dest[x]+'"'
             exp=str(exp).replace(chr(92)+chr(92),chr(92))
-            cmd(exp, shell=True).communicate()
+            cmd(["powershell",exp], shell=True).communicate()
         print("")
     except SyntaxError: print(color("   Bad Syntax\n", "R"))
     except: print(color("   Error\n", "R"))
