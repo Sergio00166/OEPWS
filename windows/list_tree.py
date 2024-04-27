@@ -29,9 +29,9 @@ def tree(arg1, directory):
     green=color("","Gnr")
     reset=color()
     path=parse_syntax(arg1,directory,["in",None])[0]
+    if path.endswith(chr(92)): path=path[:-1]
     dirt=path.split(chr(92))[-1]
     if not path==None:
-        if dirt.endswith(chr(92)): dirt=dirt[:len(dirt)-1]
         print("\n   "+blue+dirt+reset)
         worker(path); print("")
 
