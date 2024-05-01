@@ -16,9 +16,10 @@ def fix(code):
             if isinstance(node, ast.Import) or isinstance(node, ast.ImportFrom):
                 for name in node.names:
                     module_name = name.name.split('.')[0]
-                    if module_name in banned_modules: return False
+                    if module_name in banned_functions: return False
         return True
     except SyntaxError: return False
+
 
 def init():
     global letras, operaprt, error, resultprt
