@@ -43,7 +43,16 @@ def calendar(arg1):
     current_month = date.today().month
 
     try:
-        if "month" in arg1:
+
+        if "this year" in arg1:
+            calendar = cl.formatyear(int(current_year))
+            format_year(calendar)
+
+        elif "this month" in arg1:
+            calendar = cl.formatmonth(int(current_year), int(current_month))
+            colours(calendar)
+            
+        elif "month" in arg1:
             mes = int(arg1[arg1.find("month") + 6:])
             calendar = cl.formatmonth(int(current_year),mes)
             colours(calendar)
@@ -56,14 +65,6 @@ def calendar(arg1):
                 mes = arg1[arg1.find("month") + 5:arg1.find("year") - 1]
                 year = arg1[arg1.find("year") + 5:]
             calendar = cl.formatmonth(int(year), int(mes))
-            colours(calendar)
-
-        elif "this year" in arg1:
-            calendar = cl.formatyear(int(current_year))
-            format_year(calendar)
-
-        elif "this month" in arg1:
-            calendar = cl.formatmonth(int(current_year), int(current_month))
             colours(calendar)
 
         elif "today" in arg1:
