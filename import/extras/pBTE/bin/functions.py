@@ -1,32 +1,32 @@
 #Code by Sergio1260
 
-from os import get_terminal_size,sep
+from os import sep
 from sys import path
 path.append(path[0]+sep+"lib.zip")
 from wcwidth import wcwidth
+from functions1 import CalcRelLine
 
+ascii_map = { 0x00: '␀',  0x01: '␁',  0x02: '␂', 0x03: '␃', 0x04: '␄', 0x05: '␅', 0x06: '␆', 0x07: '␇',
+              0x08: '␈',  0x0A: '␊',  0x0B: '␋', 0x0C: '␌', 0x0D: '␍', 0x0E: '␎', 0x0F: '␏', 0x10: '␐',
+              0x11: '␑',  0x12: '␒',  0x13: '␓', 0x14: '␔', 0x15: '␕', 0x16: '␖', 0x17: '␗', 0x18: '␘',
+              0x19: '␙',  0x1A: '␚',  0x1B: '␛', 0x1C: '␜', 0x1D: '␝', 0x1E: '␞', 0x1F: '␟', 0x7F: '␡'
+            }
 
+ascii_replaced = [ascii_map[x] for x in ascii_map]+[">","<","�"]
+
+# Now it seems to work
 def wrap(text, columns):
+    out,buffer,counter = [],"",-1
     text=text.expandtabs(8)
-    out=[]; counter=-1; buffer=""
     for x in text:
-        if counter>=columns-1:
-            lenght=str_len(x)
-            if lenght>1: ext=buffer; buffer=x
-            else: ext=buffer+x; buffer=""    
-            out.append(ext); counter=0
-        else: buffer+=x; counter+=str_len(x)
-    if not buffer=="": out.append(buffer)
-    return out
-
-def get_size():
-    size=get_terminal_size()
-    return size[1]-3,size[0]-2
-
-def decode(key,getch):
-    for x in range(3):
-        try: out=key.decode("UTF-8"); break
-        except: key+=getch()
+        lenght=str_len(fscp(x))
+        if counter+lenght>columns:
+            out.append(buffer)
+            buffer,counter = x,lenght
+        else:
+            buffer+=x
+            counter+=lenght
+    out.append(buffer)
     return out
 
 def fix_arr_line_len(arr, columns, black, reset):
@@ -37,6 +37,7 @@ def fix_arr_line_len(arr, columns, black, reset):
         elif fix==len(wrapped_text):
             text=wrapped_text[fix-1]
         else: text=wrapped_text[fix]
+        text=sscp(text,[black,reset])
         if (len(wrapped_text)-fix)>1:
             text+=black+">"+reset
         out.append(text)   
@@ -51,35 +52,18 @@ def str_len(text,pointer=None):
     for x in fix: lenght+=wcwidth(x)
     return lenght
 
-def fixlenline(text, pointer, oldptr):
-    length=len(text)+1
-    if pointer>length or oldptr>length:
-        return length,oldptr
-    elif oldptr>pointer: return oldptr,oldptr
-    else: return pointer,oldptr
-
-def CalcRelLine(p1,arr,offset,line,banoff,rows):
-    if p1=="-": p1=len(arr)-1
-    try:
-        p1=int(p1)
-        if p1<len(arr):
-            if p1<rows: offset=0; line=p1+banoff
-            else: offset=p1-rows; line=rows+banoff
-    except: pass
-    text=arr[line+offset-banoff]
-    return line, offset, text
-
 def fix_cursor_pos(text,pointer,columns,black,reset):
     len_arr=[]; ptr=pointer; pos=0
-    pointer=str_len(text,pointer)   
+    pointer=str_len(fscp(text),pointer)   
     wrapped_text = wrap(text,columns)  
     for x in wrapped_text:
-        if pointer-str_len(x)<1: break
+        if pointer-str_len(fscp(x))<1: break
         else: pos+=1
-        pointer-=str_len(x)
+        pointer-=str_len(fscp(x))
     if pos>0: pointer+=1
     if not len(wrapped_text)==0:
         text=wrapped_text[pos]
+        text=sscp(text,[black,reset])
         if pos>0:
             text=black+"<"+reset+text
             if not pos==len(wrapped_text)-1:
@@ -90,36 +74,52 @@ def fix_cursor_pos(text,pointer,columns,black,reset):
                 
     return pointer+1, text
 
-def fixfilename(filename, columns):
-    if len(filename)+32>columns: #If filename overflows
-        flfix=filename.split(sep)
-        filename=flfix[len(flfix)-1]
-        if len(filename)+31>columns: #If still not fiting
-            middle = len(filename) // 2
-            filename=filename[:middle-1]+'*'+filename[middle+2:]
-            if len(filename)+31>columns:
-                filename=filename[:columns-32]+"*"
-    return filename
 
 def scr_arr2str(arr,line,offset,pointer,black,reset,columns,rows,banoff):
-    text=arr[line+offset-banoff]; uptr=pointer
+    uptr=pointer; out_arr=[]; sp=black+"<"+reset
+    text = arr[line+offset-banoff]
     pointer, text = fix_cursor_pos(text,pointer,columns,black,reset)
-    arr=arr[offset : rows+offset+1]
+    arr = arr[offset:rows+offset+banoff]
     arr = fix_arr_line_len(arr,columns,black,reset)
-    arr[line-1]=text; out_arr=[]
+    arr[line-banoff] = text
+
     for x in arr:
-        ln=str_len(x)
-        if uptr>(columns+2) and arr.index(x)==line-1: ln-=12
+        ln=str_len(rscp(x,[black,reset],True))
         if ln<(columns+2): x=x+(" "*(columns-ln+2))
         out_arr.append(x)
     if not len(arr)==rows:
         out_arr+=[" "*(columns+2)]*(rows-len(arr)+1)
     
-    return "\n".join(out_arr).expandtabs(8), pointer
+    return "\n".join(out_arr), pointer
 
-def del_sel(select, arr, banoff):
-    p1=arr[:sum(select[0])]; p2=arr[sum(select[1]):]
-    line=select[0][0]+banoff; offset=select[0][1]
-    select=[]; arr=p1+p2; text=arr[line+offset-banoff]
-    return select, arr, text, line, offset
 
+# Replaces ascii control chars to the highlighted visual version
+def sscp(arg,color):
+    global ascii_map
+    b, r = color; ext = []
+    arg=arg.expandtabs(8)
+    for x in arg:
+        if ord(x) in ascii_map:
+            ext.append(b+ascii_map[ord(x)]+r)
+        elif str_len(x)>0: ext.append(x)
+        else: ext.append(b+"�"+r)
+    return "".join(ext)
+
+# Changes visual ascii chars to space (to read the real screen len)
+def fscp(arg,null=False):
+    global ascii_map
+    r = "" if null else " "
+    ext = []
+    for x in arg:
+        if ord(x) in ascii_map: ext.append(r)
+        elif str_len(x)>0: ext.append(x)
+        else: ext.append(r)
+    return "".join(ext)
+
+# Inverts the highlight (for the highlight selector)
+def rscp(arg,color,mode=False):
+    global ascii_replaced
+    b, r = color
+    for x in ascii_replaced:
+        arg=arg.replace(b+x+r, " " if mode else r+x+b)
+    return arg

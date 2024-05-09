@@ -7,6 +7,8 @@ Nowadays it is in development stage, then it can be expected to be broken
 
 Basic functionalities currently available such as copy, cut, paste lines, and the basic for a text editor
 
+Can read binary files but sometimes the screen will do weird things
+
 Requirements:<br>
 Python 3 (tested under python 3.12)<br>
 No dependencies<br>

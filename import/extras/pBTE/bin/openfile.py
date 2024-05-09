@@ -1,6 +1,6 @@
 #Code by Sergio1260
 
-from functions import decode, get_size
+from functions1 import decode, get_size, read_UTF8
 from upd_scr import menu_updsrc
 from threading import Thread
 from glob import glob
@@ -13,17 +13,18 @@ if not sep==chr(92): import tty; import termios
 def updscr_thr():
     global opentxt,openfile,rows,columns,black,reset,status,banoff
     global lenght,wrtptr,offset,line,arr,banner,filename,rows,columns
-    global run, kill, fd, old_settings
+    global run, kill, fd, old_settings, status_st
     
     while not kill:
         delay(0.01)
         if run:
             # If OS is LINUX restore TTY to it default values
-            if not sep==chr(92): termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
+            if not sep==chr(92):
+                termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
             # Call Screen updater
             mode=(openfile,opentxt,wrtptr,lenght)
             arg=(black,reset,status,banoff,offset,line,\
-            wrtptr,arr,banner,filename,rows,columns)
+            wrtptr,arr,banner,filename,rows,columns,status_st)
             rows,columns = menu_updsrc(arg,mode)
             # If OS is LINUX set TTY to raw mode
             if not sep==chr(92): tty.setraw(fd)
@@ -35,10 +36,11 @@ def exit():
         termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
     print(reset+"\r\033c", end="")
 
-def open_file(args):
+
+def open_file(arg):
     global opentxt,openfile,rows,columns,black,reset,status,banoff
     global lenght,wrtptr,offset,line,arr,banner,filename,rows,columns
-    global run, kill, fd, old_settings, thr
+    global run, kill, fd, old_settings, thr, status_st
 
     if not sep==chr(92): #If OS is LINUX
         #Get default values for TTY
@@ -46,8 +48,9 @@ def open_file(args):
         fd = sys.stdin.fileno()
         old_settings = termios.tcgetattr(fd)
 
-    filename,black,reset,rows,banoff,arr,columns,status,\
-    offset,line,banner,status_st,getch,keys,pointer,fixstr = args
+    filename,black,reset,rows,banoff,arr,columns,status,offset,\
+    line,banner,status_st,getch,keys,pointer,fixstr = arg
+
     openfile=sep.join(filename.split(sep)[:-1])+sep
     opentxt=" Open: "; lenght=len(opentxt)+2; wrtptr=lenght+len(openfile)
     thr=Thread(target=updscr_thr); run=False; kill=False; thr.start()
@@ -55,13 +58,17 @@ def open_file(args):
     complete=False; cmp_counter=0
     
     while True:
+        # Fix when the pointer is out
+        if len(openfile)<wrtptr-lenght:
+            wrtptr = len(openfile)+lenght
         try:
             # If OS is LINUX restore TTY to it default values
-            if not sep==chr(92): termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
+            if not sep==chr(92):
+                termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
             # Call Screen updater
             mode=(openfile,opentxt,wrtptr,lenght)
             arg=(black,reset,status,banoff,offset,line,\
-            wrtptr,arr,banner,filename,rows,columns)
+            wrtptr,arr,banner,filename,rows,columns,status_st)
             rows,columns = menu_updsrc(arg,mode,True)
             # If OS is LINUX set TTY to raw mode
             if not sep==chr(92): tty.setraw(fd)
@@ -86,11 +93,7 @@ def open_file(args):
             
             elif key==keys["ctrl+o"]:
                 openfile=glob(openfile, recursive=False)[0]
-                for i in open(openfile, "r", encoding="UTF-8").readlines():
-                    if '\x00' in i: raise ValueError
-                tmp=open(openfile, "r", encoding="UTF-8").readlines(); arr=[]
-                for x in tmp: arr.append(x.replace("\r","").replace("\n","").replace("\f",""))
-                arr.append(""); filename=openfile
+                arr=read_UTF8(openfile); filename=openfile
                 exit(); status_st=False
                 pointer=offset=0; line=1
                 break
@@ -121,17 +124,16 @@ def open_file(args):
                         wrtptr+=1
                 elif arrow==keys["supr"]:
                     if not sep==chr(92): getch()
-                    if not wrtptr==lenght:
-                        if complete:
-                            openfile=openfile.split(sep)[:-1]
-                            openfile=sep.join(openfile)+sep
-                            wrtptr-=len(openfile[-1])-1
-                            complete=False
-                        else: 
-                            p1=list(openfile)
-                            p1.pop(wrtptr-lenght)
-                            openfile="".join(p1)
-            
+                    if complete:
+                        openfile=openfile.split(sep)[:-1]
+                        openfile=sep.join(openfile)+sep
+                        wrtptr-=len(openfile[-1])-1
+                        complete=False
+                    else:
+                        p1=list(openfile)
+                        p1.pop(wrtptr-lenght)
+                        openfile="".join(p1)
+    
                 elif arrow==keys["start"]:
                     wrtptr=lenght
                     

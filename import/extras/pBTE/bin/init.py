@@ -7,7 +7,8 @@ if not __name__=="__main__":
     from sys import argv, path
     from os.path import isabs, isdir
     from glob import glob
-    from functions import get_size
+    from functions1 import get_size, read_UTF8
+    from functions import str_len, fscp
     from upd_scr import update_scr
     from keys_func import keys_func
     from subprocess import check_output
@@ -16,12 +17,13 @@ if not __name__=="__main__":
     from threading import Thread
     from time import sleep as delay
     from time import time
-    
+
     init(autoreset=False,convert=True); reset=Style.RESET_ALL
     black=Back.WHITE+Style.DIM+Fore.BLACK+Style.DIM; deinit()
     rows,columns=get_size(); ch_T_SP=False
+    del init, Fore, Back, Style, deinit
     
-    version="v0.5.3.3"
+    version="v0.5.5.2"
     
     if sep==chr(92): #Windows
         from msvcrt import getch
@@ -36,25 +38,15 @@ if not __name__=="__main__":
             finally: termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
             return char
 
-    
     #Check if we have arguments via cli, if not create an empty one
     if not len(argv)==1:
-        out=[glob(x,recursive=False) for x in argv[1:]]
-        out=[i for x in out for i in x if not isdir(i)]
-        files = []
-        for x in out:
-            try:
-                for i in open(x, "r", encoding="UTF-8").readlines():
-                    if '\x00' in i: raise ValueError
-                files.append(x)
-            except: pass
+        files=[glob(x,recursive=False) for x in argv[1:]]
+        files=[i for x in files for i in x if not isdir(i)]
         if len(files)>0: 
-            tmp=open(files[0], "r", encoding="UTF-8").readlines(); arr=[]
-            for x in tmp: arr.append(x.replace("\r","").replace("\n","").replace("\f",""))
-            arr.append(""); filename=files[0]; files=files[1:]
+            arr=read_UTF8(files[0])
+            filename=files[0]; files=files[1:]
         else: filename=getcwd()+sep+"NewFile"; arr=[""]; files=[]    
     else: filename=getcwd()+sep+"NewFile"; arr=[""]; files=[] 
-
 
     # Creates a list of banned chars code
     values=["0","1","2","3","4","5","6","7","8","9","a","b","c","d","e","f"]
@@ -65,15 +57,14 @@ if not __name__=="__main__":
     
     #Define a lot of stuff
     text=arr[0]; pointer=offset=0; line=banoff=1
-    banner=black+" "*3+"pBTE "+version+reset
+    banner=["pBTE",version]
     copy_buffer=""; fix=False; oldptr=p_offset=0
     select=[]; end=1; start=0
 
     #Flag to show after saving the file
-    saved_txt=black+"SAVED"+reset; status=saved_df=black+" "*5+reset; status_st=0
+    saved_txt="SAVED"; status=saved_df=" "*5; status_st=False
     
     print("\033c", end="") # Clear the screen
-
 
 
     # Here we have all the mapped scape codes for the keys and for Windows and Linux
@@ -95,8 +86,4 @@ if not __name__=="__main__":
                 "repag":b'5',"avpag":b'6',"tab":b'\t',"insert":b'2',"ctrl+arr_up":b'A',
                 "ctrl+arr_down":b'B',"ctrl+arr_left":b'D',"ctrl+arr_right":b'C'}
 
-
-    
-
-    
-
+ 

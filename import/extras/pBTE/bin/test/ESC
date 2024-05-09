@@ -1,0 +1,15 @@
+Escape Codes Test
+=================
+[47m[2m[30m[2mpepe[0m
+Tab: Hello	World!
+Backspace: HelloWorld!
+Form feed: HelloWorld!
+Vertical tab: HelloWorld!
+Backslash: Hello\World!
+Single quote: Hello'World!
+Double quote: Hello"World!
+Unicode character: Hello☺World!
+Hexadecimal character: HelloHello World!
+Octal character: HelloHello World!
+Bell character: HelloWorld!
+Escape character: Hello\eWorld!
