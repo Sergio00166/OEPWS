@@ -35,10 +35,11 @@ def print_text(arg1):
     arg1=arg1.replace("\fr","\\r").replace("\\\\","\\")
     for x in arg1.split("\n"): print(x)
 
-def speedtest():
+def speedtest(arg1):
     from sys import path
     cmd("START /B /WAIT " + path[0] +
-        "\\import\\extras\\speedtest.exe")
+        "\\import\\extras\\speedtest.exe"+
+        " "+arg1)
     print("")
         
 def pwdgen(arg1):
@@ -78,7 +79,7 @@ def extras(arg,arg1,directory):
     elif arg=="shutdown": cmd("shutdown /s /t 0")
     elif arg=="restart": cmd("shutdown /r /t 0")   
     elif arg=="print": print_text(arg1)
-    elif arg=="speedtest": speedtest()
+    elif arg=="speedtest": speedtest(arg1)
     elif arg=="pwdgen": pwdgen(arg1)
     elif arg=="weather": weather(arg1)
     elif arg=="mem": memusage()
