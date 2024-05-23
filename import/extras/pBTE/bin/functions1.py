@@ -8,18 +8,14 @@ def get_size():
     size=get_terminal_size()
     return size[1]-2,size[0]-2
 
-def decode(key,getch):
-    for x in range(3):
-        try: out=key.decode("UTF-8"); break
-        except: key+=getch()
-    return out
+def decode(key): return key.decode("UTF-8")
 
-def fixlenline(text, pointer, oldptr):
+def fixlenline(text,pointer,oldptr):
     length=len(text)+1
     if pointer>length or oldptr>length:
-        return length,oldptr
-    elif oldptr>pointer: return oldptr,oldptr
-    else: return pointer,oldptr
+        return length
+    elif oldptr>pointer: return oldptr
+    else: return pointer
 
 def CalcRelLine(p1,arr,offset,line,banoff,rows):
     if p1=="-": p1=len(arr)-1
@@ -47,6 +43,43 @@ def del_sel(select, arr, banoff):
     line=select[0][0]+banoff; offset=select[0][1]
     select=[]; arr=p1+p2 
     return select, arr, line, offset
+
+def mng_tab_select(arr,line,offset,select,ch_T_SP):
+    # Get the values from select
+    start=sum(select[0]); end=sum(select[1])
+    # Get the text that is upper and below the selected region
+    p0=arr[:start]; p2=arr[end:]
+    # Get the text that is selected
+    p1=arr[start:end]
+    # Add a tab at the start of each element
+    tab=" "*4 if ch_T_SP else "\t"
+    p1=[tab+x for x in p1]
+    # Now reconstruct all arr
+    return p0+p1+p2
+
+def get_str(arr,key,select,pointer,line,offset,banoff,ch_T_SP,rows,keys):
+    
+    out,skip = decode(key),False
+   
+    if select:
+        if not out=="\t": select,arr,line,offset = del_sel(select,arr,banoff)     
+        else: arr,skip = mng_tab_select(arr,line,offset,select,ch_T_SP),True
+       
+    if not skip:
+        pos=line+offset-banoff; text=arr[pos]
+        p1,p2 = text[:pointer-1], text[pointer-1:]
+        if ch_T_SP: out=out.replace("\t"," "*4)
+        out_lines = out.split(keys["return"].decode("utf-8"))
+        arr[pos] = p1+out_lines[0]+p2
+        
+        if len(out_lines) > 1:
+            arr[pos+1:pos+1] = out_lines[1:]
+            line,offset = CalcRelLine(pos+len(out_lines)-1,arr,offset,line,banoff,rows)
+            pointer += len(out_lines[-1])
+        else: pointer += len(out_lines[0])
+
+    return arr, pointer, line, offset
+
 
 # Each line is ejecuted on a separate CPU core
 def read_UTF8(file):
