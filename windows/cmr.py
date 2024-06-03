@@ -1,6 +1,6 @@
 #Code by Sergio1260
 
-from subprocess import Popen as cmd
+from os import system as cmd
 from syntax import parse_syntax
 from colors import color
 from os.path import isdir
@@ -15,9 +15,9 @@ def copy(arg1,directory):
             for x in fich:
                 if x[len(x)-1:]==chr(92) or isdir(x):
                     if x[len(x)-1:]==chr(92): x=x[:len(x)-1]
-                    exp='robocopy /E /NJH /NFL /MT "'+x+'" "'+y+'"'
-                else: exp='xcopy /Y "'+x+'" "'+y+'"'
-                cmd(["powershell",exp], shell=True).communicate()
+                    exp='robocopy /E /NJH /NFL /MT \\"'+x+'\\" \\"'+y+'\\"'
+                else: exp='xcopy /Y \\"'+x+'\\" \\"'+y+'\\"'
+                cmd("powershell "+exp)
         print("")            
     except SyntaxError: print(color("   Bad Syntax\n", "R"))
     except: print(color("   Error\n", "R"))
@@ -31,9 +31,9 @@ def move(arg1,directory):
         for x in fich:
             if x[len(x)-1:]==chr(92) or isdir(x):
                 if x[len(x)-1:]==chr(92): x=x[:len(x)-1]
-                exp='robocopy /E /MOVE /NJH /NFL /MT "'+x+'" "'+dest+'"'
-            else: exp='move /Y "'+x+'" "'+dest+'"'
-            cmd(["powershell",exp], shell=True).communicate()
+                exp='robocopy /E /MOVE /NJH /NFL /MT \\"'+x+'\\" \\"'+dest+'\\"'
+            else: exp='move /Y \\"'+x+'\\" \\"'+dest+'\\"'
+            cmd("powershell "+exp)
         print("")           
     except SyntaxError: print(color("   Bad Syntax\n", "R"))
     except ValueError: print(color("   Too many destinations\n", "R"))
@@ -44,9 +44,9 @@ def rmov(arg1,directory):
         print("")
         fich, dest = parse_syntax(arg1, directory, ["from","to"])
         for x in range(0,len(fich)):
-            exp='move "'+fich[x]+'" "'+dest[x]+'"'
-            exp=str(exp).replace(chr(92)+chr(92),chr(92))
-            cmd(["powershell",exp], shell=True).communicate()
+            p1=' \\"'+fich[x]+'\\"'
+            p2=' \\"'+dest[x]+'\\"'
+            cmd("powershell move"+p1+p2)
         print("")
     except SyntaxError: print(color("   Bad Syntax\n", "R"))
     except: print(color("   Error\n", "R"))
