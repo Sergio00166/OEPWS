@@ -5,6 +5,7 @@ from glob import glob
 from itertools import chain
 from functools import partial
 from subprocess import Popen
+from os import system as cmd
 from sys import path
 
 from multiprocessing import cpu_count
@@ -31,21 +32,13 @@ def startcmd(val,arg2, directory):
     for x in paths: tree+=proc(x)
     searcher = partial(worker, arg2=val)
     ext=pool.map_async(searcher,tree); out=[]
-    out=list(chain(*ext.get()))
+    out=list(chain(*ext.get())) 
     if not len(out)==0:
-        out=out[0].replace("\\\\","\\")
-        out=f'cd "{directory}" ; &"{out}"'
-        if not arg2=="": out+=" "+arg2
-        com=["powershell.exe", "-Command", out]
-        process = Popen(com); process.wait()
+        out=' & "'+out[0].replace("\\\\","\\")+'" '
+        cmd(f'cd "{directory}"'+out+arg2)
     else: return True
 
 def main(arg1, arg2, directory):
-    com=["powershell.exe","Set-ExecutionPolicy -Scope "
-         +"CurrentUser -ExecutionPolicy Bypass -Force;"]
-    com+=[path[0]+'\\import\\powershell\\trycmd.ps1']
-    com+=['"'+directory+'"','"'+arg1+" "+arg2+'"']
-    try:
-        process = Popen(com); process.wait()
-        if process.returncode==1: return startcmd(arg1,arg2,directory)
+    try: Popen([f'cd "{directory}"',arg1,arg2]).wait()
+    except FileNotFoundError: return startcmd(arg1,arg2,directory)
     except KeyboardInterrupt: pass
