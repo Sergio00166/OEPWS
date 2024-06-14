@@ -5,7 +5,6 @@ from glob import glob
 from itertools import chain
 from functools import partial
 from subprocess import Popen
-from os import system as cmd
 from sys import path
 
 from multiprocessing import cpu_count
@@ -34,11 +33,15 @@ def startcmd(val,arg2, directory):
     ext=pool.map_async(searcher,tree); out=[]
     out=list(chain(*ext.get())) 
     if not len(out)==0:
-        out=' & "'+out[0].replace("\\\\","\\")+'" '
-        cmd(f'cd "{directory}"'+out+arg2)
+        out=out[0].replace("\\\\","\\")
+        out = [out,arg2] if len(arg2)>0 else [out]
+        try: Popen(out, cwd=directory).communicate()
+        except: pass
     else: return True
 
 def main(arg1, arg2, directory):
-    try: Popen([f'cd "{directory}"',arg1,arg2]).wait()
+    try:
+        out = [arg1,arg2] if len(arg2)>0 else [arg1]
+        Popen(out, cwd=directory).communicate()
     except FileNotFoundError: return startcmd(arg1,arg2,directory)
     except KeyboardInterrupt: pass
