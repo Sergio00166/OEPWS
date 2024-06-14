@@ -7,11 +7,7 @@ A Windows 'shell' with its own simple syntax
 Includes my pBTE custom text editor and my pySysBench CPU stability and benchmark tool
 
 And if you write native windows commands "works".<br>
-Write # before the command and it will executed on the windows native powershell
-
-To run an executable from the current directory write before the file ".\\"
-
-If the absolute/relative path of the executable contains space you must write that part of the path within '' like C:\\'Program Files'\Program
+Write # before the command and it will executed on the windows native cmd
 
 Extra: if you type the name of an executable without the .exe, this shell will look for it and execute it with the commands provided via CLI
 
