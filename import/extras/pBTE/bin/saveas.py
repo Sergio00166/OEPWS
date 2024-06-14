@@ -9,10 +9,9 @@ from glob import glob
 
 if not sep==chr(92): #If OS is LINUX
     #Get default values for TTY
-    from termios import TCSADRAIN, tcsetattr, tcgetattr
-    from tty import setraw; from sys import stdin
-    fd = stdin.fileno()
-    old_settings = tcgetattr(fd)
+    from termios import TCSADRAIN,tcsetattr,tcgetattr
+    from sys import stdin; from tty import setraw
+    fd = stdin.fileno(); old_settings = tcgetattr(fd)
 
 def updscr_thr():
     global saveastxt,filewrite,rows,columns,black,reset,status,banoff
@@ -32,10 +31,7 @@ def updscr_thr():
             wrtptr,arr,banner,filename,rows,columns,status_st)
             rows,columns = menu_updsrc(arg,mode)
             # If OS is LINUX set TTY to raw mode
-            if not sep==chr(92):
-                terminal = tcgetattr(fd)
-                terminal[3] = terminal[3] & ~(ICANON | ECHO)
-                tcsetattr(fd, TCSADRAIN, terminal)
+            if not sep==chr(92): setraw(fd,when=TCSADRAIN)
 
 
 def exit():
@@ -51,7 +47,7 @@ def save_as(arg):
     global run, kill, fd, thr, old_settings, status_st, bnc, slc
 
     filename,black,bnc,slc,reset,rows,banoff,arr,columns,status,offset,\
-    line,banner,status_st,saved_txt,keys,fixstr,read_key = arg
+    line,banner,status_st,saved_txt,keys,read_key = arg
 
     saveastxt=" Save as: "; lenght=len(saveastxt)+2
     filewrite=filename; wrtptr=lenght+len(filewrite)
@@ -73,17 +69,14 @@ def save_as(arg):
             wrtptr,arr,banner,filename,rows,columns,status_st)
             rows,columns = menu_updsrc(arg,mode,True)
             # If OS is LINUX set TTY to raw mode
-            if not sep==chr(92):
-                terminal = tcgetattr(fd)
-                terminal[3] = terminal[3] & ~(ICANON | ECHO)
-                tcsetattr(fd, TCSADRAIN, terminal)
+            if not sep==chr(92): setraw(fd,when=TCSADRAIN)
             
             run=True #Start update screen thread
             key=read_key() #Map keys
             run=False #Stop update screen thread
 
             if key==keys["tab"]:
-                if not (filewrite==sep or len(filewrite)==0):
+                if not (len(openfile)==0 or (sep==chr(92) and not ":" in openfile)):
                     if not complete: content=glob(filewrite+"*",recursive=False)
                     if len(content)>0: complete=True
                     if cmp_counter>=len(content): cmp_counter = 0
@@ -105,7 +98,7 @@ def save_as(arg):
                 else: status,filename = saved_txt,filewrite
                 exit(); break
                 
-            elif key==keys["ctrl+c"]: exit(); break
+            elif key==keys["ctrl+q"]: exit(); break
         
             elif key==keys["delete"]:
                 if not wrtptr==lenght:
@@ -153,9 +146,7 @@ def save_as(arg):
                 exit(); break
             
             else: #Rest of keys
-                cond1=wrtptr<((columns+2)*rows+1)
-                cond2=str(key)[4:6] in fixstr
-                if cond1 and not cond2:
+                if wrtptr<((columns+2)*rows+1):
                     out=decode(key)
                     p1=filewrite[:wrtptr-lenght]
                     p2=filewrite[wrtptr-lenght:]

@@ -9,11 +9,9 @@ from time import sleep as delay
 
 if not sep==chr(92): #If OS is LINUX
     #Get default values for TTY
-    from termios import TCSADRAIN,\
-    tcsetattr, tcgetattr, ICANON, ECHO
-    from sys import stdin
-    fd = stdin.fileno()
-    old_settings = tcgetattr(fd)
+    from termios import TCSADRAIN,tcsetattr,tcgetattr
+    from sys import stdin; from tty import setraw
+    fd = stdin.fileno(); old_settings = tcgetattr(fd)
 
 def updscr_thr():
     global opentxt,openfile,rows,columns,black,reset,status,banoff
@@ -33,10 +31,7 @@ def updscr_thr():
             wrtptr,arr,banner,filename,rows,columns,status_st)
             rows,columns = menu_updsrc(arg,mode)
             # If OS is LINUX set TTY to raw mode
-            if not sep==chr(92):
-                terminal = tcgetattr(fd)
-                terminal[3] = terminal[3] & ~(ICANON | ECHO)
-                tcsetattr(fd, TCSADRAIN, terminal)
+            if not sep==chr(92): setraw(fd,when=TCSADRAIN)
 
 def exit():
     global fd, old_settings, run, kill, thr
@@ -51,7 +46,7 @@ def open_file(arg):
     global run, kill, fd, old_settings, thr, status_st, bnc, slc
 
     filename,black,bnc,slc,reset,rows,banoff,arr,columns,status,offset,\
-    line,banner,status_st,keys,pointer,oldptr,fixstr,select,read_key = arg
+    line,banner,status_st,keys,pointer,oldptr,select,read_key = arg
     
     openfile=sep.join(filename.split(sep)[:-1])+sep
     opentxt=" Open: "; lenght=len(opentxt)+2; wrtptr=lenght+len(openfile)
@@ -73,17 +68,14 @@ def open_file(arg):
             wrtptr,arr,banner,filename,rows,columns,status_st)
             rows,columns = menu_updsrc(arg,mode,True)
             # If OS is LINUX set TTY to raw mode
-            if not sep==chr(92):
-                terminal = tcgetattr(fd)
-                terminal[3] = terminal[3] & ~(ICANON | ECHO)
-                tcsetattr(fd, TCSADRAIN, terminal)
+            if not sep==chr(92): setraw(fd,when=TCSADRAIN)
 
             run=True #Start update screen thread
             key=read_key() #Map keys
             run=False #Stop update screen thread
 
             if key==keys["tab"]:
-                if not (openfile==sep or len(openfile)==0):
+                if not (len(openfile)==0 or (sep==chr(92) and not ":" in openfile)):
                     if not complete: content=glob(openfile+"*",recursive=False)
                     if len(content)>0: complete=True
                     if cmp_counter>=len(content): cmp_counter = 0
@@ -105,7 +97,7 @@ def open_file(arg):
                 pointer,offset,oldptr = 1,0,1
                 exit(); break
                 
-            elif key==keys["ctrl+c"]: exit(); break
+            elif key==keys["ctrl+q"]: exit(); break
         
             elif key==keys["delete"]:
                 if not wrtptr==lenght:
@@ -149,9 +141,7 @@ def open_file(arg):
                 exit(); break
             
             else: #Rest of keys
-                cond1=wrtptr<((columns+2)*rows+1)
-                cond2=str(key)[4:6] in fixstr
-                if cond1 and not cond2:
+                if wrtptr<((columns+2)*rows+1):
                     out=decode(key)
                     p1=openfile[:wrtptr-lenght]
                     p2=openfile[wrtptr-lenght:]

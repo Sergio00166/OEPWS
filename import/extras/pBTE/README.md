@@ -1,6 +1,8 @@
 # pBTE
 python-based Basic Text Editor
 
+<b>Only UTF-8, when reading other formats it converts to UTF-8 and for that reason it saves only to UTF-8 (LF)</b>
+
 A a basic terminal text editor with python using the minimun external libraries as possible (only wcwidth and colorama) 
 
 Nowadays it is in development stage, then it can be expected to be broken
@@ -17,9 +19,9 @@ Also now "works" under linux (tested under FEDORA and UBUNTU)
 
 <br><h2>OPTIONS</h2>
 <br>*NORMAL*<br>
-^E EXIT | ^S SAVE | ^A Save as | ^O OPEN | ^C COPY | ^X CUT | ^P PASTE | ^G GOTO | ^T T/SP <br>
+^Q QUIT | ^S SAVE | ^A Save as | ^O OPEN | ^C COPY | ^X CUT | ^P PASTE | ^G GOTO | ^T T/SP <br>
 <br>*Open file menu*<br>
-^C CANCEL | ^O OPEN  | ^N NEW FILE <br>
+^Q CANCEL | ^O OPEN  | ^N NEW FILE <br>
 <br>*Save as menu*<br>
-^C CANCEL | ^S SAVE | ^B BACKUP | ^A APPEND | ^P PREPEND
+^Q CANCEL | ^S SAVE | ^B BACKUP | ^A APPEND | ^P PREPEND
 <br>

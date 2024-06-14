@@ -7,8 +7,8 @@ from openfile import open_file
 
 
 def keys_func(key,pointer,oldptr,line,offset,columns,banoff,arr,rows,
-              filename,status,status_st,copy_buffer,fixstr,black,bnc,
-              slc,reset,saved_txt,ch_T_SP,banner,read_key,keys,select):
+              filename,status,status_st,copy_buffer,black,bnc,slc,
+              reset,saved_txt,ch_T_SP,banner,read_key,keys,select):
 
     if key==keys["supr"]:
         args=(pointer,offset,banoff,arr,line,select)
@@ -85,12 +85,12 @@ def keys_func(key,pointer,oldptr,line,offset,columns,banoff,arr,rows,
 
     elif key==keys["ctrl+a"]:
         args = (filename,black,bnc,slc,reset,rows,banoff,arr,columns,status,\
-                offset,line,banner,status_st,saved_txt,keys,fixstr,read_key)
+                offset,line,banner,status_st,saved_txt,keys,read_key)
         status_st,filename,status = save_as(args)
 
     elif key==keys["ctrl+o"]:
         args = (filename,black,bnc,slc,reset,rows,banoff,arr,columns,status,offset\
-                ,line,banner,status_st,keys,pointer,oldptr,fixstr,select,read_key)
+                ,line,banner,status_st,keys,pointer,oldptr,select,read_key)
         arr,filename,status_st,pointer,oldptr,line,offset,select = open_file(args)
         
     elif key==keys["ctrl+t"]: ch_T_SP = not ch_T_SP
@@ -98,7 +98,8 @@ def keys_func(key,pointer,oldptr,line,offset,columns,banoff,arr,rows,
     else: #All the other keys
         args=(arr,key,select,pointer,line,offset,banoff,ch_T_SP,rows,keys)
         arr, pointer, line, offset = get_str(*args)
+        status_st = False
                 
-    return pointer,oldptr,line,offset,columns,banoff,arr,rows,filename,\
-           status,status_st,copy_buffer,fixstr,ch_T_SP,select
+    return pointer,oldptr,line,offset,columns,banoff,arr,rows,\
+           filename,status,status_st,copy_buffer,ch_T_SP,select
 

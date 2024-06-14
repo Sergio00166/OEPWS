@@ -1,6 +1,6 @@
 # Code by Sergio1260
 
-from functions import scr_arr2str, rscp
+from functions import scr_arr2str, rscp, sscp
 from functions1 import get_size, fixfilename
 from sys import stdout
 
@@ -8,18 +8,19 @@ def print(text): stdout.write(text)
 
 def update_scr(black,bnc,slc,reset,status,banoff,offset,line,pointer,arr,banner,filename,rows,columns,status_st,rrw=False,select=[]):
     # Create the string that represents on which line we are
-    position=bnc+"  "+str(line+offset-banoff)+"   "
+    position=bnc+"  "+str(line+offset-banoff)+"  "
     # Create a part of the banner (position and status strings)
     status= (" "+banner[1] if not status_st else "  "+status)
     outb=position+bnc+" "+banner[0]+status+"    "+reset
-    # Now set the filenamevar with the fixed filename string and
-    # sets the cls var with the clear screen scape code
-    filename = fixfilename(filename, columns); cls="\r\033[%d;%dH"%(1, 1)
-    # Get the text that will be on screen and update the pointer value
-    all_file,pointer = scr_arr2str(arr,line,offset,pointer,black,reset,columns,rows,banoff)
+    # Now set the filenamevar with the fixed filename string
+    filename = fixfilename(filename, columns)
+    # Set the cls var with the clear screen scape code
+    cls="\r\033[%d;%dH"%(1, 1)
     # Get the separation between the Left and the filename
     fix=outb.replace(bnc,"").replace(reset,"")
     fix=columns-len(fix)-len(filename)+1
+    # Get the text that will be on screen and update the pointer value
+    all_file,pointer = scr_arr2str(arr,line,offset,pointer,black,reset,columns,rows,banoff)
     # Initialize the menu with all the banner
     menu=cls+outb+bnc+" "*fix
 
@@ -61,6 +62,7 @@ def update_scr(black,bnc,slc,reset,status,banoff,offset,line,pointer,arr,banner,
         # ascii chars to p1 (the selected string)
         all_file=p0+black+p1+reset+p2
     # Add to the screen string the rest of the screen
+    filename=sscp(filename,[slc,reset+bnc])
     menu+=filename+" "+reset+"\n"+all_file
     # If raw mode is specified return the screen string
     if rrw: return menu
@@ -97,6 +99,8 @@ def menu_updsrc(arg,mode=None,updo=False):
             line,0,arr,banner,filename,rows,columns,status_st,True)
             # Cut menu to add the menu bar
             menu = "\n".join(menu.split("\n")[:rows+banoff-fix])
+            # Fix weird chars
+            out=sscp(out,[slc,reset+bnc])
             # Add menu to it
             menu+="\n"+bnc+out+(" "*(full))
             # Calculate pointer y displacement
