@@ -40,8 +40,7 @@ def startcmd(val,arg2, directory):
     else: return True
 
 def main(arg1, arg2, directory):
-    try:
-        out = [arg1,arg2] if len(arg2)>0 else [arg1]
-        Popen(out, cwd=directory).communicate()
+    out = " ".join([arg1,arg2] if len(arg2)>0 else [arg1])
+    try: Popen(out, cwd=directory, shell=True).communicate()
     except FileNotFoundError: return startcmd(arg1,arg2,directory)
-    except KeyboardInterrupt: pass
+    except: pass
