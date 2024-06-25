@@ -41,6 +41,6 @@ def startcmd(val,arg2, directory):
 
 def main(arg1, arg2, directory):
     out = " ".join([arg1,arg2] if len(arg2)>0 else [arg1])
-    try: Popen(out, cwd=directory, shell=True).communicate()
+    try: Popen(out, cwd=directorys).wait()
     except FileNotFoundError: return startcmd(arg1,arg2,directory)
     except: pass
