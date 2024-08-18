@@ -22,9 +22,11 @@ def createuserexec():
     from os import system as cmd
     python=dirname(executable)+"\\python.exe"
     dirt=path[0]
-    cmd("powershell "+dirt+"\\import\\powershell\\crex.ps1 "+'"python" "'
+    execf="powershell Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy Bypass -Force;"
+    cmd(execf+dirt+"\\import\\powershell\\crex.ps1 "+'"python" "'
         +dirt+'\\shell.py" "'+dirt+'\\import\\admin.lnk"')
     mkadlnk(dirt+"\\import\\admin.lnk")
+
 
 def mkadlnk(arg):
     with open(arg, 'rb') as file:
