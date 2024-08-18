@@ -40,7 +40,6 @@ def sysinfo():
     raw=str(check_output("powershell -noprofile -executionpolicy bypass -file "+file), encoding="cp857")
     raw=raw[:len(raw)-1]
     raw=raw.split("\r\n")
-    raw.pop(6); raw.pop(7)
     tz=raw[9]; tz=tz[:tz.find(")")+1]
     thr.join()
     out="\n"+line[0]+raw[1]+"\n"+line[1]+raw[2]+line[2]+raw[3]+"\n"+line[3]+raw[0]

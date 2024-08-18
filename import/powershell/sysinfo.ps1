@@ -10,7 +10,7 @@ $operatingSystem.BuildNumber
 "{0:D1}:{1:D2}:{2:D2}:{3:D2}" -f $uptime.Days, $uptime.Hours, $uptime.Minutes, $uptime.Seconds
 $computerSystem.Manufacturer
 $computerSystem.Model
-wmic cpu get name
+Get-CimInstance -ClassName Win32_Processor | Select-Object -ExpandProperty Name
 $biosInfo.Name
 $biosInfo.Version
 (Get-TimeZone).DisplayName
