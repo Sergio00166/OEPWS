@@ -27,7 +27,6 @@ def createuserexec():
         +dirt+'\\shell.py" "'+dirt+'\\import\\admin.lnk"')
     mkadlnk(dirt+"\\import\\admin.lnk")
 
-
 def mkadlnk(arg):
     with open(arg, 'rb') as file:
         bytes_data = bytearray(file.read())
@@ -37,11 +36,11 @@ def mkadlnk(arg):
 
 def fixaddr(arg, silent=False):
     from glob import glob
-    from os.path import isfile
+    from os.path import isfile, abspath
     from os import access, R_OK
     fix=glob(arg, recursive=False)
     if not len(fix)==0 and not len(fix)>1:
-        fix=fix[0]
+        fix=abspath(fix[0])
         if not isfile(fix):
             if access(fix,R_OK): return fix
             elif not silent:
