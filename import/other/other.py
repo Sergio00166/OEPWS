@@ -36,11 +36,12 @@ def mkadlnk(arg):
 
 def fixaddr(arg, silent=False):
     from glob import glob
-    from os.path import isfile, abspath
+    from os.path import isfile
     from os import access, R_OK
     fix=glob(arg, recursive=False)
     if not len(fix)==0 and not len(fix)>1:
-        fix=abspath(fix[0])
+        fix = str(check_output("cd "+fix[0]+" & cd", shell=True))[2:-4]
+        fix = fix.replace("\\\\",chr(92)).replace("\\\\",chr(92))
         if not isfile(fix):
             if access(fix,R_OK): return fix
             elif not silent:
