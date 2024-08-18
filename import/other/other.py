@@ -110,10 +110,6 @@ def extgrp(arg):
     return False
 
 def isadmin():
-    try:
-        open("C:\\tmp","w")
-        try: cmd("DEL /F C:\\tmp 2>nul >nul")
-        except: pass
-        return True
-    except: return False
+    from ctypes import windll
+    return windll.shell32.IsUserAnAdmin()!=0
     
