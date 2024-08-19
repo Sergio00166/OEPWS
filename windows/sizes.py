@@ -25,7 +25,7 @@ def sizwk(i,directory,colors):
     if path.isdir(i): return dirsize(i,directory,colors)
     else:
         file_size = path.getsize(i)
-        i=i.replace(directory,"")
+        i=fixcrdir(i).replace(directory,"")
         ext=("┌─ "+green+'File '+reset+blue+i+reset+"\n└─ ")
         ext+=(yellow+'Size: '+reset+blue+readable(file_size)+reset+"\n")
         return ext
@@ -36,12 +36,12 @@ def dirsize(arg1,directory,colors):
         if ":\\" in arg1: direct=arg1
         else: direct=directory + arg1
     green,yellow,blue,reset = colors
+    print(direct)
     for x in glob(direct, recursive=False):
         size=get_directory_size(x)
         size=readable(size)
-        if not x.endswith(chr(92)): x+=chr(92)
-        x=x.replace(directory,"")
-        if x=="": x=fixcrdir(directory)
+        x=fixcrdir(x)
+        if not x==directory: x=x.replace(directory,"")
         ext=("┌─ "+green+"Directory: "+reset+blue+x+reset+"\n└─ ")
         ext+=(yellow+"Dir size: "+reset+blue+size+reset+"\n")
     return ext
@@ -58,8 +58,7 @@ def size(arg1,directory):
         exp=pool.map_async(worker,files)
         out=exp.get()
         if not len(out)==0:
-            for i in out:
-                print(i.replace(directory,""))
+            for i in out: print(i)
         else: print(color("   It doesn't exist","R")+"\n")
     except SyntaxError: print(color("   Syntax Error","R"))
     except: print(color("   Error\n","R"))

@@ -30,7 +30,8 @@ def tree(arg1, directory):
     reset=color()
     path=parse_syntax(arg1,directory,["in",None])[0]
     if path.endswith(chr(92)): path=path[:-1]
-    dirt=path.split(chr(92))[-1]
+    dirt=fixcrdir(path)
+    if dirt!=directory: dirt=dirt.replace(directory,"")
     if not path==None:
         print("\n   "+blue+dirt+reset)
         worker(path); print("")
@@ -62,11 +63,8 @@ def ls(arg1, directory):
         if not len(buff)==0:
             for x in buff:
                 try:
-                    if ":"+chr(92) in arg1 or arg1=="": dirt=x
-                    else: dirt=x.replace(directory,"")
-                    if not dirt.endswith(chr(92)): dirt+=chr(92)
-                    if dirt==directory: dirt=fixcrdir(directory)+chr(92)
-                    else: dirt=dirt.replace(directory,"")
+                    dirt=fixcrdir(x)
+                    if dirt!=directory: dirt=dirt.replace(directory,"")
                     x=fixaddr(x, True); exp=""
                     if not x==None:
                         print("\n┌─"+green+" Contents of "+reset+blue+dirt+reset+"\n│")

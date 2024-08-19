@@ -26,14 +26,10 @@ def when(arg1, directory):
                 mctime[x]=[mod,crea]       
         print("")
         for x in mctime:
-            if not x.endswith(chr(92)):
-                x=x+chr(92); fix=True
-            else: fix=False
-            file=x.replace(directory,"")
+            file=fixcrdir(x).replace(directory,"")
             if len(file)==0: file=fixcrdir(x)
-            if fix: x=x[:len(x)-1]
             if isdir(x): fltp=" Directory "
-            else: fltp=" File "; file=file[:len(file)-1]
+            else: fltp=" File "
             out= ("┌─"+green+fltp+reset+blue+file+reset+"\n│")
             out+=("\n├"+yellow+" Modificated: "+reset+mctime[x][0]+reset)
             out+=("\n├"+yellow+" Created:     "+reset+mctime[x][1]+reset+"\n└─\n")

@@ -5,8 +5,13 @@ from sys import path
 from colors import color
 
 def fixcrdir(fix):
-    fix=fix.split("\\")
-    return fix[len(fix)-2]
+    from os.path import isdir
+    if isdir(fix): x=fixaddr(fix)
+    else:
+        fix=fix.split(chr(92))
+        x=chr(92).join(fix[:-1])
+        x=fixaddr(x)+fix[-1]
+    return x
 
 def readable(num, suffix="B"):
     for unit in ["", "Ki", "Mi", "Gi", "Ti"]:

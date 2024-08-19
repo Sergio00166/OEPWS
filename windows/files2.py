@@ -26,10 +26,8 @@ def lsacl(arg1, directory):
         if not len(lstext)==0:
             for x in lstext:
                 file=x[1];ext=str(x[0]); buff=""
-                if isdir(file):
-                    if file+chr(92)==directory: file=fixcrdir(directory)+chr(92)
-                    else: file=file.replace(directory,"")+chr(92)
-                file=file[:len(file)].replace(directory,"")
+                file=fixcrdir(file)
+                if file!=directory: file=file.replace(directory,"")
                 buff+=("┌─ "+green+"Object: "+reset+blue+file+reset+"\n│\n")
                 ext=ext[ext.find(" "):]; fix=[]; ext=ext.split("\\n")
                 for x in ext: fix.append(x.lstrip().rstrip())
