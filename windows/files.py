@@ -18,8 +18,8 @@ def delete(arg1, directory):
             if not len(file)==0:
                 for x in file: files.extend(glob(x, recursive=False, include_hidden=True))
                 for x in files: 
-                    if isfile(x): cmd('DEL /Q /F "'+x+'" 2>nul')
-                    else: cmd('RD /s /q "'+x+'" 2>nul')
+                    if isfile(x): cmd('DEL /Q /F "'+x+'" >nul 2>nul')
+                    else: cmd('RD /s /q "'+x+'" >nul 2>nul')
         except SyntaxError: print(color("\n   Syntax Error\n","R"))
     else: print(color("\n   Error\n","R"))
 
