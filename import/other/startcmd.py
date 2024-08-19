@@ -1,4 +1,4 @@
-#Code by Sergio1260
+#Code by Sergio00166
 
 from multiprocessing import Pool
 from glob import glob
@@ -41,6 +41,6 @@ def startcmd(val,arg2, directory):
 
 def main(arg1, arg2, directory):
     out = " ".join([arg1,arg2] if len(arg2)>0 else [arg1])
-    try: Popen(out, cwd=directorys).wait()
+    try: Popen(out, cwd=directory).wait()
     except FileNotFoundError: return startcmd(arg1,arg2,directory)
     except: pass

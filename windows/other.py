@@ -1,4 +1,4 @@
-#Code by Sergio1260
+#Code by Sergio00166
 
 from subprocess import check_output
 from sys import path

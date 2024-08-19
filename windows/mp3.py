@@ -1,4 +1,4 @@
-#Code by Sergio1260
+#Code by Sergio00166
 
 from pygame.mixer import music
 from pygame.mixer import init

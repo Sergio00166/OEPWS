@@ -1,4 +1,4 @@
-#Code by Sergio1260
+#Code by Sergio00166
 
 from os import system as cmd
 from sys import path

@@ -1,4 +1,4 @@
-#Code by Sergio1260
+#Code by Sergio00166
 
 from os import system as cmd
 from sys import path
@@ -19,7 +19,6 @@ def fix(code):
                     if module_name in banned_functions: return False
         return True
     except SyntaxError: return False
-
 
 def init():
     global letras, operaprt, error, resultprt
@@ -53,7 +52,7 @@ def main(arg1=False):
             arg=input()
         else: arg=arg1
         if arg=="exit": print(""); break
-        elif arg=="clear": print("\033c")
+        elif arg=="clear": print("\r\033c",end="")
         elif arg=="flush": letras={":a":0,":b":0,":c":0,":d":0}
         else:
             if "set" in arg:

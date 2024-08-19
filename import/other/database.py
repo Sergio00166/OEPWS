@@ -1,4 +1,4 @@
-#Code by Sergio1260
+#Code by Sergio00166
 
 from colors import color
 from multiprocessing import Process, Queue

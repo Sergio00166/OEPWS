@@ -1,4 +1,4 @@
-#Code by Sergio1260
+#Code by Sergio00166
 
 def things(arg, arg1, directory):
     status=True
