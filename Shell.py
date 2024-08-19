@@ -48,10 +48,9 @@ def cli(args):
             else:
                 if not arg=="":
                     if arg=="sudo": arg1=arg1.replace(";","';'")
-                    #try:
-                    directory=database(arg,arg1,directory,str(oldir[0]))
-                    #except KeyboardInterrupt: pass
-                    #except: print(ferror)
+                    try: directory=database(arg,arg1,directory,str(oldir[0]))
+                    except KeyboardInterrupt: pass
+                    except: print(ferror)
                     if not len(oldir)==1:
                         if not directory==oldir[1]: oldir.pop(0)
         if args: input("Press any key to exit . . . ")
