@@ -1,37 +1,67 @@
-#Code by Sergio1260
+# Code by Sergio00166
 
 from os import sep
 from sys import path
 path.append(path[0]+sep+"lib.zip")
 from wcwidth import wcwidth
-from functions1 import CalcRelLine
 
-ascii_map = { 0x00: '␀',  0x01: '␁',  0x02: '␂', 0x03: '␃', 0x04: '␄', 0x05: '␅', 0x06: '␆', 0x07: '␇',
-              0x08: '␈',  0x0A: '␊',  0x0B: '␋', 0x0C: '␌', 0x0D: '␍', 0x0E: '␎', 0x0F: '␏', 0x10: '␐',
-              0x11: '␑',  0x12: '␒',  0x13: '␓', 0x14: '␔', 0x15: '␕', 0x16: '␖', 0x17: '␗', 0x18: '␘',
-              0x19: '␙',  0x1A: '␚',  0x1B: '␛', 0x1C: '␜', 0x1D: '␝', 0x1E: '␞', 0x1F: '␟', 0x7F: '␡'
+ascii_map = { 0x00: '␀', 0x01: '␁', 0x02: '␂', 0x03: '␃', 0x04: '␄', 0x05: '␅', 0x06: '␆',
+              0x07: '␇', 0x08: '␈', 0x0A: '␊', 0x0B: '␋', 0x0C: '␌', 0x0D: '␍', 0x0E: '␎',
+              0x0F: '␏', 0x10: '␐', 0x11: '␑', 0x12: '␒', 0x13: '␓', 0x14: '␔', 0x15: '␕',
+              0x16: '␖', 0x17: '␗', 0x18: '␘', 0x19: '␙', 0x1A: '␚', 0x1B: '␛', 0x1C: '␜',
+              0x1D: '␝', 0x1E: '␞', 0x1F: '␟', 0x7F: '␡'
             }
-
 ascii_replaced = [ascii_map[x] for x in ascii_map]+[">","<","�"]
 
-# Now it seems to work
-def wrap(text, columns):
-    out,buffer,counter = [],"",-1
-    text=text.expandtabs(8)
-    for x in text:
-        lenght=str_len(fscp(x))
-        if counter+lenght>columns:
-            out.append(buffer)
-            buffer,counter = x,lenght
+
+def expandtabs(self, tabsize=8):
+    result,col = [], 0
+    for char in self:
+        if char == '\t':
+            space_count = tabsize - (col % tabsize)
+            result.append(' ' * space_count)
+            col += space_count
         else:
-            buffer+=x
-            counter+=lenght
-    out.append(buffer)
-    return out
+            result.append(char)
+            char_width = wcwidth(char)
+            if char_width > 0:
+                col += char_width
+            else: col += 1
+    return ''.join(result)
+
+
+def wrap(text, columns, tabsize=8, rtarr=False):
+    buffer, counter, col = "", -1, 0
+    result, len_arr = [], []
+
+    def handle_char(char, char_width):
+        nonlocal buffer, counter, col, result
+        if counter + char_width > columns:
+            result.append(buffer)
+            len_arr.append(counter)
+            buffer, counter = char, char_width
+        else:
+            buffer += char
+            counter += char_width
+        col += char_width
+
+    for char in text:
+        if char == '\t':
+            space_count = tabsize - (col % tabsize)
+            expanded = ' ' * space_count
+            for x in expanded: handle_char(x, 1)
+        else:
+            char_width = wcwidth(char) if wcwidth(char) > 0 else 1
+            handle_char(char, char_width)
+
+    if buffer: result.append(buffer)
+    return (result,len_arr) if rtarr else (result)
+
 
 def fix_arr_line_len(arr, columns, black, reset):
     out=[]; fix=0//(columns+2)
     for text in arr:
+        text = text[:columns+2]
         wrapped_text = wrap(text,columns)
         if len(wrapped_text)==0: wrapped_text=""
         elif fix==len(wrapped_text):
@@ -43,24 +73,23 @@ def fix_arr_line_len(arr, columns, black, reset):
         out.append(text)   
     return out
 
-def str_len(text,pointer=None):
+def str_len(text):
     lenght=0
-    if not pointer==None:
-        fix=text[:pointer-1]
-    else: fix=text
-    fix=fix.expandtabs(8)
+    fix=expandtabs(text)
     for x in fix: lenght+=wcwidth(x)
     return lenght
 
 def fix_cursor_pos(text,pointer,columns,black,reset):
     len_arr=[]; ptr=pointer; pos=0
-    pointer=str_len(fscp(text),pointer)   
-    wrapped_text = wrap(text,columns)  
-    for x in wrapped_text:
-        if pointer-str_len(fscp(x))<1: break
+    text = text[:pointer+columns+2]
+    pointer=str_len(fscp(text[:pointer-1])) 
+    wrapped_text,len_arr = wrap(text,columns,rtarr=True)
+    
+    for x in len_arr:
+        if (pointer-x)<1: break
         else: pos+=1
-        pointer-=str_len(fscp(x))
-    if pos>0: pointer+=1
+        pointer-=x
+
     if not len(wrapped_text)==0:
         if pos>len(wrapped_text)-1: pos=-1
         text=wrapped_text[pos]
@@ -98,7 +127,6 @@ def scr_arr2str(arr,line,offset,pointer,black,reset,columns,rows,banoff):
 def sscp(arg,color):
     global ascii_map
     b, r = color; ext = []
-    arg=arg.expandtabs(8)
     for x in arg:
         if ord(x) in ascii_map:
             ext.append(b+ascii_map[ord(x)]+r)

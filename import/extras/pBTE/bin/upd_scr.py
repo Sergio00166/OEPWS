@@ -1,28 +1,37 @@
-# Code by Sergio1260
+# Code by Sergio00166
 
-from functions import scr_arr2str, rscp, sscp
+from functions import scr_arr2str, rscp, sscp, fscp, str_len
 from functions1 import get_size, fixfilename
 from sys import stdout
 
-def print(text): stdout.write(text)
+
+# Some ANSII ctrl codes
+movcr = "\r\033[%d;%dH"
+cls = movcr%(1,1)
+scr = "\r\x1b[?25h"
+hcr = "\r\x1b[?25l"
+
+def print(text):
+    stdout.write(text)
+    stdout.flush()
 
 def update_scr(black,bnc,slc,reset,status,banoff,offset,line,pointer,arr,banner,filename,rows,columns,status_st,rrw=False,select=[]):
     # Create the string that represents on which line we are
-    position=bnc+"  "+str(line+offset-banoff)+"  "
+    position=bnc+" "+str(line+offset-banoff)+"  "
     # Create a part of the banner (position and status strings)
     status= (" "+banner[1] if not status_st else "  "+status)
-    outb=position+bnc+" "+banner[0]+status+"    "+reset
+    outb=position+bnc+" "+banner[0]+status+"    "
     # Now set the filenamevar with the fixed filename string
-    filename = fixfilename(filename, columns)
-    # Set the cls var with the clear screen scape code
-    cls="\r\033[%d;%dH"%(1, 1)
+    length = columns-len(outb.replace(bnc,""))
+    filename = fixfilename(filename,columns,length)
+    filename = sscp(filename,[slc,reset+bnc])
     # Get the separation between the Left and the filename
     fix=outb.replace(bnc,"").replace(reset,"")
     fix=columns-len(fix)-len(filename)+1
     # Get the text that will be on screen and update the pointer value
     all_file,pointer = scr_arr2str(arr,line,offset,pointer,black,reset,columns,rows,banoff)
     # Initialize the menu with all the banner
-    menu=cls+outb+bnc+" "*fix
+    menu=cls+outb+" "*fix
 
     # Highlight selector
     if len(select)>0:
@@ -61,17 +70,19 @@ def update_scr(black,bnc,slc,reset,status,banoff,offset,line,pointer,arr,banner,
         # Now create the all file string. Adding the
         # ascii chars to p1 (the selected string)
         all_file=p0+black+p1+reset+p2
-    # Add to the screen string the rest of the screen
-    filename=sscp(filename,[slc,reset+bnc])
+    # Now concatenate all to create the screen
     menu+=filename+" "+reset+"\n"+all_file
     # If raw mode is specified return the screen string
     if rrw: return menu
     else:
-        # if not add the ansii code to move the
-        # cursor where it is stored in line and
-        # pointer vars and prints it
-        menu+=("\r\033[%d;%dH"%(line+1, pointer))
-        print(menu)
+        # if not add the ansii code firstly to unshow
+        # the tty cursor, then move the cursor to the
+        # desired line, the show the cursor and move
+        # it horizontally and then print to stdout
+        line += banoff
+        menu += movcr%(line,1)+scr
+        menu += movcr%(line,pointer)
+        print(hcr+menu)
 
 
 def menu_updsrc(arg,mode=None,updo=False):
@@ -82,7 +93,7 @@ def menu_updsrc(arg,mode=None,updo=False):
     old_rows=rows; old_columns=columns
     rows,columns=get_size()
     # Check if terminal is too small
-    if rows<4 or columns<34: print("\r\033cTerminal too small")
+    if rows<4 or columns<24: print("\r\033cTerminal too small")
     # Compare the old values with the new ones
     elif not (old_rows==rows and old_columns==columns) or updo:
         if not updo: print("\r\033c")

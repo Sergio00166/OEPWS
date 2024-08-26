@@ -1,6 +1,6 @@
-#Code by Sergio1260
+# Code by Sergio00166
 
-from functions1 import decode, get_size
+from functions1 import decode, get_size, read_UTF8
 from upd_scr import menu_updsrc
 from threading import Thread
 from os import sep
@@ -47,7 +47,7 @@ def save_as(arg):
     global run, kill, fd, thr, old_settings, status_st, bnc, slc
 
     filename,black,bnc,slc,reset,rows,banoff,arr,columns,status,offset,\
-    line,banner,status_st,saved_txt,keys,read_key = arg
+    line,banner,status_st,saved_txt,keys,read_key,codec,lnsep = arg
 
     saveastxt=" Save as: "; lenght=len(saveastxt)+2
     filewrite=filename; wrtptr=lenght+len(filewrite)
@@ -92,13 +92,13 @@ def save_as(arg):
             #Ctrl + A (confirms) or Ctrl + B backup
             elif key==keys["ctrl+s"] or key==keys["ctrl+b"]:
                 if key==keys["ctrl+b"] and filewrite==filename: filewrite+=".bak"
-                out=open(filewrite,"w",encoding="UTF-8",newline='')
-                out.write("\n".join(arr)); out.close(); status_st=True
+                out=open(filewrite,"w",encoding=codec,newline='')
+                out.write(lnsep.join(arr)); out.close(); status_st=True
                 if key==keys["ctrl+b"]: status=bnc+"BCKPd"
                 else: status,filename = saved_txt,filewrite
                 exit(); break
                 
-            elif key==keys["ctrl+q"]: exit(); break
+            elif key==keys["ctrl+c"]: exit(); break
         
             elif key==keys["delete"]:
                 if not wrtptr==lenght:
@@ -137,11 +137,11 @@ def save_as(arg):
             elif key==keys["return"]: pass
 
             elif key==keys["ctrl+p"] or key==keys["ctrl+a"]:
-                tmp=open(filewrite,"r",encoding="UTF-8",newline='').readlines()
+                tmp,codec,lnsep = read_UTF8(filewrite)
                 if key==keys["ctrl+a"]: output=list(arr+tmp)
                 elif key==keys["ctrl+p"]: output=list(tmp+arr)
-                out=open(filewrite,"w",encoding="UTF-8",newline='')
-                out.write("\n".join(output)); out.close()
+                out=open(filewrite,"w",encoding=codec,newline='')
+                out.write(lnsep.join(output)); out.close()
                 status,status_st = bnc+"ADDED",True
                 exit(); break
             
@@ -151,7 +151,7 @@ def save_as(arg):
                     p1=filewrite[:wrtptr-lenght]
                     p2=filewrite[wrtptr-lenght:]
                     filewrite=p1+out+p2
-                    wrtptr+=1
+                    wrtptr+=len(out)
         except: pass
 
-    return status_st, filename, status
+    return status_st, filename, status, codec, lnsep

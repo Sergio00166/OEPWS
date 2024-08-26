@@ -1,4 +1,4 @@
-#Code by Sergio1260
+# Code by Sergio00166
 
 from functions1 import decode, get_size, read_UTF8
 from upd_scr import menu_updsrc
@@ -46,7 +46,7 @@ def open_file(arg):
     global run, kill, fd, old_settings, thr, status_st, bnc, slc
 
     filename,black,bnc,slc,reset,rows,banoff,arr,columns,status,offset,\
-    line,banner,status_st,keys,pointer,oldptr,select,read_key = arg
+    line,banner,status_st,keys,pointer,oldptr,select,read_key,codec,lnsep = arg
     
     openfile=sep.join(filename.split(sep)[:-1])+sep
     opentxt=" Open: "; lenght=len(opentxt)+2; wrtptr=lenght+len(openfile)
@@ -92,12 +92,13 @@ def open_file(arg):
             
             elif key==keys["ctrl+o"]:
                 openfile=glob(openfile, recursive=False)[0]
-                arr=read_UTF8(openfile); filename=openfile
+                arr,codec,lnsep = read_UTF8(openfile)
+                filename = openfile
                 status_st,line,select = False,1,[]
                 pointer,offset,oldptr = 1,0,1
                 exit(); break
                 
-            elif key==keys["ctrl+q"]: exit(); break
+            elif key==keys["ctrl+c"]: exit(); break
         
             elif key==keys["delete"]:
                 if not wrtptr==lenght:
@@ -146,8 +147,8 @@ def open_file(arg):
                     p1=openfile[:wrtptr-lenght]
                     p2=openfile[wrtptr-lenght:]
                     openfile=p1+out+p2
-                    wrtptr+=1
+                    wrtptr+=len(out)
                     complete=False
         except: pass
     
-    return arr,filename,status_st,pointer,oldptr,line,offset,select
+    return arr,filename,status_st,pointer,oldptr,line,offset,select,codec,lnsep

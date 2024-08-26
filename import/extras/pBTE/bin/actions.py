@@ -1,7 +1,6 @@
-#Code by Sergio1260
+# Code by Sergio00166
 
 from functions1 import *
-from functions import str_len
 
 
 def down(line,offset,arr,banoff,oldptr,rows,pointer,select,selected):
@@ -93,7 +92,19 @@ def goto(columns, rows, banoff, line, arr, offset, black):
     print("\033c", end="")
     return line, offset
 
+def chg_var_str(columns,rows,banoff,line,black,old,text):
+    try:    
+        print("\r\033[%d;%dH"%(rows+banoff+2,1),end="")
+        print(black+(" "*(columns+2))+"\r", end="")
+        print(f" Set {text} char: ", end=""); inp=input()
+        print("\r\033[%d;%dH"%(line, 1),end="")
+    except: inp = old
+    print("\033c", end="")
+    return inp
+
 def newline(pointer,offset,banoff,line,arr,rows,status,select):
+    if not len(select)==0:
+        select,arr,line,offset = del_sel(select,arr,banoff)
     text=arr[line+offset-banoff]
     p1=arr[:line+offset-banoff]
     p2=arr[line+offset-banoff:]
@@ -102,12 +113,21 @@ def newline(pointer,offset,banoff,line,arr,rows,status,select):
         seltext=[text[:pointer-fix]]
         arr=p1+seltext+p2
         text=text[pointer-fix:]
-        pointer=0
+        pointer=1
     else: arr=p1+[""]+p2
     if not line>rows: line+=1
     else: offset+=1
     status_st=False
-    if not len(select)==0: select=[]
     arr[line+offset-banoff]=text
     return line, offset, arr, pointer, status, select
+
+def dedent(arr,line,offset,banoff,indent,pointer):
+    text = arr[line+offset-banoff]
+    p1 = text[:pointer-1]
+    p2 = text[pointer-1:]
+    if len(indent)>0 and p1.endswith(indent):
+        p1 = p1[:-len(indent)]
+        pointer-=len(indent)
+        arr[line+offset-banoff] = p1+p2
+    return arr,pointer
 

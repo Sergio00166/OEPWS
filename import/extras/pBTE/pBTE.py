@@ -1,4 +1,4 @@
-#Code by Sergio1260
+# Code by Sergio00166
 
 
 def updscr_thr():
@@ -13,7 +13,7 @@ def updscr_thr():
             old_rows=rows; old_columns=columns
             rows,columns=get_size()
             # Check if terminal is too small
-            if rows<4 or columns<34: print("\r\033cTerminal too small")
+            if rows<4 or columns<24: print("\r\033cTerminal too small")
             # Compare the old values with the new ones
             elif not (old_rows==rows and old_columns==columns):
                 # Increment the offset if line is geeter than rows
@@ -46,10 +46,6 @@ if __name__=="__main__":
         try:
             # Fix arr when empty
             if len(arr)==0: arr=[""]
-            # Fix for the pointer variable
-            lenght=len(arr[line+offset-banoff])+1
-            if pointer==0: pointer=1
-            elif pointer>lenght: pointer=lenght   
             # If status flag is 0 set save text to blank
             if status_st==0: status=saved_df 
             # Get the terminal size
@@ -62,20 +58,22 @@ if __name__=="__main__":
             # If key is Ctrl + Q (quit) exit the program and clear the screen
             if key==keys["ctrl+q"]:
                 if len(files)>0:
-                    filename=files[0]; files=files[1:]; arr=read_UTF8(filename)
-                    pointer=1; line=1; offset=0; status_st=False
+                    filename,files = files[0],files[1:]
+                    arr,codec,lnsep = read_UTF8(filename)
+                    pointer,line,offsetstatus_st = 1,1,0,False
                 else: kill=True; update_thr.join(); break
             #Call keys functions (Yeah, its a lot of args and returned values)
             args = (
                 key,pointer,oldptr,line,offset,columns,banoff,arr,rows,
-                filename,status,status_st,copy_buffer,black,bnc,slc,
-                reset,saved_txt,ch_T_SP,banner,getch,keys,select
+                filename,status,status_st,copy_buffer,black,bnc,slc,reset,
+                saved_txt,indent,banner,getch,keys,select,codec,lnsep,comment
             )
             pointer,oldptr,line,offset,columns,banoff,arr,\
             rows,filename,status,status_st,copy_buffer,\
-            ch_T_SP,select = keys_func(*args)
+            indent,select,codec,lnsep,comment = keys_func(*args)
                          
         except: pass
+
 
     # Clear and reset the terminal
     if not sep==chr(92):
