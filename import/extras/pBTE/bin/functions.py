@@ -14,48 +14,39 @@ ascii_map = { 0x00: '␀', 0x01: '␁', 0x02: '␂', 0x03: '␃', 0x04: '␄', 0
 ascii_replaced = [ascii_map[x] for x in ascii_map]+[">","<","�"]
 
 
-def expandtabs(self, tabsize=8):
-    result,col = [], 0
-    for char in self:
-        if char == '\t':
-            space_count = tabsize - (col % tabsize)
-            result.append(' ' * space_count)
-            col += space_count
-        else:
-            result.append(char)
-            char_width = wcwidth(char)
-            if char_width > 0:
-                col += char_width
-            else: col += 1
-    return ''.join(result)
-
-
-def wrap(text, columns, tabsize=8, rtarr=False):
-    buffer, counter, col = "", -1, 0
-    result, len_arr = [], []
+# Expands tabulators and splits the text in parts and as
+# optional calculates the position and relative pointer
+def wrap(text, columns, tabsize=8, pointer=None):
+    buffer,counter,col = "", -1, 0
+    result,pos,ptr = [], 0, 0
+    extra = pointer!=None
 
     def handle_char(char, char_width):
-        nonlocal buffer, counter, col, result
+        nonlocal buffer,counter,col,result,ptr,pos
         if counter + char_width > columns:
             result.append(buffer)
-            len_arr.append(counter)
+            if ptr-counter>0:
+                ptr -= counter
+                pos += 1
             buffer, counter = char, char_width
         else:
             buffer += char
             counter += char_width
         col += char_width
 
-    for char in text:
+    for p,char in enumerate(text):
         if char == '\t':
             space_count = tabsize - (col % tabsize)
             expanded = ' ' * space_count
+            if extra and pointer>p: ptr += space_count
             for x in expanded: handle_char(x, 1)
         else:
             char_width = wcwidth(char) if wcwidth(char) > 0 else 1
+            if extra and pointer>p: ptr += char_width
             handle_char(char, char_width)
 
     if buffer: result.append(buffer)
-    return (result,len_arr) if rtarr else (result)
+    return (result,ptr,pos) if not pointer==None else (result)
 
 
 def fix_arr_line_len(arr, columns, black, reset):
@@ -73,22 +64,29 @@ def fix_arr_line_len(arr, columns, black, reset):
         out.append(text)   
     return out
 
-def str_len(text):
-    lenght=0
-    fix=expandtabs(text)
-    for x in fix: lenght+=wcwidth(x)
+# Expands tabs and gets real string lenght
+def str_len(self, tabsize=8):
+    result,col,lenght = [],0,0
+    for char in self:
+        if char == '\t':
+            space_count = tabsize - (col % tabsize)
+            result.append(' ' * space_count)
+            lenght += space_count
+            col += space_count
+        else:
+            result.append(char)
+            char_width = wcwidth(char)
+            lenght += char_width
+            if char_width > 0:
+                col += char_width
+            else: col += 1
     return lenght
 
+
 def fix_cursor_pos(text,pointer,columns,black,reset):
-    len_arr=[]; ptr=pointer; pos=0
     text = text[:pointer+columns+2]
-    pointer=str_len(fscp(text[:pointer-1])) 
-    wrapped_text,len_arr = wrap(text,columns,rtarr=True)
-    
-    for x in len_arr:
-        if (pointer-x)<1: break
-        else: pos+=1
-        pointer-=x
+    wrapped_text, pointer, pos =\
+    wrap(text,columns,pointer=pointer-1)
 
     if not len(wrapped_text)==0:
         if pos>len(wrapped_text)-1: pos=-1
