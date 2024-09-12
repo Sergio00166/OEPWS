@@ -32,7 +32,7 @@ def move(arg1,directory):
             if x[len(x)-1:]==chr(92) or isdir(x):
                 if x[len(x)-1:]==chr(92): x=x[:len(x)-1]
                 exp='robocopy /E /MOVE /NJH /NFL /MT \\"'+x+'\\" \\"'+dest+'\\"'
-            else: exp='move /Y \\"'+x+'\\" \\"'+dest+'\\"'
+            else: exp='Move-Item -Path \\"'+x+'\\" -Destination \\"'+dest+'\\"'
             cmd("powershell "+exp)
         print("")           
     except SyntaxError: print(color("   Bad Syntax\n", "R"))
