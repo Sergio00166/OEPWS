@@ -40,7 +40,7 @@ def wrap(text, columns, tabsize=8, cursor=None):
             handle_char(char, char_width)
 
     if buffer: result.append(buffer)
-    return (result,ptr,pos) if not cursor==None else (result)
+    return (result,ptr,pos) if extra else (result)
 
 
 def fix_arr_line_len(arr, columns, black, reset):

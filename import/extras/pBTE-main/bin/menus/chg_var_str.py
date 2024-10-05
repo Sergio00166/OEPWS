@@ -40,10 +40,10 @@ def exit():
     if not sep == chr(92): tcsetattr(fd,TCSADRAIN,old_settings)
 
 
-def chg_var_str(arg):
+def chg_var_str(arg,kctlc_f=False):
     global prt_txt,entered_str,rows,columns,black,reset,status,banoff
     global length,wrtptr,offset,line,arr,banner,filename,rows,columns
-    global run, kill, fd, old_settings, thr, status_st, bnc, slc
+    global run,kill,fd,old_settings,thr,status_st,bnc,slc
 
     filename,black,bnc,slc,reset,rows,banoff,arr,columns,status,offset,line,\
     banner,status_st,keys,cursor,select,read_key,entered_str,prt_txt = arg
@@ -52,7 +52,7 @@ def chg_var_str(arg):
     length=len(prt_txt)+2
     wrtptr=length+len(entered_str)
     thr=Thread(target=updscr_thr)
-    run,kill = False,False
+    run,kill,kctlc = False,False,False
     thr.start()
     
     while True:
@@ -83,6 +83,7 @@ def chg_var_str(arg):
 
             elif key==keys["ctrl+c"]:
                 entered_str = old_str
+                if kctlc_f: kctlc=True
                 exit(); break
         
             elif key==keys["delete"]:
@@ -103,9 +104,9 @@ def chg_var_str(arg):
                 p1.pop(wrtptr-length)
                 entered_str="".join(p1)
 
-            elif key==keys["start"]: wrtptr=length
+            elif key in keys["start"]: wrtptr=length
                 
-            elif key==keys["end"]: wrtptr=len(entered_str)+length
+            elif key in keys["end"]: wrtptr=len(entered_str)+length
             
             else: #Rest of keys
                 if wrtptr<((columns+2)*rows+1):
@@ -116,5 +117,7 @@ def chg_var_str(arg):
                     wrtptr+=len(out)
                     complete=False
         except: pass
-    
+
+    if kctlc: raise KeyboardInterrupt
     return entered_str
+

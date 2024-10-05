@@ -1,16 +1,22 @@
 # Code by Sergio00166
 
-version="v0.6.5.0"
+version="v0.6.6.9"
      
 if not __name__=="__main__":
 
-    from os import getcwd, sep, read
+    from os import getcwd, sep, read, environ
     from sys import argv, path
+
+    # Add all file structure
+    root = path[0]+sep+"bin"+sep
+    path.append(path[0]+sep+"lib.zip")
+    path.append(root+"core")
+    path.append(root+"menus")
+    
     from os.path import abspath, isdir
     from functions1 import get_size,read_UTF8
     from upd_scr import update_scr
     from keys_func import keys_func
-    path.append(path[0]+sep+"lib.zip")
     from colorama import init, Fore, Back, Style, deinit
     from threading import Thread
     from time import sleep as delay
@@ -20,7 +26,7 @@ if not __name__=="__main__":
     # Define colors
     init(autoreset=False,convert=True)
     reset=Style.RESET_ALL
-    bnc=Back.LIGHTWHITE_EX+Fore.BLACK+Style.DIM
+    bnc=Back.LIGHTWHITE_EX+Fore.BLACK
     black=Back.LIGHTCYAN_EX+Fore.BLACK+Style.DIM
     slc=Back.LIGHTYELLOW_EX+Fore.BLUE+Style.BRIGHT
     deinit(); del init, Fore, Back, Style, deinit
@@ -54,24 +60,27 @@ if not __name__=="__main__":
             return out
 
 
-    #Check if we have arguments via cli, if not create an empty one
+    # Check if we have arguments via cli, if not create an empty one
+    filename = getcwd()+sep+"NewFile"
+    # Fix when current dir is root
+    if filename.startswith("//"):
+        filename = filename[1:]
+    arr,codec,lnsep = [""],"UTF-8","\n"
     if not len(argv)==1:
-        files=[glob(x,recursive=False) for x in argv[1:]]
-        files=[abspath(i) for x in files for i in x if not isdir(i)]
-        if len(files)>0: 
-            arr,codec,lnsep = read_UTF8(files[0])
-            filename=files[0]; files=files[1:]
-            files = [x.replace(sep,"/") for x in files]
-        else:
-            filename=getcwd()+sep+"NewFile"
-            arr,files = [""],[]   
-            codec,lnsep = "UTF-8","\n" 
-    else:
-        filename=getcwd()+sep+"NewFile"
-        arr,files = [""],[]   
-        codec,lnsep = "UTF-8","\n"
+        files = [glob(x,recursive=False) for x in argv[1:]]
+        files = [abspath(i) for x in files for i in x if not isdir(i)]
+        files = [x.replace(sep,"/") for x in files]
+        if len(files)>0:
+            # Skip unopenable files
+            for _ in range(len(files)):
+                try:
+                    name,files = files[0],files[1:]
+                    arr,codec,lnsep = read_UTF8(name)
+                    filename = name
+                    break
+                except: pass
+    else: files=[]
 
-    filename = filename.replace(sep,"/")
 
     #Define a lot of stuff
     offset=oldptr=0
@@ -81,6 +90,7 @@ if not __name__=="__main__":
     end,start,indent = 1,0,"\t"
     comment = ["#",""]
     rows,columns=get_size()
+    filename = filename.replace(sep,"/")
 
     #Flag to show after saving the file
     saved_txt="SAVED"; status=saved_df=" "*5; status_st=False

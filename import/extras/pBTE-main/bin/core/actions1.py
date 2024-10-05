@@ -1,6 +1,7 @@
 # Code by Sergio00166
 
 from functions1 import *
+from actions import up,down
 
 
 def paste(copy_buffer,arr,line,offset,banoff,cursor,select,rows,status_st):
@@ -67,39 +68,15 @@ def copy(select,arr,line,offset,banoff,cursor):
     return copy_buffer
 
 def repag(line,offset,banoff,rows,arr,sep,cursor,oldptr,select,selected):
-    if selected: seled=[line-banoff,offset]
-    p1=line+offset-banoff-rows
-    if p1<0: p1=0
-    line,offset = CalcRelLine(p1,arr,offset,line,banoff,rows)
-    text=arr[line+offset-banoff]
-    cursor=fixlenline(text,cursor,oldptr)
-    arr[line+offset-banoff]=text  
-    if selected:
-        selst=[line-banoff,offset]
-        if len(select)==0:
-            select=[selst,seled]
-        else: select[0]=selst
-    else: select=[]    
+    for x in range(0,rows):
+        cursor, oldptr, offset, line, select =\
+        up(line,offset,arr,banoff,oldptr,rows,cursor,select,selected)
     return line, offset, cursor, oldptr, select
 
 def avpag(line,offset,banoff,rows,arr,sep,cursor,oldptr,select,selected):
-    if selected:
-        selst=[line-banoff,offset]
-        fix=line+offset
-    p1=line+offset-banoff+rows
-    if p1>=len(arr): p1="-"
-    line,offset = CalcRelLine(p1,arr,offset,line,banoff,rows)
-    text=arr[line+offset-banoff]
-    cursor=fixlenline(text,cursor,oldptr)
-    arr[line+offset-banoff]=text
-    if selected:
-        seled=[line-banoff,offset]
-        if sum(seled)<fix:
-            seled[0]=seled[0]+1
-        if len(select)==0:
-            select=[selst,seled]
-        else: select[1]=seled
-    else: select=[]  
+    for x in range(0,rows):
+        cursor, oldptr, offset, line, select =\
+        down(line,offset,arr,banoff,oldptr,rows,cursor,select,selected)
     return line, offset, cursor, oldptr, select
 
 def dedent(arr,line,offset,banoff,indent,cursor):

@@ -20,7 +20,7 @@ def updscr_thr():
     global rows,columns,black,reset,status,banoff,cursor
     global offset,line,banner,filename,rows,columns
     global kill,fd,thr,old_settings,status_st,bnc,slc
-    global find_str,rel_cursor,run,arr
+    global find_str,rel_cursor,run,arr,active
 
     while not kill:
         delay(0.01)
@@ -45,7 +45,7 @@ def updscr_thr():
                 rel_cursor = update_scr(
                 black,bnc,slc,reset,status,banoff,offset,line,cursor,arr,\
                 banner,filename,rows,columns,status_st,False,[],find_str)
-                chg_hlg(rel_cursor,find_str)
+                if active: chg_hlg(rel_cursor,find_str)
             # If OS is LINUX set TTY to raw mode
             if not sep==chr(92): setraw(fd,when=TCSADRAIN)
 
@@ -74,10 +74,10 @@ def search_substring_rev(lst, substring, start_list_pos=0, start_string_pos=None
             if lst[i][j-len(substring):j] == substring: return i, j
         i,start_string_pos = (i-1)%list_length,None
 
-def chg_hlg(rel_cursor,find_str):
-    pos = rel_cursor-str_len(find_str)
+def chg_hlg(rel_cursor,string):
+    pos = rel_cursor-str_len(string)
     mov = movcr%(line+banoff,pos)
-    if pos>0: print(mov+slc+find_str+reset+hcr)
+    if pos>0: print(mov+slc+string+reset+hcr)
 
 def isin_arr(arr,string):
     for x in arr:
@@ -85,18 +85,22 @@ def isin_arr(arr,string):
     return False
 
 
-def find(arg):
+def replace(arg):
     global rows,columns,black,reset,status,banoff,cursor
     global offset,line,banner,filename,rows,columns
     global kill,fd,thr,old_settings,status_st,bnc,slc
-    global find_str,rel_cursor,run,arr
+    global find_str,rel_cursor,run,arr,active
 
     filename,black,bnc,slc,reset,rows,banoff,arr,columns,\
     status,offset,line,banner,status_st,keys,read_key,cursor = arg
+    
+    args = (filename,black,bnc,slc,reset,rows,banoff,arr,columns,status,\
+            offset,line,banner,status_st,keys,cursor,[],read_key,"")
 
-    args = (filename,black,bnc,slc,reset,rows,banoff,arr,columns,status,offset,\
-            line,banner,status_st,keys,cursor,[],read_key,""," Find: ")
-    find_str = chg_var_str(args)
+    try: find_str = find_str = chg_var_str((*args," [R] Find: "),True)
+    except KeyboardInterrupt: return cursor,line,offset,arr,status_st
+    try: replace_str = chg_var_str((*args," Replace with: "),True)
+    except KeyboardInterrupt: return cursor,line,offset,arr,status_st
 
     thr=Thread(target=updscr_thr)
     run,kill = False,False
@@ -104,13 +108,13 @@ def find(arg):
 
     # Check if the str exists in arr
     if not isin_arr(arr,find_str):
-        exit(); return cursor,line,offset
-    # Find and move cursor to the fist one
-    pos = line+offset-banoff
-    p1,cursor = search_substring(arr,find_str,pos,cursor)
-    line,offset = CalcRelLine(p1,arr,offset,line,banoff,rows)
-    cursor += 1 # Cursor starts in 1 not 0
-    
+        exit(); cursor,line,offset,arr,status_st
+    # Find replace and move cursor to the first one
+    pos,active = line+offset-banoff,False
+    cl_line,cursor = search_substring(arr,find_str,pos,cursor)
+    line,offset = CalcRelLine(cl_line,arr,offset,line,banoff,rows)
+    cursor -= len(find_str) # Move to the start of the string
+
     while True:
         try:
             # If OS is LINUX restore TTY to it default values
@@ -123,28 +127,48 @@ def find(arg):
             rel_cursor = update_scr(
             black,bnc,slc,reset,status,banoff,offset,line,cursor,arr,\
             banner,filename,rows,columns,status_st,False,[],find_str)
-            chg_hlg(rel_cursor,find_str)
+            if active:
+                chg_hlg(rel_cursor,replace_str)
+                active = False
             # If OS is LINUX set TTY to raw mode
             if not sep==chr(92): setraw(fd,when=TCSADRAIN)
             
             run=True #Start update screen thread
             key=read_key() #Map keys
             run=False #Stop update screen thread
-
             pos = line+offset-banoff
-    
-            if key==keys["arr_right"]:
-                p1,cursor = search_substring(arr,find_str,pos,cursor)
-                line,offset = CalcRelLine(p1,arr,offset,line,banoff,rows)
+
+            if key==keys["ctrl+c"]: exit(); break
+
+            # Lock it if we cannot do anything more
+            elif not isin_arr(arr,find_str): pass
+            
+            elif key==keys["arr_right"]:
+                cl_line,cursor = search_substring(arr,find_str,pos,cursor)
+                p1 = arr[cl_line][:cursor-len(find_str)]
+                p2 = arr[cl_line][cursor:]
+                arr[cl_line] = p1+replace_str+p2
+                cursor = cursor+len(replace_str)-len(find_str)
+                line,offset = CalcRelLine(cl_line,arr,offset,line,banoff,rows)
                 cursor += 1 # Cursor starts in 1 not 0
+                status_st,active = False,True
                 
             elif key==keys["arr_left"]:
-                p1,cursor = search_substring_rev(arr,find_str,pos,cursor-1)
-                line,offset = CalcRelLine(p1,arr,offset,line,banoff,rows)
+                cl_line,cursor = search_substring_rev(arr,find_str,pos,cursor-1)
+                p1 = arr[cl_line][:cursor-len(find_str)]
+                p2 = arr[cl_line][cursor:]
+                arr[cl_line] = p1+replace_str+p2
+                cursor = cursor+len(replace_str)-len(find_str)
+                line,offset = CalcRelLine(cl_line,arr,offset,line,banoff,rows)
                 cursor += 1 # Cursor starts in 1 not 0
+                status_st,active = False,True
 
-            elif key==keys["ctrl+c"]: exit(); break
+            elif key==keys["ctrl+a"]:
+                for p,x in enumerate(arr):
+                    arr[p] = x.replace(find_str,replace_str)
+                status_st = False # Reset status value
+                break # Exit this menu program
    
         except: pass
 
-    return cursor,line,offset
+    return cursor,line,offset,arr,status_st

@@ -38,9 +38,9 @@ def up(line,offset,arr,banoff,oldptr,rows,cursor,select,selected):
 
 def left(cursor,oldptr,line,offset,banoff,arr):
     if not cursor==1: cursor-=1; oldptr=cursor
-    elif not line+offset==1:
-        if offset==0: line-=1
-        else: offset-=1
+    elif line+offset>banoff:
+        if line>1: line-=1
+        elif offset>0: offset-=1
         text=arr[line+offset-banoff]
         cursor=len(text)+1
     return cursor, oldptr, line, offset
@@ -48,13 +48,13 @@ def left(cursor,oldptr,line,offset,banoff,arr):
 def right(cursor,columns,offset,line,banoff,arr,rows,oldptr):
     text=arr[line+offset-banoff]
     if not cursor>len(text):
-        cursor+=1
+        cursor += 1
         oldptr=cursor
-    else:
-        if not offset+line>len(arr)-1:
-            if not line>rows-2: line+=1
-            else: offset+=1
-            cursor=1
+    elif not offset+line>len(arr)-1:
+        if not line>rows: 
+            line += 1
+        else: offset+=1
+        cursor=1
     return cursor, oldptr, line, offset
 
 def backspace(cursor,offset,line,arr,banoff,select):

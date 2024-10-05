@@ -54,22 +54,28 @@ if __name__=="__main__":
                        banner,filename,rows,columns,status_st,False,select)
             # Set time after reading key from keyboard and stopping the update Thread
             run_thread=True; key=getch(); run_thread=False
-            # If key is Ctrl + Q (quit) exit the program and clear the screen
+            # If key is Ctrl+Q (quit) open new file from queue or exit
             if key==keys["ctrl+q"]:
                 if len(files)>0:
-                    filename,files = files[0],files[1:]
-                    arr,codec,lnsep = read_UTF8(filename)
-                    cursor,line,offsetstatus_st = 1,1,0,False
+                    # Skip unopenable files
+                    for _ in range(len(files)):
+                        try:
+                            name,files = files[0],files[1:]
+                            arr,codec,lnsep = read_UTF8(name)
+                            filename,status_st = name,False
+                            cursor,line,offset = 1,1,0
+                            break
+                        except: pass
                 else: kill=True; update_thr.join(); break
+
             #Call keys functions (Yeah, its a lot of args and returned values)
             args = (
                 key,cursor,oldptr,line,offset,columns,banoff,arr,rows,
                 filename,status,status_st,copy_buffer,black,bnc,slc,reset,
                 saved_txt,indent,banner,getch,keys,select,codec,lnsep,comment
             )
-            cursor,oldptr,line,offset,columns,banoff,arr,\
-            rows,filename,status,status_st,copy_buffer,\
-            indent,select,codec,lnsep,comment = keys_func(*args)
+            cursor,oldptr,line,offset,columns,banoff,arr,rows,filename,status,\
+            status_st,copy_buffer,indent,select,codec,lnsep,comment = keys_func(*args)
                          
         except: pass
 

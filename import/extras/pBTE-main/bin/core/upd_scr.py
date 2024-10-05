@@ -3,18 +3,19 @@
 from functions import scr_arr2str,rscp,sscp,str_len,fix_cursor_pos
 from functions1 import get_size, fixfilename
 from sys import stdout
+from os import sep
 
 
 # Some ANSII ctrl codes
 movcr = "\r\033[%d;%dH"
-cls = movcr%(1,1)
+cls = "\r\033[3J"
+cls += movcr%(1,1)
 scr = "\r\x1b[?25h"
 hcr = "\r\x1b[?25l"
 
 def print(text):
     stdout.write(text)
     stdout.flush()
-
 
 def update_scr(black,bnc,slc,reset,status,banoff,offset,line,cursor,arr,banner,\
                filename,rows,columns,status_st,rrw=False,select=[],hlg_str=""):
@@ -29,7 +30,7 @@ def update_scr(black,bnc,slc,reset,status,banoff,offset,line,cursor,arr,banner,\
     # Fix the filename string to fit in the space
     filename = fixfilename(filename,length)
     # Use the fucking UNIX path separator
-    filename = filename.replace(chr(92),"/")
+    filename = filename.replace(sep,"/")
     # Calculate blank space of necessary
     if small: filename+=" "*(columns-len(filename))
     # Get the separation between the Left and the filename
@@ -106,7 +107,7 @@ def menu_updsrc(arg,mode=None,updo=False):
     if rows<4 or columns<24: print("\r\033cTerminal too small")
     # Compare the old values with the new ones
     elif not (old_rows==rows and old_columns==columns) or updo:
-        if not updo: print("\r\033[3J",end="") # Clear previous content
+        if not updo: print("\r\033[3J") # Clear previous content
         if not mode==None or updo:
             # Set some vars
             filetext,opentxt,wrtptr,length = mode
