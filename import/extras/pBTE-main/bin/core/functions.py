@@ -58,20 +58,20 @@ def fix_arr_line_len(arr, columns, black, reset):
         out.append(text)   
     return out
 
-# Expands tabs and gets real string length
+# Expands tabs and gets real string lenght
 def str_len(self, tabsize=8):
-    result,col,length = [],0,0
+    result,col,lenght = [],0,0
     for char in self:
         if char == '\t':
             space_count = tabsize - (col % tabsize)
             result.append(' ' * space_count)
-            length += space_count
+            lenght += space_count
             col += space_count
         else:
             result.append(char)
             char_width = wcwidth(char)
-            length += char_width
-    return length
+            lenght += char_width
+    return lenght
 
 
 def fix_cursor_pos(text,cursor,columns,black,reset):
@@ -102,10 +102,13 @@ def scr_arr2str(arr,line,offset,cursor,black,reset,columns,rows,banoff):
     arr = fix_arr_line_len(arr,columns,black,reset)
     arr[line-banoff] = text
 
+    # Fill the lines with empty spaces
     for x in arr:
         ln=str_len(rscp(x,[black,reset],True))
         out_arr.append(x+(" "*(columns-ln+2)))
-    if not len(arr)==rows:
+
+    # Add empty lines to fill it
+    if not len(arr)==rows-banoff:
         out_arr+=[" "*(columns+2)]*(rows-len(arr)+1)
     
     return "\n".join(out_arr), cursor

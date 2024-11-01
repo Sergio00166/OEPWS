@@ -38,7 +38,8 @@ if __name__=="__main__":
     
     # Run the update Thread
     update_thr=Thread(target=updscr_thr)
-    run_thread=True; kill=False
+    run_thread,kill = True,False
+    update_thr.daemon = True
     update_thr.start()
     
     while True:
@@ -46,7 +47,7 @@ if __name__=="__main__":
             # Fix arr when empty
             if len(arr)==0: arr=[""]
             # If status flag is 0 set save text to blank
-            if status_st==0: status=saved_df 
+            if status_st==0: status=saved_df
             # Get the terminal size
             rows,columns=get_size()
             # Call screen updater function
@@ -64,6 +65,7 @@ if __name__=="__main__":
                             arr,codec,lnsep = read_UTF8(name)
                             filename,status_st = name,False
                             cursor,line,offset = 1,1,0
+                            indent = taborspace(arr)
                             break
                         except: pass
                 else: kill=True; update_thr.join(); break
@@ -84,3 +86,5 @@ if __name__=="__main__":
     if not sep==chr(92):
         print("\x1b[H\x1b[2J\x1b[3J")
     print("\r\033c"+"\033[0 q")
+    exit(0) # Kill itself
+

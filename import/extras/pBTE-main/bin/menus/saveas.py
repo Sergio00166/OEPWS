@@ -2,10 +2,11 @@
 
 from functions1 import decode, get_size, read_UTF8
 from upd_scr import menu_updsrc
-from threading import Thread
-from os import sep
 from time import sleep as delay
+from threading import Thread
 from glob import glob
+from os import sep
+
 
 if not sep==chr(92): #If OS is LINUX
     #Get default values for TTY
@@ -15,7 +16,7 @@ if not sep==chr(92): #If OS is LINUX
 
 def updscr_thr():
     global saveastxt,filewrite,rows,columns,black,reset,status,banoff
-    global length,wrtptr,offset,line,arr,banner,filename,rows,columns
+    global lenght,wrtptr,offset,line,arr,banner,filename,rows,columns
     global run, kill, fd, old_settings, status_st, bnc, slc
     
     while not kill:
@@ -26,7 +27,7 @@ def updscr_thr():
                 old=(fd,TCSADRAIN,old_settings)
                 tcsetattr(fd, TCSADRAIN, old_settings)
             # Call Screen updater
-            mode=(filewrite,saveastxt,wrtptr,length)
+            mode=(filewrite,saveastxt,wrtptr,lenght)
             arg=(black,bnc,slc,reset,status,banoff,offset,line,\
             wrtptr,arr,banner,filename,rows,columns,status_st)
             rows,columns = menu_updsrc(arg,mode)
@@ -42,21 +43,23 @@ def exit():
 
 def save_as(arg):
     global saveastxt,filewrite,rows,columns,black,reset,status,banoff
-    global length,wrtptr,offset,line,arr,banner,filename,rows,columns
+    global lenght,wrtptr,offset,line,arr,banner,filename,rows,columns
     global run, kill, fd, thr, old_settings, status_st, bnc, slc
 
     filename,black,bnc,slc,reset,rows,banoff,arr,columns,status,offset,\
     line,banner,status_st,saved_txt,keys,read_key,codec,lnsep = arg
 
-    saveastxt=" Save as: "; length=len(saveastxt)+2
-    filewrite=filename; wrtptr=length+len(filewrite)
-    thr=Thread(target=updscr_thr); run=False
-    kill=False; thr.start(); complete=False; cmp_counter=0
+    saveastxt=" Save as: "; lenght=len(saveastxt)+2
+    filewrite=filename; wrtptr=lenght+len(filewrite)
+    thr=Thread(target=updscr_thr)
+    run,kill,complete = False,False,False
+    thr.daemon=True; thr.start()
+    cmp_counter = 0
     
     while True:
         # Fix when the cursor is out
-        if len(filewrite)<wrtptr-length:
-            wrtptr = len(filewrite)+length
+        if len(filewrite)<wrtptr-lenght:
+            wrtptr = len(filewrite)+lenght
         try:
             # Force use LINUX dir separator
             filewrite=filewrite.replace(chr(92),"/")
@@ -65,7 +68,7 @@ def save_as(arg):
                 old=(fd,TCSADRAIN,old_settings)
                 tcsetattr(fd, TCSADRAIN, old_settings)
             # Call Screen updater
-            mode=(filewrite,saveastxt,wrtptr,length)
+            mode=(filewrite,saveastxt,wrtptr,lenght)
             arg=(black,bnc,slc,reset,status,banoff,offset,line,\
             wrtptr,arr,banner,filename,rows,columns,status_st)
             rows,columns = menu_updsrc(arg,mode,True)
@@ -95,14 +98,14 @@ def save_as(arg):
                 if key==keys["ctrl+b"] and filewrite==filename: filewrite+=".bak"
                 out=open(filewrite,"w",encoding=codec,newline='')
                 out.write(lnsep.join(arr)); out.close(); status_st=True
-                if key==keys["ctrl+b"]: status=bnc+"BCKPd"
+                if key==keys["ctrl+b"]: status="BCKPd"
                 else: status,filename = saved_txt,filewrite
-                exit(); break
+                break
                 
-            elif key==keys["ctrl+c"]: exit(); break
+            elif key==keys["ctrl+c"]: break
         
             elif key==keys["delete"]:
-                if not wrtptr==length:
+                if not wrtptr==lenght:
                     if complete:
                         filewrite=filewrite.split("/")[:-1]
                         filewrite="/".join(filewrite)+"/"
@@ -110,15 +113,15 @@ def save_as(arg):
                         complete=False
                     else: 
                         p1=list(filewrite)
-                        p1.pop(wrtptr-length-1)
+                        p1.pop(wrtptr-lenght-1)
                         filewrite="".join(p1)
                         wrtptr-=1
 
             elif key==keys["arr_left"]:
-                if not wrtptr==length: wrtptr-=1
+                if not wrtptr==lenght: wrtptr-=1
                 
             elif key==keys["arr_right"]:
-                if not wrtptr>len(filewrite)+length-1:  wrtptr+=1
+                if not wrtptr>len(filewrite)+lenght-1:  wrtptr+=1
                 
             elif key==keys["supr"]:
                 if complete:
@@ -127,12 +130,12 @@ def save_as(arg):
                     complete=False
                 else: 
                     p1=list(filewrite)
-                    p1.pop(wrtptr-length)
+                    p1.pop(wrtptr-lenght)
                     filewrite="".join(p1)                   
 
-            elif key in keys["start"]: wrtptr=length
+            elif key in keys["start"]: wrtptr=lenght
                 
-            elif key in keys["end"]: wrtptr=len(filewrite)+length
+            elif key in keys["end"]: wrtptr=len(filewrite)+lenght
          
             elif key==keys["return"]: pass
 
@@ -143,19 +146,18 @@ def save_as(arg):
                 out=open(filewrite,"w",encoding=codec,newline='')
                 out.write(lnsep.join(output)); out.close()
                 status,status_st = bnc+"ADDED",True
-                exit(); break
+                break
             
             else: #Rest of keys
                 if wrtptr<((columns+2)*rows+1):
                     out=decode(key)
-                    p1=filewrite[:wrtptr-length]
-                    p2=filewrite[wrtptr-length:]
+                    p1=filewrite[:wrtptr-lenght]
+                    p2=filewrite[wrtptr-lenght:]
                     filewrite=p1+out+p2
                     wrtptr+=len(out)
         except: pass
-
+        
+    exit() # Reset
     # Fix when current dir is root
-    if filename.startswith("//"):
-        filename = filename[1:]
- 
+    if filename.startswith("//"): filename = filename[1:]
     return status_st, filename, status, codec, lnsep

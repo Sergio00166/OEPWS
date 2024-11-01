@@ -1,5 +1,7 @@
 # Code by Sergio00166
 
+from functions1 import cmt_w_ind
+from functions import str_len
 from actions import *
 from actions1 import *
 from saveas import save_as
@@ -7,6 +9,7 @@ from openfile import open_file
 from find_str import find
 from replace_str import replace
 from chg_var_str import chg_var_str
+from opt_menu import opt_menu
 
 
 def keys_func(key,cursor,oldptr,line,offset,columns,banoff,arr,rows,
@@ -65,8 +68,13 @@ def keys_func(key,cursor,oldptr,line,offset,columns,banoff,arr,rows,
         status_st = False
 
     elif key==keys["return"]:
+        args=(cursor,offset,banoff,line,arr,rows,select)
+        line,offset,arr,cursor,select = newline(*args)
+        status_st = False
+
+    elif key==keys["ctrl+j"]:
         args=(cursor,offset,banoff,line,arr,rows,status,select)
-        line,offset,arr,cursor,staus,select = newline(*args)
+        _,_,arr,_,staus,select = newline(*args)
         status_st = False
 
     elif key==keys["ctrl+s"]:
@@ -100,9 +108,9 @@ def keys_func(key,cursor,oldptr,line,offset,columns,banoff,arr,rows,
         status_st,filename,status,codec,lnsep = save_as(args)
 
     elif key==keys["ctrl+o"]:
-        args = (filename,black,bnc,slc,reset,rows,banoff,arr,columns,status,offset,\
-                line,banner,status_st,keys,cursor,oldptr,select,read_key,codec,lnsep)
-        arr,filename,status_st,cursor,oldptr,line,offset,select,codec,lnsep = open_file(args)
+        args = (filename,black,bnc,slc,reset,rows,banoff,arr,columns,status,offset,line,\
+                banner,status_st,keys,cursor,oldptr,select,read_key,codec,lnsep,indent)
+        arr,filename,status_st,cursor,oldptr,line,offset,select,codec,lnsep,indent = open_file(args)
 
     elif key==keys["ctrl+f"]:
         args = (filename,black,bnc,slc,reset,rows,banoff,arr,columns,\
@@ -112,24 +120,7 @@ def keys_func(key,cursor,oldptr,line,offset,columns,banoff,arr,rows,
     elif key==keys["ctrl+r"]:
         args = (filename,black,bnc,slc,reset,rows,banoff,arr,columns,\
                 status,offset,line,banner,status_st,keys,read_key,cursor)
-        cursor,line,offset,arr,status_st = replace(args)
-        
-    elif key==keys["alt+d"]: indent = " "*4 if indent=="\t" else "\t"
-
-    elif key==keys["alt+k"]:
-        args = (filename,black,bnc,slc,reset,rows,banoff,arr,columns,status,offset,line,\
-                banner,status_st,keys,cursor,select,read_key,comment[0]," Set comment: ")
-        comment[0] = chg_var_str(args)
-
-    elif key==keys["alt+u"]:
-        args = (filename,black,bnc,slc,reset,rows,banoff,arr,columns,status,offset,line,\
-                banner,status_st,keys,cursor,select,read_key,comment[1]," Set end cmt: ")
-        comment[1] = chg_var_str(args)
-
-    elif key==keys["alt+i"]:
-        args = (filename,black,bnc,slc,reset,rows,banoff,arr,columns,status,offset,line,\
-                banner,status_st,keys,cursor,select,read_key,indent," Set indent: ")
-        indent = chg_var_str(args)
+        cursor,line,offset,arr,status_st = replace(args)  
 
     elif key==keys["ctrl+d"]:
         if len(select)>0:
@@ -137,20 +128,15 @@ def keys_func(key,cursor,oldptr,line,offset,columns,banoff,arr,rows,
         else: arr,cursor = dedent(arr,line,offset,banoff,indent,cursor)
     
     elif key==keys["ctrl+k"]:
-        if len(select)>0: slt = select
-        else:
-            slt = [[line-banoff,offset],[line,offset]]
-            cursor += len(comment[0])
-        arr = select_add_start_str(arr,line,offset,slt,comment)
-    
-    elif key==keys["ctrl+u"]:    
-        if len(select)>0: slt = select
-        else: 
-            slt = [[line-banoff,offset],[line,offset]]
-            x = arr[line+offset-banoff]
-            if x.startswith(comment[0]) and x.endswith(comment[1]):
-                cursor -= len(comment[0])
-        arr = select_add_start_str(arr,line,offset,slt,comment,True)
+        arr,cursor = comment_func(arr,line,offset,banoff,select,comment,cursor,indent)
+
+    elif key==keys["ctrl+u"]:
+        arr,cursor = uncomment_func(arr,line,offset,banoff,select,comment,cursor,indent)
+        
+    elif key==keys["ctrl+t"]:
+        args = (filename,black,bnc,slc,reset,rows,banoff,arr,columns,status,offset,\
+                line,banner,status_st,keys,cursor,select,read_key,comment,indent)
+        comment,indent = opt_menu(args)
 
     else: #All the other keys
         args=(arr,key,select,cursor,line,offset,banoff,indent,rows,keys)

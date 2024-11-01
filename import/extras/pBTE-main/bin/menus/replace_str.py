@@ -1,6 +1,6 @@
 # Code by Sergio00166
 
-from upd_scr import update_scr,movcr,hcr,print
+from upd_scr import update_scr,movcr,hcr,scr,print
 from functions1 import get_size,CalcRelLine
 from chg_var_str import chg_var_str
 from time import sleep as delay
@@ -40,7 +40,6 @@ def updscr_thr():
                 if line>rows: offset=offset+(line-rows); line=rows
                 # If OS is LINUX restore TTY to it default values
                 if not sep==chr(92): tcsetattr(fd, TCSADRAIN, old_settings)
-                print("\r\033[3J") # Clear previous content
                 # Call screen updater function
                 rel_cursor = update_scr(
                 black,bnc,slc,reset,status,banoff,offset,line,cursor,arr,\
@@ -53,26 +52,27 @@ def updscr_thr():
 def exit():
     global fd, old_settings, run, kill, thr
     run=False; kill=True; thr.join()
+    print(scr) # Show cursor again
     if not sep == chr(92): tcsetattr(fd,TCSADRAIN,old_settings)
 
 def search_substring(lst, substring, start_list_pos=0, start_string_pos=0):
-    list_length,i = len(lst),start_list_pos
+    list_lenght,i = len(lst),start_list_pos
     while True:
         start = start_string_pos if i == start_list_pos else 0
         for j in range(start, len(lst[i])):
             if lst[i][j:j+len(substring)] == substring:
                 return i, j+len(substring)
-        i,start_string_pos = (i+1)%list_length,0
+        i,start_string_pos = (i+1)%list_lenght,0
 
 def search_substring_rev(lst, substring, start_list_pos=0, start_string_pos=None):
-    list_length,i = len(lst),start_list_pos
+    list_lenght,i = len(lst),start_list_pos
     while True:
         start = start_string_pos if i == start_list_pos else len(lst[i])
         if start_string_pos is None: start = len(lst[i])
         else: start = start_string_pos-len(find_str)
         for j in range(start, -1, -1):
             if lst[i][j-len(substring):j] == substring: return i, j
-        i,start_string_pos = (i-1)%list_length,None
+        i,start_string_pos = (i-1)%list_lenght,None
 
 def chg_hlg(rel_cursor,string):
     pos = rel_cursor-str_len(string)
@@ -97,18 +97,21 @@ def replace(arg):
     args = (filename,black,bnc,slc,reset,rows,banoff,arr,columns,status,\
             offset,line,banner,status_st,keys,cursor,[],read_key,"")
 
-    try: find_str = find_str = chg_var_str((*args," [R] Find: "),True)
+    try: # Skip if Ctrl+C or the text is empty
+        find_str = find_str = chg_var_str((*args," [R] Find: "),True)
+        if find_str == "": raise KeyboardInterrupt
     except KeyboardInterrupt: return cursor,line,offset,arr,status_st
     try: replace_str = chg_var_str((*args," Replace with: "),True)
     except KeyboardInterrupt: return cursor,line,offset,arr,status_st
 
-    thr=Thread(target=updscr_thr)
-    run,kill = False,False
-    thr.start()
-
     # Check if the str exists in arr
     if not isin_arr(arr,find_str):
-        exit(); cursor,line,offset,arr,status_st
+        return cursor,line,offset,arr,status_st
+
+    thr=Thread(target=updscr_thr)
+    run,kill = False,False
+    thr.daemon=True; thr.start()
+ 
     # Find replace and move cursor to the first one
     pos,active = line+offset-banoff,False
     cl_line,cursor = search_substring(arr,find_str,pos,cursor)
@@ -138,10 +141,7 @@ def replace(arg):
             run=False #Stop update screen thread
             pos = line+offset-banoff
 
-            if key==keys["ctrl+c"]: exit(); break
-
-            # Lock it if we cannot do anything more
-            elif not isin_arr(arr,find_str): pass
+            if key==keys["ctrl+c"] or not isin_arr(arr,find_str): break
             
             elif key==keys["arr_right"]:
                 cl_line,cursor = search_substring(arr,find_str,pos,cursor)
@@ -168,7 +168,8 @@ def replace(arg):
                     arr[p] = x.replace(find_str,replace_str)
                 status_st = False # Reset status value
                 break # Exit this menu program
-   
+
         except: pass
 
+    exit() # Reset
     return cursor,line,offset,arr,status_st

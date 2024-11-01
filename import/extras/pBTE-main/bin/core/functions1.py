@@ -18,6 +18,11 @@ def get_size():
     size=get_terminal_size()
     return size[1]-2,size[0]-2
 
+def cmt_w_ind(string, sepstr):
+    pos,lenght = 0,len(sepstr)
+    while string.startswith(sepstr,pos): pos+=lenght
+    return string[:pos], string[pos:]
+
 def decode(key):
     out = key.decode("UTF-8")
     for x in ascii_no_lfcr:
@@ -26,9 +31,9 @@ def decode(key):
     return out
 
 def fixlenline(text,cursor,oldptr):
-    length=len(text)+1
-    if cursor>length or oldptr>length:
-        return length
+    lenght=len(text)+1
+    if cursor>lenght or oldptr>lenght:
+        return lenght
     elif oldptr>cursor: return oldptr
     else: return cursor
 
@@ -55,14 +60,14 @@ def del_sel(select, arr, banoff, blank=False):
         else: line-=1
     return [], arr, line, offset
 
-def fixfilename(path, length):
-    if len(path) <= length: return path
+def fixfilename(path, lenght):
+    if len(path) <= lenght: return path
     dirname, basename = psplit(path)
-    if len(path) <= length: return path
-    available_length = length - len(basename) - 1
-    if available_length <= 0: return basename[:length - 1]+'*'
+    if len(path) <= lenght: return path
+    available_lenght = lenght - len(basename) - 1
+    if available_lenght <= 0: return basename[:lenght - 1]+'*'
     parts = dirname.split(sep)
-    while len(parts) > 0 and len(sep.join(parts)) > available_length: parts.pop(0)
+    while len(parts) > 0 and len(sep.join(parts)) > available_lenght: parts.pop(0)
     if len(parts) == 0: compacted_path=basename
     else: compacted_path = sep.join(parts)+sep+basename
     return compacted_path
@@ -87,26 +92,39 @@ def select_add_start_str(arr,line,offset,select,text,remove=False):
     else: p1 = [x[len(text):] if x.startswith(text) else x for x in p1]   
     return p0+p1+p2 # Reconstruct the arr
 
+
 def get_str(arr,key,select,cursor,line,offset,banoff,indent,rows,keys):
-    out,skip = decode(key),False   
+    out = decode(key)
     if select:
-        if not out=="\t": select,arr,line,offset = del_sel(select,arr,banoff,True)
-        else: arr,skip = select_add_start_str(arr,line,offset,select,indent),True      
-    if not skip:
-        pos=line+offset-banoff; text=arr[pos]
-        p1,p2 = text[:cursor-1], text[cursor-1:]
-        out=out.replace("\t",indent)
-        out_lines = resplit(r'[\n\r]',out)
-        if not select and len(out_lines)>1:
-            arr[pos] = p1+out_lines[0]
-        else: arr[pos] = p1+out_lines[0]+p2
-        if len(out_lines) > 1:
-            if not select: out_lines[-1] += p2
-            arr[pos+1:pos+1] = out_lines[1:]
-            line,offset = calc_displacement(out_lines,line,banoff,offset,rows,1)
-            cursor = len(out_lines[-1])+1
-        else: cursor += len(out_lines[0])
+        if out=="\t":
+            args = (arr,line,offset,select,indent)
+            arr = select_add_start_str(*args)
+            return arr, cursor, line, offset, select
+        else:
+            args = (select,arr,banoff,True)
+            select,arr,line,offset = del_sel(*args)
+            cursor = 1 # Reset cursor value
+
+    pos = line+offset-banoff
+    text = arr[pos] # Get current line
+    p1,p2 = text[:cursor-1],text[cursor-1:]
+    out = out.replace("\t",indent)
+    out_lines = resplit(r'[\n\r]',out)
+
+    if not select and len(out_lines)>1:
+        arr[pos] = p1+out_lines[0]
+    else: arr[pos] = p1+out_lines[0]+p2
+
+    if len(out_lines) > 1:
+        cursor = len(out_lines[-1])+1
+        if not select: out_lines[-1] += p2
+        arr[pos+1:pos+1] = out_lines[1:]
+        args = (out_lines,line,banoff,offset,rows,1)
+        line,offset = calc_displacement(*args)
+    else: cursor += len(out_lines[0])
+
     return arr, cursor, line, offset, select
+
 
 def detect_line_ending_char(file_path):
     c = open(file_path, 'rb').read()
@@ -130,4 +148,12 @@ def read_UTF8(path):
         file,codec = file.read(),"latin_1"
         
     return file.split(lnsep), codec, lnsep
+
+# Detect if indent is tab or space
+def taborspace(contents):
+    sp_cnt,tab_cnt = 0,0
+    for x in contents:
+        if x.startswith(" "*4): sp_cnt+=1
+        if x.startswith("\t"): tab_cnt+=1
+    return " "*4 if sp_cnt>tab_cnt else "\t"
 
