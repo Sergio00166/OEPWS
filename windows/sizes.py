@@ -36,7 +36,6 @@ def dirsize(arg1,directory,colors):
         if ":\\" in arg1: direct=arg1
         else: direct=directory + arg1
     green,yellow,blue,reset = colors
-    print(direct)
     for x in glob(direct, recursive=False):
         size=get_directory_size(x)
         size=readable(size)
