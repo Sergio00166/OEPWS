@@ -41,28 +41,29 @@ def mkadlnk(arg):
 
 def fixaddr(arg, silent=False):
     from glob import glob
-    from os.path import isfile
+    from os.path import isfile, abspath, isdir
     from os import access, R_OK
-    fix=glob(arg, recursive=False)
-    if not len(fix)==0 and not len(fix)>1:
-        fix = str(check_output("cd /D "+fix[0]+" & cd", shell=True))[2:-4]
-        fix = fix.replace("\\\\",chr(92)).replace("\\\\",chr(92))
-        if not isfile(fix):
-            if access(fix,R_OK): return fix
+    fix = glob(arg, recursive=False)
+    if len(fix) == 1:
+        fix = abspath(fix[0]).replace("\\\\", "\\")
+        fix += "" if fix.endswith(chr(92)) else chr(92)
+
+        if isdir(fix):
+            if access(fix, R_OK): return fix
             elif not silent:
-                print(color("\n   Permision Denied\n","R"))
-                return None
+                print(color("\n   Permission Denied\n", "R"))
+            return None
         else:
             if not silent:
-                print(color("\n   It isn't a valid directory\n","R"))
-                return None
+                print(color("\n   It isn't a valid directory\n", "R"))
+            return None
     else:
-        if len(fix)>1 and not silent:
-            print(color("\n   Too many arguments\n","R"))
-            return None
+        if len(fix) > 1 and not silent:
+            print(color("\n   Too many arguments\n", "R"))
         elif not silent:
-            print(color("\n   The dir doesn't exist\n","R"))
-            return None
+            print(color("\n   The directory doesn't exist\n", "R"))
+        return None
+
 
 def fixfiles(arg):
     arg=arg.split(chr(92))
