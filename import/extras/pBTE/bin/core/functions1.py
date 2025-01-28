@@ -6,6 +6,19 @@ from multiprocessing import cpu_count, Pool
 from re import split as resplit
 from data import ascii_no_lfcr
         
+bom_map = {
+    b'\xef\xbb\xbf': 'utf-8-sig',
+    b'\xff\xfe': 'utf-16-le',
+    b'\xfe\xff': 'utf-16-be',
+}
+rev_bom_map = {
+    'utf-8-sig': b'\xef\xbb\xbf',
+    'utf-16-le': b'\xff\xfe',
+    'utf-16-be': b'\xfe\xff',
+}
+codecs_no_bom = ("utf-8", "utf-16", "latin_1")
+
+
 
 def calc_displacement(data,line,banoff,offset,rows,rect=0):
     line += len(data)-rect
@@ -126,29 +139,6 @@ def get_str(arr,key,select,cursor,line,offset,banoff,indent,rows,keys):
     return arr, cursor, line, offset, select
 
 
-def detect_line_ending_char(file_path):
-    c = open(file_path, 'rb').read()
-    crlf = c.count(b'\r\n')
-    c=c.replace(b'\r\n',b'')
-    cr = c.count(b'\r')
-    lf = c.count(b'\n')
-    if crlf>cr and crlf>lf:
-        return '\r\n'
-    elif cr>lf: return '\r'
-    else: return '\n'
-
-# Try to read in UTF-8, if cannot read in extended ascii
-def read_UTF8(path):
-    lnsep = detect_line_ending_char(path)
-    try:
-        file = open(path,"r", encoding="UTF-8",newline="")
-        file,codec = file.read(),"UTF-8"
-    except:
-        file = open(path,"r", encoding="latin_1",newline="")
-        file,codec = file.read(),"latin_1"
-        
-    return file.split(lnsep), codec, lnsep
-
 # Detect if indent is tab or space
 def taborspace(contents):
     sp_cnt,tab_cnt = 0,0
@@ -156,4 +146,51 @@ def taborspace(contents):
         if x.startswith(" "*4): sp_cnt+=1
         if x.startswith("\t"): tab_cnt+=1
     return " "*4 if sp_cnt>tab_cnt else "\t"
+
+
+def detect_line_ending_char(c):
+    c = c[:1024]
+    crlf = c.count('\r\n')
+    c = c.replace('\r\n','')
+    cr = c.count('\r')
+    lf = c.count('\n')
+    if crlf>cr and crlf>lf:
+        return '\r\n'
+    elif cr>lf: return '\r'
+    else: return '\n'
+
+
+def read_UTF8(path):
+    data = open(path, "rb").read()
+    codec = None
+
+    for bom, encoding in bom_map.items():
+        if data.startswith(bom):
+            data,codec = data[len(bom):],encoding
+            break
+
+    if codec:
+        data = data.decode(codec)
+        lnsep = detect_line_ending_char(data)
+        data = data.split(lnsep)
+        return data,codec,lnsep
+
+    for codec in codecs_no_bom:
+        try:
+            data = data.decode(codec)
+            lnsep = detect_line_ending_char(data)
+            data = data.split(lnsep)
+            return data,codec,lnsep
+        except: pass
+
+    raise UnicodeError
+
+
+def write_UTF8(path,codec,lnsep,data):
+    file = open(path,"wb")
+    data = lnsep.join(data).encode(codec)
+    if codec in rev_bom_map:
+        bom = rev_bom_map[codec]
+        data = bom+data
+    file.write(data); file.close()
 

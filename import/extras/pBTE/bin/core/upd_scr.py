@@ -82,11 +82,8 @@ def update_scr(black,bnc,slc,reset,status,banoff,offset,line,cursor,arr,banner,\
     # If raw mode is specified return the screen string
     if rrw: return menu
     else:
-        # if not add the ansii code firstly to unshow
-        # the tty cursor, then move the cursor to the
-        # desired line, the show the cursor and move
-        # it horizontally and then print to stdout
-        print(menu+movcr%(line+banoff,cursor))
+        mv = movcr%(line+banoff,cursor)
+        print(hcr+menu+scr+mv)
         # If we are using this in the find
         # function return the relative cursor
         if hlg_str!="": return cursor

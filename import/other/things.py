@@ -42,7 +42,7 @@ def things(arg, arg1, directory):
     elif arg=="stress" or arg=="benchmk":
         from sys import path
         from os import system as cmd
-        exe="import\\extras\\pySysBench\\pySysBench.py"
+        exe="import\\extras\\pyCPUBench.py"
         exe="START /B /WAIT "+path[0]+"\\"+exe
         if arg=="stress": exe+=" stress"
         cmd(exe)

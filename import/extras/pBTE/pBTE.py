@@ -46,8 +46,6 @@ if __name__=="__main__":
         try:
             # Fix arr when empty
             if len(arr)==0: arr=[""]
-            # If status flag is 0 set save text to blank
-            if status_st==0: status=saved_df
             # Get the terminal size
             rows,columns=get_size()
             # Call screen updater function
@@ -74,7 +72,7 @@ if __name__=="__main__":
             args = (
                 key,cursor,oldptr,line,offset,columns,banoff,arr,rows,
                 filename,status,status_st,copy_buffer,black,bnc,slc,reset,
-                saved_txt,indent,banner,getch,keys,select,codec,lnsep,comment
+                indent,banner,getch,keys,select,codec,lnsep,comment
             )
             cursor,oldptr,line,offset,columns,banoff,arr,rows,filename,status,\
             status_st,copy_buffer,indent,select,codec,lnsep,comment = keys_func(*args)

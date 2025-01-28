@@ -5,8 +5,6 @@ from chg_var_str import chg_var_str
 from time import sleep as delay
 from functions1 import get_size
 from threading import Thread
-from codec_menu import codec_menu
-from lnsep_menu import lnsep_menu
 from os import sep
 
 
@@ -44,18 +42,23 @@ def exit():
     if not sep == chr(92): tcsetattr(fd,TCSADRAIN,old_settings)
 
 
-def opt_menu(arg):
+def lnsep_menu(arg):
     global text,rows,columns,black,reset,status,banoff,arr
     global wrtptr,offset,line,banner,filename,rows,columns
     global run,kill,fd,old_settings,thr,status_st,bnc,slc
 
-    filename,black,bnc,slc,reset,rows,banoff,arr,columns,status,offset,line,\
-    banner,status_st,keys,cursor,select,read_key,comment,indent,codec,lnsep = arg
+    filename,black,bnc,slc,reset,rows,banoff,arr,columns,offset,\
+    line,banner,keys,cursor,select,read_key,lnsep = arg
+    
+    status_st = True
+    if   lnsep=="\n":   status="LF"
+    elif lnsep=="\r":   status="CR"
+    elif lnsep=="\r\n": status="CRLF"
+    elif lnsep=="":     status="None"
 
-    text  = "S (CharSet), L (LineSep), "
-    text += "TAB (Tab/Sp), C (Chg cmnt), "
-    text += "E (Chg end cmnt), I (Chg indent)"
-    text,wrtptr = " Options: "+text, 1
+    text =  "1 (LF), 2 (CRLF),"
+    text += " 3 (CR), 4 (None) "
+    text,wrtptr = f" LineSep: "+text, 1
     thr=Thread(target=updscr_thr)
     run,kill = False,False
     thr.daemon = True; thr.start()
@@ -85,41 +88,12 @@ def opt_menu(arg):
             run=False #Stop update screen thread
 
             if key==keys["ctrl+c"]: break
-        
-            elif key==b'\t':
-                indent = " "*4 if indent=="\t" else "\t"
-                break
 
-            elif key==b'c':
-                args = (filename,black,bnc,slc,reset,rows,banoff,arr,columns,status,offset,line,\
-                        banner,status_st,keys,cursor,select,read_key,comment[0]," Set comment: ")
-                comment[0] = chg_var_str(args)
-                break
+            elif key==b'1': lnsep = "\n";   break
+            elif key==b'2': lnsep = "\r\n"; break
+            elif key==b'3': lnsep = "\r";   break
+            elif key==b'4': lnsep = "";     break
 
-            elif key==b'e':
-                args = (filename,black,bnc,slc,reset,rows,banoff,arr,columns,status,offset,line,\
-                        banner,status_st,keys,cursor,select,read_key,comment[1]," Set end cmt: ")
-                comment[1] = chg_var_str(args)
-                break
-
-            elif key==b'i':
-                args = (filename,black,bnc,slc,reset,rows,banoff,arr,columns,status,offset,line,\
-                        banner,status_st,keys,cursor,select,read_key,indent," Set indent: ")
-                indent = chg_var_str(args)
-                break
-
-            elif key==b's':
-                args = (filename,black,bnc,slc,reset,rows,banoff,arr,\
-                columns,offset,line,banner,keys,cursor,select,read_key,codec)
-                codec = codec_menu(args)
-                break
-    
-            elif key==b'l':
-                args = (filename,black,bnc,slc,reset,rows,banoff,arr,\
-                columns,offset,line,banner,keys,cursor,select,read_key,lnsep)
-                lnsep = lnsep_menu(args)
-                break
-            
             elif key==keys["arr_left"]:
                 wrtptr -= columns
                 wrtptr = max(wrtptr,1)
@@ -130,6 +104,5 @@ def opt_menu(arg):
 
         except: pass
 
-    exit() # Reset
-    return comment,indent,codec,lnsep
+    exit(); return lnsep
 
