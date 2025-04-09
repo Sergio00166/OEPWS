@@ -31,10 +31,10 @@ class write:
         print(color("    Sequencial Write Speed: ","B"),end="")
         print(color(output,"G"))
 
+
 def main(arg,directory):
     print("")
     try:
-        arg=" "+arg
         if " -drive " in arg:
             fix=arg[arg.find(" -drive ")+8:]+":"
             drive=str(fix[:fix.find(" -")])
@@ -43,16 +43,20 @@ def main(arg,directory):
         else: drive=directory[:directory.find(":")]
         print("  "+color("         Benchmarking Drive: "+drive+"           ","bW"))
         print("")
-        if " -read " in arg and " -write " in arg and " -rand " in arg: read.rand(drive); write.rand(drive)
-        elif " -read " in arg and " -write " in arg and " -seq " in arg: read.seq(drive); write.seq(drive)
-        elif " -read " in arg and not " -write " in arg and " -rand " in arg: read.rand(drive)
-        elif " -read " in arg and not " -write " in arg and " -seq " in arg: read.seq(drive)
-        elif not " -read " in arg and " -write " in arg and " -rand " in arg: write.rand(drive)
-        elif not " -read " in arg and " -write " in arg and " -seq " in arg: write.seq(drive)
-        else:
-            if " -rand" in arg:
-                read.rand(drive); write.rand(drive)
-            else: read.seq(drive); write.seq(drive)
-    except OSError: print(color("   This feature requires admin mode","R"))
-    except: pass
+
+        rmod  = "-read"  in arg
+        wmod =  "-write" in arg
+        rand  = "-rand"  in arg
+
+        if not rmod and not wmod:
+            rmod,wmod = True,True
+
+        if rmod:
+            if rand: read.rand(drive)
+            else:    read.seq(drive)
+        if wmod:
+            if rand: write.rand(drive)
+            else:    write.seq(drive)
+
+    except: print(color("   This feature requires admin mode","R"))
     print("")
