@@ -17,18 +17,26 @@ def fileonly(arg):
     arg=arg.split(chr(92))
     return arg[len(arg)-1]
 
-def worker(arg,pattern,onlydir):
-    filepath = glob(arg+chr(92)+"*", recursive=False, include_hidden=True)
-    if len(filepath)>0:
-        out=[]; dirs=[]
-        for x in filepath:
+
+def filter_wk(data,pattern,onlydir):
+    out = []
+    for x in data:
+        if pattern.search(fileonly(x)):
+            if onlydir:
+                if isdir(x): out.append(x)
+            else: out.append(x)
+    return out
+
+
+def list_wk(path):
+    path, dirs = path+chr(92)+"*", []
+    out = glob(path,recursive=False,include_hidden=True)
+    if len(out)>0:
+        for x in out:
             if isdir(x): dirs.append(x)
-            if pattern.search(fileonly(x)):
-                if onlydir:
-                    if isdir(x): out.append(x)
-                else: out.append(x)
         return [dirs,out]
     else: return [[],[]]
+
 
 def proc(x,buff,recurse):
     if x.endswith(chr(92)):
@@ -36,15 +44,22 @@ def proc(x,buff,recurse):
         onlydir=True
     else: onlydir=False
     pattern=re.compile(x)
-    prew,filepath = worker(buff[:-1],pattern,onlydir)
+    prew,filepath = list_wk(buff[:-1])
+
     if not buff==None and recurse:
-        pool=Pool(processes=cpu_count()-1)
-        lister = partial(worker, pattern=pattern,onlydir=onlydir)
+        pool=Pool(processes=cpu_count())
         while not len(prew)==0:
-            ext=pool.map_async(lister,prew).get(); prew=[]
+            ext = pool.map_async(list_wk,prew).get()
+            prew = [] # Clear buffer
             for x in ext: prew+=x[0]; filepath+=x[1]
-            
-    return filepath,onlydir
+
+        flwk = partial(filter_wk,pattern=pattern,onlydir=onlydir)
+        out = pool.map_async(flwk,filepath).get()
+        out = list(chain(*out))
+        
+        return out,onlydir
+    return prew,[]
+
 
 def main(arg,arg1,directory):
     try:
