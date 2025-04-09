@@ -72,10 +72,11 @@ if __name__=="__main__":
             args = (
                 key,cursor,oldptr,line,offset,columns,banoff,arr,rows,
                 filename,status,status_st,copy_buffer,black,bnc,slc,reset,
-                indent,banner,getch,keys,select,codec,lnsep,comment
+                indent,banner,getch,keys,select,codec,lnsep,comment,select_mode
             )
             cursor,oldptr,line,offset,columns,banoff,arr,rows,filename,status,\
-            status_st,copy_buffer,indent,select,codec,lnsep,comment = keys_func(*args)
+            status_st,copy_buffer,indent,select,codec,lnsep,comment,select_mode\
+            = keys_func(*args) # Update all values
                          
         except: pass
 

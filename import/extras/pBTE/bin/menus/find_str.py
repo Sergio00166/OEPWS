@@ -1,10 +1,10 @@
 # Code by Sergio00166
 
 from upd_scr import update_scr,movcr,hcr,scr,print
-from functions1 import get_size,CalcRelLine
+from scr_funcs import get_size,str_len
 from chg_var_str import chg_var_str
+from functions import CalcRelLine
 from time import sleep as delay
-from functions import str_len
 from threading import Thread
 from os import sep
 
@@ -140,7 +140,7 @@ def find(arg):
             if key==keys["ctrl+c"]: break 
 
             elif key==keys["arr_right"]:
-                p1,cursor = search_substring(arr,find_str,pos,cursor)
+                p1,cursor = search_substring(arr,find_str,pos,cursor-1)
                 line,offset = CalcRelLine(p1,arr,offset,line,banoff,rows)
                 cursor += 1 # Cursor starts in 1 not 0
                 

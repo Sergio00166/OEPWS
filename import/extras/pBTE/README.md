@@ -10,7 +10,8 @@ The default encoding for blank files is UTF-8 and defaults to use LF.
 
 Using colorama and wcwidth (they are inside lib.zip) and its LICENSES can be found inside that zip file.    
 Basic functionalities currently available such as copy, cut, paste lines, find string, and replaced string.   
-Currently ctrl+Z is not available a workaround is using ctrl+a and then ctrl+b to create a .bak file  
+
+The keyboard mappings are stored in bin/data.py
 
 -----------------------------------
 
@@ -25,6 +26,8 @@ Currently ctrl+Z is not available a workaround is using ctrl+a and then ctrl+b t
 - `^I` [Indent],    `^K` [Comment]
 - `^U` [Uncomment], `^F` [Find]
 - `^R` [Replace],   `^J` [non-move NL]
+- `^Y` [Toggle line select mode]
+- `Ctrl + Arrow keys` [Move in batches of 4]
 
 #### OpenFile Menu:
 - `^C` [Exit], `^O` [Open file]

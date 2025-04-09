@@ -1,10 +1,10 @@
 # Code by Sergio00166
 
 from upd_scr import update_scr,movcr,hcr,scr,print
-from functions1 import get_size,CalcRelLine
+from scr_funcs import get_size,str_len
 from chg_var_str import chg_var_str
+from functions import CalcRelLine
 from time import sleep as delay
-from functions import str_len
 from threading import Thread
 from os import sep
 
@@ -144,7 +144,7 @@ def replace(arg):
             if key==keys["ctrl+c"] or not isin_arr(arr,find_str): break
             
             elif key==keys["arr_right"]:
-                cl_line,cursor = search_substring(arr,find_str,pos,cursor)
+                cl_line,cursor = search_substring(arr,find_str,pos,cursor-1)
                 p1 = arr[cl_line][:cursor-len(find_str)]
                 p2 = arr[cl_line][cursor:]
                 arr[cl_line] = p1+replace_str+p2

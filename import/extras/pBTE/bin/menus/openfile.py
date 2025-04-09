@@ -1,8 +1,9 @@
 # Code by Sergio00166
 
-from functions1 import decode, get_size, read_UTF8, taborspace
+from functions import decode, read_UTF8, taborspace
 from upd_scr import menu_updsrc
 from time import sleep as delay
+from scr_funcs import get_size
 from threading import Thread
 from os import getcwd,sep
 from glob import glob

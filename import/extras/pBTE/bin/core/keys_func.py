@@ -1,7 +1,7 @@
 # Code by Sergio00166
 
-from functions1 import cmt_w_ind,write_UTF8
-from functions import str_len
+from functions import cmt_w_ind,write_UTF8
+from scr_funcs import str_len
 from actions import *
 from actions1 import *
 from saveas import save_as
@@ -12,24 +12,29 @@ from chg_var_str import chg_var_str
 from opt_menu import opt_menu
 
 
-def keys_func(key,cursor,oldptr,line,offset,columns,banoff,arr,rows,
-              filename,status,status_st,copy_buffer,black,bnc,slc,reset,
-              indent,banner,read_key,keys,select,codec,lnsep,comment):
+def keys_func(key,cursor,oldptr,line,offset,columns,banoff,arr,rows,filename,
+              status,status_st,copy_buffer,black,bnc,slc,reset,indent,
+              banner,read_key,keys,select,codec,lnsep,comment,select_mode):
 
-    if key==keys["supr"]:
+    if key==keys["ctrl+y"]:
+        select_mode = not select_mode
+
+    elif key==keys["supr"]:
         args=(cursor,offset,banoff,arr,line,select)
         arr, line, offset, select = supr(*args)
         status_st = False
 
     elif key==keys["arr_up"] or key==keys["ctrl+arr_up"]:
-        selected = key==keys["ctrl+arr_up"]
-        args=(line,offset,arr,banoff,oldptr,rows,cursor,select,selected)
-        cursor, oldptr, offset, line, select = up(*args)
+        times = 4 if key==keys["ctrl+arr_up"] else 1
+        for x in range(times):
+            args=(line,offset,arr,banoff,oldptr,rows,cursor,select,select_mode)
+            cursor, oldptr, offset, line, select = up(*args)
         
     elif key==keys["arr_down"] or key==keys["ctrl+arr_down"]:
-        selected = key==keys["ctrl+arr_down"]
-        args=(line,offset,arr,banoff,oldptr,rows,cursor,select,selected)
-        cursor, oldptr, offset, line, select = down(*args)
+        times = 4 if key==keys["ctrl+arr_down"] else 1
+        for x in range(times):
+            args=(line,offset,arr,banoff,oldptr,rows,cursor,select,select_mode)
+            cursor, oldptr, offset, line, select = down(*args)
 
     elif key==keys["arr_right"] or key==keys["ctrl+arr_right"]:
         times = 4 if key==keys["ctrl+arr_right"] else 1
@@ -52,14 +57,12 @@ def keys_func(key,cursor,oldptr,line,offset,columns,banoff,arr,rows,
         cursor = len(text)+1
         oldptr,select = cursor,[]
         
-    elif key==keys["repag"] or key==keys["ctrl+repag"]:
-        fix = key==keys["ctrl+repag"]
-        args=(line,offset,banoff,rows,arr,sep,cursor,oldptr,select,fix)
+    elif key==keys["repag"]:
+        args=(line,offset,banoff,rows,arr,sep,cursor,oldptr,select,select_mode)
         line,offset,cursor,oldptr,select = repag(*args)
         
-    elif key==keys["avpag"] or key==keys["ctrl+avpag"]:
-        fix = key==keys["ctrl+avpag"]
-        args=(line,offset,banoff,rows,arr,sep,cursor,oldptr,select,fix)
+    elif key==keys["avpag"]:
+        args=(line,offset,banoff,rows,arr,sep,cursor,oldptr,select,select_mode)
         line,offset,cursor,oldptr,select = avpag(*args)
             
     elif key==keys["delete"]:
@@ -145,6 +148,6 @@ def keys_func(key,cursor,oldptr,line,offset,columns,banoff,arr,rows,
         arr, cursor, line, offset, select = get_str(*args)
         status_st = False
                 
-    return cursor,oldptr,line,offset,columns,banoff,arr,rows,filename,\
-           status,status_st,copy_buffer,indent,select,codec,lnsep,comment
+    return cursor,oldptr,line,offset,columns,banoff,arr,rows,filename,status,\
+           status_st,copy_buffer,indent,select,codec,lnsep,comment,select_mode
 

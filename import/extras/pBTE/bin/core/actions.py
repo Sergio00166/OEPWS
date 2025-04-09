@@ -1,10 +1,11 @@
 # Code by Sergio00166
 
-from functions1 import *
+from functions import *
+from scr_funcs import fixlenline
 
 
-def down(line,offset,arr,banoff,oldptr,rows,cursor,select,selected):
-    if selected:
+def down(line,offset,arr,banoff,oldptr,rows,cursor,select,select_mode):
+    if select_mode:
         selst = [line-banoff,offset]
         fix = line+offset
     if not line+offset==len(arr)+banoff-1:
@@ -12,7 +13,7 @@ def down(line,offset,arr,banoff,oldptr,rows,cursor,select,selected):
         elif not line+offset==len(arr)+1: offset += 1
         text = arr[line+offset-banoff]
         cursor = fixlenline(text,cursor,oldptr)
-    if selected:
+    if select_mode:
         seled = [line-banoff,offset]
         if sum(seled)<fix:
             seled[0] = seled[0]+1
@@ -22,13 +23,13 @@ def down(line,offset,arr,banoff,oldptr,rows,cursor,select,selected):
     else: select = []
     return cursor, oldptr, offset, line, select
 
-def up(line,offset,arr,banoff,oldptr,rows,cursor,select,selected):
-    if selected: seled = [line-banoff,offset]
+def up(line,offset,arr,banoff,oldptr,rows,cursor,select,select_mode):
+    if select_mode: seled = [line-banoff,offset]
     if not line==banoff: line -= 1
     elif offset>0: offset -= 1
     text = arr[line+offset-banoff]
     cursor = fixlenline(text,cursor,oldptr)
-    if selected:
+    if select_mode:
         selst = [line-banoff,offset]
         if len(select)==0:
             select = [selst,seled]
@@ -110,11 +111,15 @@ def comment_func(arr,line,offset,banoff,select,comment,cursor,indent):
 def uncomment_func(arr,line,offset,banoff,select,comment,cursor,indent):
     orig = arr[line+offset-banoff]
     if not len(select)>0:
-        pos,lenght = line+offset-banoff,len(comment[0])
+        pos = line+offset-banoff
+        lncmt1 = len(comment[0])
+        lncmt2 = len(comment[1])
         p1,p2 = cmt_w_ind(arr[pos], indent)
-        if p2.startswith(comment[0]): p2=p2[lenght:]
-        if p2.endswith(comment[0]): p2=p2[:lenght]
-        arr[pos] = p1+p2 
+        stcmt1 = p2.startswith(comment[0])
+        edcmt2 = p2.endswith(comment[1])
+        if stcmt1: p2 = p2[lncmt1:]
+        if edcmt2: p2 = p2[:-lncmt2] if lncmt2>0 else p2
+        arr[pos] = p1+p2 # Add the indent
     else: arr = select_add_start_str(arr,line,offset,select,comment,True)
     if not orig==arr[line+offset-banoff]: cursor-=len(comment[0])
     return arr,cursor

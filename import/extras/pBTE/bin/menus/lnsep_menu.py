@@ -3,7 +3,7 @@
 from upd_scr import menu_updsrc,hcr,scr,print
 from chg_var_str import chg_var_str
 from time import sleep as delay
-from functions1 import get_size
+from scr_funcs import get_size
 from threading import Thread
 from os import sep
 

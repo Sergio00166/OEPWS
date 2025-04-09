@@ -1,6 +1,6 @@
 # Code by Sergio00166
 
-from functions1 import *
+from functions import *
 from actions import up,down
 
 

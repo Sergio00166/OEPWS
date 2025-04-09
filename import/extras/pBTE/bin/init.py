@@ -1,6 +1,6 @@
 # Code by Sergio00166
 
-version="v0.6.9.2"
+version="v0.7.1.6"
      
 if not __name__=="__main__":
 
@@ -9,12 +9,13 @@ if not __name__=="__main__":
 
     # Add all file structure
     root = path[0]+sep+"bin"+sep
-    path.append(path[0]+sep+"lib.zip")
+    path.append(sep.join([path[0],"bin","lib.zip"]))
     path.append(root+"core")
     path.append(root+"menus")
     
     from os.path import abspath, isdir
-    from functions1 import get_size,read_UTF8,taborspace
+    from functions import read_UTF8,taborspace
+    from scr_funcs import get_size
     from upd_scr import update_scr
     from keys_func import keys_func
     from colorama import init, Fore, Back, Style, deinit
@@ -82,6 +83,7 @@ if not __name__=="__main__":
     else: files=[]
 
     #Define a lot of stuff
+    select_mode = False
     indent = taborspace(arr)
     offset=oldptr=0
     cursor=line=banoff=1
