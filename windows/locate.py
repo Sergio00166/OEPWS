@@ -1,3 +1,5 @@
+#Code by Sergio00166
+
 from concurrent.futures import ProcessPoolExecutor, as_completed
 from os import scandir, sep, cpu_count
 from os.path import isdir, join, normpath, basename, isabs, relpath
