@@ -42,4 +42,55 @@ def tree(arg1, directory):
         worker(path)
         print("")
 
-# The rest of the code (print_files and ls) remains unchanged
+
+
+def print_files(files, max_width):
+    current_width = 0
+    for file in files:
+        if files.index(file)==0:
+            print("├   ",end="")
+        elif current_width+len(file)>=max_width:
+            print("\n├   ",end="")
+            current_width = 0
+        else: print(" · ", end="")
+        print(file, end="")
+        current_width += len(file)
+    print("")
+    
+
+def ls(arg1, directory):
+    from os.path import islink, isdir
+    from os import get_terminal_size
+    green=color("","Gnr"); blue=color("","Bnr")
+    magenta=color("","Mnr"); red=color("","Rnr")
+    reset=color()
+
+    dirt=parse_syntax(arg1,directory,["from",None])
+
+    for y in dirt:
+        buff=glob(y, recursive=False)
+        if not len(buff)==0:
+            for x in buff:
+                try:
+                    dirt=fixcrdir(x)
+                    if dirt!=directory: dirt=dirt.replace(directory,"")
+                    x=fixaddr(x, True); exp=""
+                    if not x==None:
+                        print("\n┌─"+green+" Contents of "+reset+blue+dirt+reset+"\n│")
+                        ext = glob(x+'*', recursive=False, include_hidden=True)
+                        if not len(ext)==0:
+                            file_list = []
+                            for z in ext:
+                                if islink(z) or z.endswith((".lnk",".url")):
+                                    content=magenta+z.replace(x,"")+reset
+                                elif isdir(z): content=blue+z.replace(x,"")+reset
+                                else: content=green+z.replace(x,"")+reset
+                                file_list.append(content)
+                            max_width = get_terminal_size().columns
+                            print_files(file_list, max_width)
+                        else:  print("├   "+red+"EMPTY DIRECTORY"+reset)
+                        print("└─")
+                except: pass
+        else: print("\n   "+color("The dir doesn't exist","R"))
+    print("")
+
