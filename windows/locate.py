@@ -1,90 +1,121 @@
-#Code by Sergio00166
-
-from glob import glob
-from colors import color
-from multiprocessing import cpu_count, Pool
-from itertools import chain
-from functools import partial
-from sys import setrecursionlimit
-from os.path import isdir, isabs
-from syntax import parse_basic_syntax
+from concurrent.futures import ProcessPoolExecutor, as_completed
+from os import scandir, sep, cpu_count
+from os.path import isdir, join, normpath, basename, isabs, relpath
 import re
-
-setrecursionlimit(10**6) # increase the recursion limit
-
-
-def fileonly(arg):
-    arg=arg.split(chr(92))
-    return arg[len(arg)-1]
+from time import perf_counter
+from colors import color
+from syntax import parse_basic_syntax
+from functools import partial
 
 
-def filter_wk(data,pattern,onlydir):
-    out = []
-    for x in data:
-        if pattern.search(fileonly(x)):
-            if onlydir:
-                if isdir(x): out.append(x)
-            else: out.append(x)
-    return out
+def fast_scandir(path):
+    dirs = []
+    files = []
+    with scandir(path) as it:
+        for entry in it:
+            if entry.is_dir(follow_symlinks=False):
+                dirs.append(entry.path)
+            files.append(entry.path)
+    return dirs, files
 
-
-def list_wk(path):
-    path, dirs = path+chr(92)+"*", []
-    out = glob(path,recursive=False,include_hidden=True)
-    if len(out)>0:
-        for x in out:
-            if isdir(x): dirs.append(x)
-        return [dirs,out]
-    else: return [[],[]]
-
-
-def proc(x,buff,recurse):
-    if x.endswith(chr(92)):
-        x=x[:len(x)-1]
-        onlydir=True
-    else: onlydir=False
-    pattern=re.compile(x)
-    prew,filepath = list_wk(buff[:-1])
-
-    if not buff==None and recurse:
-        pool=Pool(processes=cpu_count())
-        while not len(prew)==0:
-            ext = pool.map_async(list_wk,prew).get()
-            prew = [] # Clear buffer
-            for x in ext: prew+=x[0]; filepath+=x[1]
-
-        flwk = partial(filter_wk,pattern=pattern,onlydir=onlydir)
-        out = pool.map_async(flwk,filepath).get()
-        out = list(chain(*out))
-        
-        return out,onlydir
-    return prew,[]
-
-
-def main(arg,arg1,directory):
-    try:
-        print(""); 
-        if arg=="locatenr": recurse=False
-        else: recurse=True
-
-        buff2,buff = parse_basic_syntax(arg1, directory, "in")
-        buff = buff[0]
-        if not isabs(buff): buff=directory+buff
-        if not buff.endswith(chr(92)): buff+=chr(92)
-       
-        for x in buff2:
-            filepath,onlydir = proc(x,buff,recurse)
-            yellow=color("","nrY"); reset=color()
-            if not len(filepath)==0:
-                print("┌─> "+color(x,"M")+color(" is located on:","G")+"\n│")
-                for i in filepath:
-                    i=i.replace("\\\\","\\").replace("\\\\","\\")
-                    print("├  "+yellow+i+reset)
-                print("└─")      
-            else:
-                if not recurse: ext=" in "
-                else: ext=" inside "
-                print("  "+color(x,"M")+color(" does not exist"+ext,"R")+color(buff,"B"))
-        print("")
+def parallel_walk(root, executors):
+    all_files = []
+    current_dirs = [root]
+    level = 0
     
-    except: print(color("   Error\n","R"))
+    with ProcessPoolExecutor(max_workers=executors) as pool:
+        while current_dirs:
+            futures = {}
+            batch_size = max(1, len(current_dirs) // (executors * 2))
+            
+            for i in range(0, len(current_dirs), batch_size):
+                batch = current_dirs[i:i + batch_size]
+                future = pool.submit(process_batch, batch)
+                futures[future] = batch
+            
+            current_dirs = []
+            for future in as_completed(futures):
+                batch_result = future.result()
+                all_files.extend(batch_result['files'])
+                current_dirs.extend(batch_result['dirs'])
+                level += 1
+                
+    return all_files
+
+
+def process_batch(dirs):
+    result = {'files': [], 'dirs': []}
+    for d in dirs:
+        try:
+            dirs, files = fast_scandir(d)
+            result['files'].extend(files)
+            result['dirs'].extend(dirs)
+        except Exception:
+            continue
+    return result
+
+
+def locate(pattern, root, recursive=True, executors=None):
+    executors = executors or cpu_count()
+    root = normpath(root)
+    all_files = [root] if isdir(root) else []
+    
+    if recursive:
+        all_files = parallel_walk(root, executors)
+    
+    return filter_files(all_files, pattern, executors)
+
+
+def filter_files(files, pattern, executors):
+    regex = re.compile(pattern)
+    chunk_size = max(1000, len(files) // (executors * 10))
+    matches = []
+    
+    with ProcessPoolExecutor(max_workers=executors) as pool:
+        futures = [pool.submit(match_chunk, chunk, regex) 
+                 for chunk in chunks(files, chunk_size)]
+        
+        for future in as_completed(futures):
+            matches.extend(future.result())
+    
+    return matches
+
+
+def match_chunk(chunk, regex):
+    return [f for f in chunk if regex.search(basename(f))]
+
+
+def chunks(lst, n):
+    for i in range(0, len(lst), n): yield lst[i:i + n]
+
+
+def main(arg, arg1, directory):
+    try:
+        start_time = perf_counter()
+        buff2, buff = parse_basic_syntax(arg1, directory, "in")
+        root = normpath(join(directory, buff[0]))
+        
+        results = []
+        for pattern in buff2:
+            t1 = perf_counter()
+            found = locate(pattern, root, recursive=(arg != "locatenr"))
+            dt = perf_counter() - t1
+            results.append((pattern, found, dt))
+        
+        print_results(results, root, perf_counter() - start_time)
+        
+    except Exception as e:
+        print(color(f"\nERROR: {str(e)}\n", "R"))
+
+
+def print_results(results, root, total_time):
+    reset = color()
+    col_g,col_m = color("", "Gnr"),color("", "Mnr")
+    col_y,col_b = color("", "Ynr"),color("", "Bnr")
+    col_r,col_c = color("", "Rnr"), color("", "Cnr")
+    print("")
+    for pattern, found, dt in results:
+        print(f"{col_g}┌─[ {col_m}{pattern}{col_g} ]\n│{reset}")
+        for path in found: print(f"{col_g}│  {col_b}{path}{reset}")
+    print(f"{col_g}│\n└─ {len(found)} results {col_y}({dt:.3f}s){reset}\n")
+
