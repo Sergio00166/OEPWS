@@ -11,8 +11,7 @@ from functools import partial
 
 
 def fast_scandir(path):
-    dirs = []
-    files = []
+    dirs,files = [],[]
     with scandir(path) as it:
         for entry in it:
             if entry.is_dir(follow_symlinks=False):
@@ -20,11 +19,10 @@ def fast_scandir(path):
             files.append(entry.path)
     return dirs, files
 
+
 def parallel_walk(root, executors):
-    all_files = []
-    current_dirs = [root]
-    level = 0
-    
+    all_files,current_dirs,level = [],[root],0
+
     with ProcessPoolExecutor(max_workers=executors) as pool:
         while current_dirs:
             futures = {}
@@ -57,8 +55,8 @@ def process_batch(dirs):
     return result
 
 
-def locate(pattern, root, recursive=True, executors=None):
-    executors = executors or cpu_count()
+def locate(pattern, root, recursive=True):
+    executors = min(cpu_count(),60)
     root = normpath(root)
     all_files = [root] if isdir(root) else []
     

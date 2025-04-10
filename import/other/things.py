@@ -1,12 +1,13 @@
 #Code by Sergio00166
 
+
 def things(arg, arg1, directory):
     status=True
     
     if arg=="ls":
         from list_tree import ls
         ls(arg1, directory)
-        
+
     elif arg=="sys":
         from sysinfo import sysinfo
         sysinfo()
@@ -15,7 +16,14 @@ def things(arg, arg1, directory):
         from os import system as cmd
         from sys import path
         cmd(path[0]+"\\import\\extras\\elinks\\elinks.exe "+arg1)
-        cmd("title OEPWS shell"); print("r\033c")
+        cmd("title OEPWS shell"); print("\r\033c")
+
+    elif arg=="sztree":
+        from os import system as cmd
+        from sys import path
+        if arg1.strip()=="": arg1=directory
+        cmd(path[0]+"\\import\\extras\\gdu.exe "+arg1)
+        cmd("title OEPWS shell"); print("\r\033c")        
         
     elif "sort(" in arg:
         from sort import sort

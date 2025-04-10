@@ -5,6 +5,15 @@ from subprocess import check_output
 from other import fixaddr
 
 
+def flmgr(directory):
+    from subprocess import Popen, PIPE
+    from sys import path
+    ext = path[0]+"\\import\\extras\\lf.exe -print-last-dir "+directory
+    proces = Popen(ext, shell=True, stdout=PIPE)
+    dirt = proces.communicate()[0].decode("utf-8").splitlines()
+    return dirt[len(dirt)-1]
+
+
 def eject_dsk(arg1, directory):
     from os import system as cmd
     drive = fix= None
@@ -73,6 +82,7 @@ def direct(arg,arg1,directory,oldir):
     if arg=="cd": directory+=arg1+chr(92)
     elif arg=="go": directory=goto_dir(arg1, directory, oldir)
     elif arg=="eject": directory=eject_dsk(arg1, directory)
+    elif arg=="flmgr": directory=flmgr(directory)
     fix=fixaddr(directory)
     if not fix==None: return fix
     else: return olddir
