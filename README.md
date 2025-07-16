@@ -72,7 +72,7 @@ To run an file on the current dir you need to put .\ before the file name (you c
 *sort(mode)* file (in path)<br>
 Sorts by the mode the contents of the dir <br>
 Modes: mtime, ctime, size, alpha (alphabetical)<br><br>
-*where* file (in path)<br>
+*when* file (in path)<br>
 prints when the file/dir was modified and created <br><br>
 *flmgr*<br>
 Terminal based file manager (FL)
